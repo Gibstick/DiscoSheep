@@ -22,7 +22,10 @@ public final class DiscoSheep extends JavaPlugin {
     }
 
     public void spawnSheep(World world, Location loc) {
-        sheepArray.add((Sheep) world.spawnEntity(loc, EntityType.SHEEP));
+        Sheep newSheep = (Sheep) world.spawnEntity(loc, EntityType.SHEEP);
+        newSheep.setMaxHealth(10000);
+        newSheep.setHealth(10000);
+        sheepArray.add(newSheep);
     }
     
     // Spawn some number of sheep next to given player
