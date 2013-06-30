@@ -13,6 +13,8 @@ public final class DiscoSheep extends JavaPlugin {
 
     private ArrayList<Sheep> sheepArray = new ArrayList<>();
     private DiscoUpdater updater = new DiscoUpdater(this);
+    // radius for random sheep spawns around player
+    private static int sheepSpawnRadius = 5;
 
     @Override
     public void onEnable() {
@@ -41,11 +43,10 @@ public final class DiscoSheep extends JavaPlugin {
 
             // random x and z coordinates within a 5 block radius
             // safe y-coordinate
-            x = -5 + (Math.random() * ((5 - (-5)) + 1)) + player.getLocation().getX();
-            z = -5 + (Math.random() * ((5 - (-5)) + 1)) + player.getLocation().getZ();
+            x = -sheepSpawnRadius + (Math.random() * ((sheepSpawnRadius * 2) + 1)) + player.getLocation().getX();
+            z = -sheepSpawnRadius + (Math.random() * ((sheepSpawnRadius * 2) + 1)) + player.getLocation().getZ();
             y = world.getHighestBlockYAt((int) x, (int) z);
             loc = new Location(world, x, y, z);
-
             spawnSheep(world, loc);
         }
     }
