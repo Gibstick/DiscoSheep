@@ -1,19 +1,19 @@
-package gibstick.bukkit.DiscoSheep;
+package gibstick.bukkit.discosheep;
 
 import java.util.ArrayList;
-import java.lang.Math;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.entity.Sheep;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 public final class DiscoSheep extends JavaPlugin {
 
     private ArrayList<Sheep> sheepArray = new ArrayList<>();
-	private DiscoUpdater updater = new DiscoUpdater();
-	
+    private DiscoUpdater updater = new DiscoUpdater(this);
+
     @Override
     public void onEnable() {
         getCommand("ds").setExecutor(new DiscoSheepCommandExecutor(this));
@@ -45,7 +45,7 @@ public final class DiscoSheep extends JavaPlugin {
             z = -5 + (Math.random() * ((5 - (-5)) + 1)) + player.getLocation().getZ();
             y = world.getHighestBlockYAt((int) x, (int) z);
             loc = new Location(world, x, y, z);
-            
+
             spawnSheep(world, loc);
         }
     }
@@ -64,34 +64,33 @@ public final class DiscoSheep extends JavaPlugin {
             //sheepArray.get(i) something something
         }
     }
-	
-	public void playSounds(){
-		// TODO: generate list of players to send sounds to
-	}
-	
-	public void playSounds(Player player){
-		//TODO: Add sound playing here
-	}
-	
-	//	Called after discosheep is stopped
-	public void cleanUp(){
-		removeAllSheep();
-	}
-	
-	void scheduleUpdate(){
-		updater.runTaskLater(updater,frequency);
-	}
-	
-	public void startDisco(int frequency, int duration){
-		updater.start(frequency, duration);
-	}
-	
-	public void startDisco(){
-		this.startDisco();
-	}
-	
-	public void stopDisco(){
-		updater.stop();
-	}
 
+    public void playSounds() {
+        // TODO: generate list of players to send sounds to
+    }
+
+    public void playSounds(Player player) {
+        //TODO: Add sound playing here
+    }
+
+    //	Called after discosheep is stopped
+    void cleanUp() {
+        removeAllSheep();
+    }
+
+    void scheduleUpdate() {
+        updater.runTaskLater((Plugin) updater, updater.frequency);
+    }
+
+    void startDisco(int frequency, int duration) {
+        updater.start(frequency, duration);
+    }
+
+    void startDisco() {
+        this.startDisco();
+    }
+
+    void stopDisco() {
+        updater.stop();
+    }
 }
