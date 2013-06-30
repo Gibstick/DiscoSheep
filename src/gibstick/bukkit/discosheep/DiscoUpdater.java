@@ -15,7 +15,7 @@ public class DiscoUpdater extends BukkitRunnable {
 		this.duration = 0;
 		parent.cleanUp();
 	}
-
+	
 	public void start(int duration, int frequency) {
 		this.frequency = frequency;
 		this.duration = duration;

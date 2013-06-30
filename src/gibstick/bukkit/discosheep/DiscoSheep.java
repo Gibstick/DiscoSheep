@@ -14,6 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class DiscoSheep extends JavaPlugin {
 
 	private ArrayList<Sheep> sheepArray = new ArrayList<Sheep>();
+	private ArrayList<Player> playerArray = new ArrayList<Player>();
 	private SheepDeshearer deshear = new SheepDeshearer(sheepArray);
 	private static final DyeColor[] discoColours = {
 		DyeColor.RED,
@@ -49,6 +50,10 @@ public final class DiscoSheep extends JavaPlugin {
 
 	ArrayList<Sheep> getSheep() {
 		return sheepArray;
+	}
+	
+	ArrayList<Player> getPlayers(){
+		return this.playerArray;
 	}
 
 	void spawnSheep(World world, Location loc) {
@@ -103,21 +108,23 @@ public final class DiscoSheep extends JavaPlugin {
 	//	Called after discosheep is stopped
 	void cleanUp() {
 		removeAllSheep();
+		this.playerArray.clear();
 	}
 
 	void scheduleUpdate() {
-		updater.runTaskLater((Plugin) updater, updater.frequency);
+		updater.runTaskLater(this, updater.frequency);
 	}
 
-	void startDisco(int frequency, int duration, List<Player> players) {
+	void startDisco(int duration, List<Player> players) {
+		this.playerArray.addAll(players);
 		for(Player player : players){
 			this.spawnSheep(player, this.defaultSheepAmount);
 		}
-		updater.start(frequency, duration);
+		updater.start(duration,this.defaultFrequency);
 	}
 
 	void startDisco(List<Player> players) {
-		this.startDisco(this.defaultFrequency,this.defaultDuration,players);
+		this.startDisco(this.defaultDuration,players);
 	}
 
 	void stopDisco() {
