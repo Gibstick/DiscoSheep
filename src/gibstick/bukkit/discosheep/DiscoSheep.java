@@ -99,7 +99,7 @@ public final class DiscoSheep extends JavaPlugin {
 
 	void playSounds() {
 		for(Player player: getPlayers()){
-			//player.playSound(null, Sound.BURP, frequency, frequency);
+			player.playSound(player.getLocation(), Sound.BURP, 1.0f, 1.0f);
 		}
 	}
 
