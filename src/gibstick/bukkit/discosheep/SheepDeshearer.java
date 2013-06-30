@@ -16,16 +16,20 @@ import org.bukkit.event.player.PlayerShearEntityEvent;
  */
 public class SheepDeshearer implements Listener {
 
-	List<Sheep> sheep;
+	DiscoSheep parent;
 
-	public SheepDeshearer(List sheep) {
-		this.sheep = sheep;
+	public SheepDeshearer(DiscoSheep parent) {
+		this.parent = parent;
 	}
 
 	@EventHandler
 	public void onPlayerShear(PlayerShearEntityEvent e) {
-		if (e.getEntity() instanceof Sheep && sheep.contains((Sheep) e.getEntity())) {
-			e.setCancelled(true);
+		if (e.getEntity() instanceof Sheep){
+			for(DiscoParty party : parent.getParties()){
+				if(party.getSheep().contains((Sheep)e.getEntity())){
+					e.setCancelled(true);
+				}
+			}
 		}
 	}
 }

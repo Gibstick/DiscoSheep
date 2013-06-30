@@ -4,9 +4,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class DiscoUpdater extends BukkitRunnable {
 
-	private DiscoSheep parent;
+	private DiscoParty parent;
 
-	public DiscoUpdater(DiscoSheep parent) {
+	public DiscoUpdater(DiscoParty parent) {
 		this.parent = parent;
 	}
 
