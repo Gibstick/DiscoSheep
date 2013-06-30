@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -45,7 +46,6 @@ public final class DiscoSheep extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		getServer().getPluginManager();
 	}
 
 	ArrayList<Sheep> getSheep() {
@@ -99,11 +99,9 @@ public final class DiscoSheep extends JavaPlugin {
 	}
 
 	void playSounds() {
-		// TODO: generate list of players to send sounds to
-	}
-
-	void playSounds(Player player) {
-		//TODO: Add sound playing here
+		for(Player player: getPlayers()){
+			//player.playSound(null, Sound.BURP, frequency, frequency);
+		}
 	}
 
 	void update() {
