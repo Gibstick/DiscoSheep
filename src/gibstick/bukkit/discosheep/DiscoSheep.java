@@ -29,8 +29,12 @@ public final class DiscoSheep extends JavaPlugin {
     }
     
     // Spawn some number of sheep next to given player
-    public void spawnSheep(Player player, Location loc, int num) {
+    public void spawnSheep(Player player, int num) {
+        Location loc;
         
+        for (int i = 0; i < num; i++) {
+            
+        }
     }
     
     // Mark all sheep in the sheep array for removal
