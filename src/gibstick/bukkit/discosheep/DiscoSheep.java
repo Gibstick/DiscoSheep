@@ -33,8 +33,12 @@ public final class DiscoSheep extends JavaPlugin {
         Location loc;
         
         for (int i = 0; i < num; i++) {
-            
+            loc = null;
         }
+        
+        /// change
+        /// change
+        /// change
     }
     
     // Mark all sheep in the sheep array for removal
