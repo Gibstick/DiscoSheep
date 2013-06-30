@@ -29,7 +29,7 @@ public final class DiscoSheep extends JavaPlugin {
 		DyeColor.CYAN,
 		DyeColor.PURPLE
 	}; // array of accetable disco colours (order not important)
-	private DiscoUpdater updater = new DiscoUpdater(this);
+	private DiscoUpdater updater;
 	// radius for random sheep spawns around player
 	private final int sheepSpawnRadius = 5;
 	private final int defaultSheepAmount = 10;
@@ -116,7 +116,8 @@ public final class DiscoSheep extends JavaPlugin {
 	}
 
 	void scheduleUpdate() {
-		new DiscoUpdater(this).runTaskLater(this, this.frequency);
+		updater = new DiscoUpdater(this);
+		updater.runTaskLater(this, this.frequency);
 	}
 
 	void startDisco(int duration, List<Player> players) {
@@ -140,5 +141,8 @@ public final class DiscoSheep extends JavaPlugin {
 		removeAllSheep();
 		this.playerArray.clear();
 		this.duration = 0;
+		if(updater != null)
+			updater.cancel();
+		updater = null;
 	}
 }
