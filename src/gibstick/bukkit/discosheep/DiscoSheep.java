@@ -11,7 +11,7 @@ import org.bukkit.plugin.Plugin;
 
 public final class DiscoSheep extends JavaPlugin {
 
-    private ArrayList<Sheep> sheepArray = new ArrayList<>();
+    private ArrayList<Sheep> sheepArray = new ArrayList<Sheep>();
     private DiscoUpdater updater = new DiscoUpdater(this);
     // radius for random sheep spawns around player
     private static int sheepSpawnRadius = 5;
