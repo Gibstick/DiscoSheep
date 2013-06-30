@@ -1,6 +1,5 @@
 package gibstick.bukkit.discosheep;
 
-import gibstick.bukkit.DiscoSheep.DiscoSheep;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class DiscoUpdater extends BukkitRunnable {
