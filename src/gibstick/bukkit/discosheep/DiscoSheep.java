@@ -33,8 +33,8 @@ public final class DiscoSheep extends JavaPlugin {
 	// radius for random sheep spawns around player
 	private final int sheepSpawnRadius = 5;
 	private final int defaultSheepAmount = 10;
-	private final int defaultDuration = 300;// ticks
-	private final int defaultFrequency = 20;// ticks per state change
+	private final int defaultDuration = 300; // ticks for entire party
+	private final int defaultFrequency = 10; // ticks per state change
 	private int frequency = 0, duration = 0;
 
 	@Override
@@ -99,7 +99,8 @@ public final class DiscoSheep extends JavaPlugin {
 
 	void playSounds() {
 		for(Player player: getPlayers()){
-			player.playSound(player.getLocation(), Sound.BURP, 1.0f, 1.0f);
+			player.playSound(player.getLocation(), Sound.NOTE_BASS_DRUM, 1.0f, 1.0f);
+                        player.playSound(player.getLocation(), Sound.BURP, frequency,(float) Math.random() + 1);
 		}
 	}
 
