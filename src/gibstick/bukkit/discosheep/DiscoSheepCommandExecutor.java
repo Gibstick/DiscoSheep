@@ -3,9 +3,15 @@ package gibstick.bukkit.DiscoSheep;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.CommandExecutor;
-import org.bukkit.entity.Sheep;
+
 
 public class DiscoSheepCommandExecutor implements CommandExecutor {
+    
+    private DiscoSheep plugin;
+    
+    public DiscoSheepCommandExecutor(DiscoSheep plugin) {
+        this.plugin = plugin;
+    }
     
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
