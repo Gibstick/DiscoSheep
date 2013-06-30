@@ -33,7 +33,7 @@ public final class DiscoSheep extends JavaPlugin {
 	// radius for random sheep spawns around player
 	private final int sheepSpawnRadius = 5;
 	private final int defaultSheepAmount = 10;
-	private final int defaultDuration = 1000;// ticks
+	private final int defaultDuration = 300;// ticks
 	private final int defaultFrequency = 20;// ticks per state change
 	private int frequency = 0, duration = 0;
 
@@ -85,7 +85,7 @@ public final class DiscoSheep extends JavaPlugin {
 	// Mark all sheep in the sheep array for removal, then clear the array
 	void removeAllSheep() {
 		for (Sheep sheep : getSheep()) {
-                        sheep.setHealth(0);
+			sheep.setHealth(0);
 			sheep.remove();
 		}
 		getSheep().clear();
@@ -122,11 +122,11 @@ public final class DiscoSheep extends JavaPlugin {
 	}
 
 	void startDisco(int duration, List<Player> players) {
-		if(this.duration > 0){
+		if (this.duration > 0) {
 			stopDisco();
 		}
 		this.playerArray.addAll(players);
-		for(Player player : players){
+		for (Player player : players) {
 			this.spawnSheep(player, this.defaultSheepAmount);
 		}
 		this.frequency = this.defaultFrequency;
@@ -135,7 +135,7 @@ public final class DiscoSheep extends JavaPlugin {
 	}
 
 	void startDisco(List<Player> players) {
-		this.startDisco(this.defaultDuration,players);
+		this.startDisco(this.defaultDuration, players);
 	}
 
 	void stopDisco() {
