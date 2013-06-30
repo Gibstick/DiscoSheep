@@ -13,6 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class DiscoSheep extends JavaPlugin {
 
 	private ArrayList<Sheep> sheepArray = new ArrayList<Sheep>();
+	private SheepDeshearer deshear = new SheepDeshearer(sheepArray);
 	private static final DyeColor[] discoColours = {
 		DyeColor.RED,
 		DyeColor.ORANGE,
@@ -33,14 +34,15 @@ public final class DiscoSheep extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		getCommand("ds").setExecutor(new DiscoSheepCommandExecutor(this));
+		getServer().getPluginManager().registerEvents(deshear, this);
 	}
 
 	@Override
 	public void onDisable() {
-		// Watashi Wa Kawaii, Ne?
+		getServer().getPluginManager();
 	}
-	
-	ArrayList<Sheep> getSheep(){
+
+	ArrayList<Sheep> getSheep() {
 		return sheepArray;
 	}
 
@@ -71,7 +73,7 @@ public final class DiscoSheep extends JavaPlugin {
 
 	// Mark all sheep in the sheep array for removal, then clear the array
 	void removeAllSheep() {
-		for (Sheep sheep: getSheep()) {
+		for (Sheep sheep : getSheep()) {
 			sheep.remove();
 		}
 		getSheep().clear();
@@ -80,7 +82,7 @@ public final class DiscoSheep extends JavaPlugin {
 	// Set a random colour for all sheep in array
 	void randomizeSheepColours() {
 		for (Sheep sheep : getSheep()) {
-			sheep.setColor(discoColours[(int)Math.random() * discoColours.length]);
+			sheep.setColor(discoColours[(int) Math.random() * discoColours.length]);
 		}
 	}
 
