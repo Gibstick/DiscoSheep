@@ -25,12 +25,16 @@ public final class DiscoSheep extends JavaPlugin {
 	public void onDisable() {
 		// Watashi Wa Kawaii, Ne?
 	}
+	
+	ArrayList<Sheep> getSheep(){
+		return sheepArray;
+	}
 
 	void spawnSheep(World world, Location loc) {
 		Sheep newSheep = (Sheep) world.spawnEntity(loc, EntityType.SHEEP);
 		newSheep.setMaxHealth(10000);
 		newSheep.setHealth(10000);
-		sheepArray.add(newSheep);
+		getSheep().add(newSheep);
 	}
 
 	// Spawn some number of sheep next to given player
@@ -53,15 +57,15 @@ public final class DiscoSheep extends JavaPlugin {
 
 	// Mark all sheep in the sheep array for removal, then clear the array
 	void removeAllSheep() {
-		for (int i = 0; i < sheepArray.size(); i++) {
-			sheepArray.get(i).remove();
+		for (Sheep sheep: getSheep()) {
+			sheep.remove();
 		}
-		sheepArray.clear();
+		getSheep().clear();
 	}
 
 	// Cycle colours of all sheep in the array
 	void cycleSheepColours() {
-		for (int i = 0; i < sheepArray.size(); i++) {
+		for (Sheep shep : getSheep()) {
 			//sheepArray.get(i) something something
 		}
 	}
