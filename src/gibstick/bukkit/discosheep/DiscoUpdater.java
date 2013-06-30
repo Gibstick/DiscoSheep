@@ -27,7 +27,7 @@ public class DiscoUpdater extends BukkitRunnable {
 	@Override
 	public void run() {
 		if (duration > 0) {
-			parent.cycleSheepColours();
+			parent.randomizeSheepColours();
 			parent.playSounds();
 			duration -= frequency;
 			parent.scheduleUpdate();
