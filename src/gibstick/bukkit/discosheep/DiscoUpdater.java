@@ -33,35 +33,3 @@ public class DiscoUpdater extends BukkitRunnable{
 		}
 	}
 }	
-
-/*
-
-	public void playSounds(){
-		// TODO: generate list of players to send sounds to
-	}
-	
-	public void playSounds(Player player){
-		//TODO: Add sound playing here
-	}
-	
-	//	Called after discosheep is stopped
-	public void cleanUp(){
-		removeAllSheep();
-	}
-	
-	void scheduleUpdate(){
-		updater.runTaskLater(updater,frequency);
-	}
-	
-	public void startDisco(int frequency, int duration){
-		updater.start(frequency, duration);
-	}
-	
-	public void startDisco(){
-		this.startDisco();
-	}
-	
-	public void stopDisco(){
-		updater.stop();
-	}
-*/

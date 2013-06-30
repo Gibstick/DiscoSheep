@@ -64,4 +64,34 @@ public final class DiscoSheep extends JavaPlugin {
             //sheepArray.get(i) something something
         }
     }
+	
+	public void playSounds(){
+		// TODO: generate list of players to send sounds to
+	}
+	
+	public void playSounds(Player player){
+		//TODO: Add sound playing here
+	}
+	
+	//	Called after discosheep is stopped
+	public void cleanUp(){
+		removeAllSheep();
+	}
+	
+	void scheduleUpdate(){
+		updater.runTaskLater(updater,frequency);
+	}
+	
+	public void startDisco(int frequency, int duration){
+		updater.start(frequency, duration);
+	}
+	
+	public void startDisco(){
+		this.startDisco();
+	}
+	
+	public void stopDisco(){
+		updater.stop();
+	}
+
 }
