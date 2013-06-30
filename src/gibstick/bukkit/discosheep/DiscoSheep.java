@@ -9,7 +9,6 @@ import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class DiscoSheep extends JavaPlugin {
@@ -60,7 +59,7 @@ public final class DiscoSheep extends JavaPlugin {
 		Sheep newSheep = (Sheep) world.spawnEntity(loc, EntityType.SHEEP);
 		newSheep.setMaxHealth(10000);
 		newSheep.setHealth(10000);
-		newSheep.setColor(discoColours[(int) Math.random() * discoColours.length]);
+		newSheep.setColor(discoColours[(int)Math.round(Math.random() * (discoColours.length - 1))]);
 		getSheep().add(newSheep);
 	}
 
@@ -94,7 +93,7 @@ public final class DiscoSheep extends JavaPlugin {
 	// Set a random colour for all sheep in array
 	void randomizeSheepColours() {
 		for (Sheep sheep : getSheep()) {
-			sheep.setColor(discoColours[(int) Math.random() * discoColours.length]);
+			sheep.setColor(discoColours[(int)Math.round(Math.random() * (discoColours.length - 1))]);
 		}
 	}
 

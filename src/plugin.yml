@@ -1,6 +1,6 @@
 name: DiscoSheep
 main: gibstick.bukkit.discosheep.DiscoSheep
-version: 0.7
+version: 0.9
 commands:
   ds:
     description: "Main DiscoSheep command"
