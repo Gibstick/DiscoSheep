@@ -1,6 +1,7 @@
 package gibstick.bukkit.discosheep;
 
 import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -29,7 +30,11 @@ public final class DiscoSheep extends JavaPlugin {
 	}; // array of accetable disco colours (order not important)
 	private DiscoUpdater updater = new DiscoUpdater(this);
 	// radius for random sheep spawns around player
-	private static int sheepSpawnRadius = 5;
+	private final int sheepSpawnRadius = 5;
+	private final int defaultSheepAmount = 10;
+	private final int defaultDuration = 1000;// ticks
+	private final int defaultFrequency = 20;// ticks per state change
+	
 
 	@Override
 	public void onEnable() {
@@ -104,12 +109,15 @@ public final class DiscoSheep extends JavaPlugin {
 		updater.runTaskLater((Plugin) updater, updater.frequency);
 	}
 
-	void startDisco(int frequency, int duration) {
+	void startDisco(int frequency, int duration, List<Player> players) {
+		for(Player player : players){
+			this.spawnSheep(player, this.defaultSheepAmount);
+		}
 		updater.start(frequency, duration);
 	}
 
-	void startDisco() {
-		this.startDisco();
+	void startDisco(List<Player> players) {
+		this.startDisco(this.defaultFrequency,this.defaultDuration,players);
 	}
 
 	void stopDisco() {

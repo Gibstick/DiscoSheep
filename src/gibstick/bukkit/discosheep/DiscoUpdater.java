@@ -4,8 +4,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class DiscoUpdater extends BukkitRunnable {
 
-	private final int defaultDuration = 1000;// ticks
-	private final int defaultFrequency = 20;// ticks per state change
 	int frequency = 0, duration = 0;
 	private DiscoSheep parent;
 
@@ -19,8 +17,8 @@ public class DiscoUpdater extends BukkitRunnable {
 	}
 
 	public void start(int duration, int frequency) {
-		this.frequency = this.defaultFrequency;
-		this.duration = this.defaultDuration;
+		this.frequency = frequency;
+		this.duration = duration;
 		parent.scheduleUpdate();
 	}
 
