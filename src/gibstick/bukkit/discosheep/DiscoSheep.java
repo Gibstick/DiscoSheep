@@ -35,7 +35,7 @@ public final class DiscoSheep extends JavaPlugin {
 	private final int defaultSheepAmount = 10;
 	private final int defaultDuration = 1000;// ticks
 	private final int defaultFrequency = 20;// ticks per state change
-	
+	private int frequency = 0, duration = 0;
 
 	@Override
 	public void onEnable() {
@@ -51,8 +51,8 @@ public final class DiscoSheep extends JavaPlugin {
 	ArrayList<Sheep> getSheep() {
 		return sheepArray;
 	}
-	
-	ArrayList<Player> getPlayers(){
+
+	ArrayList<Player> getPlayers() {
 		return this.playerArray;
 	}
 
@@ -60,7 +60,7 @@ public final class DiscoSheep extends JavaPlugin {
 		Sheep newSheep = (Sheep) world.spawnEntity(loc, EntityType.SHEEP);
 		newSheep.setMaxHealth(10000);
 		newSheep.setHealth(10000);
-                newSheep.setColor(discoColours[(int) Math.random() * discoColours.length]);
+		newSheep.setColor(discoColours[(int) Math.random() * discoColours.length]);
 		getSheep().add(newSheep);
 	}
 
@@ -105,22 +105,32 @@ public final class DiscoSheep extends JavaPlugin {
 		//TODO: Add sound playing here
 	}
 
-	//	Called after discosheep is stopped
-	void cleanUp() {
-		removeAllSheep();
-		this.playerArray.clear();
+	void update() {
+		if (duration > 0) {
+			randomizeSheepColours();
+			playSounds();
+			duration -= frequency;
+			this.scheduleUpdate();
+		} else {
+			this.stopDisco();
+		}
 	}
 
 	void scheduleUpdate() {
-		updater.runTaskLater(this, updater.frequency);
+		new DiscoUpdater(this).runTaskLater(this, this.frequency);
 	}
 
 	void startDisco(int duration, List<Player> players) {
+		if(this.duration > 0){
+			stopDisco();
+		}
 		this.playerArray.addAll(players);
 		for(Player player : players){
 			this.spawnSheep(player, this.defaultSheepAmount);
 		}
-		updater.start(duration,this.defaultFrequency);
+		this.frequency = this.defaultFrequency;
+		this.duration = this.defaultDuration;
+		this.scheduleUpdate();
 	}
 
 	void startDisco(List<Player> players) {
@@ -128,6 +138,8 @@ public final class DiscoSheep extends JavaPlugin {
 	}
 
 	void stopDisco() {
-		updater.stop();
+		removeAllSheep();
+		this.playerArray.clear();
+		this.duration = 0;
 	}
 }
