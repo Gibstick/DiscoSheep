@@ -1,5 +1,5 @@
 name: DiscoSheep
-main: gibstick.bukkit.DiscoSheep.DiscoSheep
+main: gibstick.bukkit.discosheep.DiscoSheep
 version: 0.7
 commands:
   ds:
