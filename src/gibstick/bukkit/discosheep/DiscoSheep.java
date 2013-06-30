@@ -19,6 +19,7 @@ public final class DiscoSheep extends JavaPlugin {
 
     @Override
     public void onDisable() {
+		// Watashi Wa Kawaii, Ne?
     }
 
     public void spawnSheep(World world, Location loc) {
