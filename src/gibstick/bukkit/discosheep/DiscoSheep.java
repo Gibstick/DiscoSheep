@@ -6,23 +6,43 @@ import org.bukkit.entity.Sheep;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 
 public final class DiscoSheep extends JavaPlugin {
-    
+
     private ArrayList<Sheep> sheepArray = new ArrayList<>();
-    
+
     @Override
-    public void onEnable(){
+    public void onEnable() {
         getCommand("ds").setExecutor(new DiscoSheepCommandExecutor(this));
     }
-    
+
     @Override
-    public void onDisable(){
-        
-    } 
-    
+    public void onDisable() {
+    }
+
     public void spawnSheep(World world, Location loc) {
-        sheepArray.add((Sheep)world.spawnEntity(loc, EntityType.SHEEP));
+        sheepArray.add((Sheep) world.spawnEntity(loc, EntityType.SHEEP));
+    }
+    
+    // Spawn some number of sheep next to given player
+    public void spawnSheep(Player player, Location loc, int num) {
+        
+    }
+    
+    // Mark all sheep in the sheep array for removal
+    public void removeAllSheep() {
+        for (int i = 0; i < sheepArray.size(); i++) {
+            sheepArray.get(i).remove();
+        }
+        sheepArray.clear();
+    }
+    
+    // Cycle colours of all sheep in the array
+    public void cycleSheepColours() {
+        for (int i = 0; i < sheepArray.size(); i++) {
+            //sheepArray.get(i) something something
+        }
     }
     
     
