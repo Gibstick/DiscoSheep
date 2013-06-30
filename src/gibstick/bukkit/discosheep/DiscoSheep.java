@@ -85,6 +85,7 @@ public final class DiscoSheep extends JavaPlugin {
 	// Mark all sheep in the sheep array for removal, then clear the array
 	void removeAllSheep() {
 		for (Sheep sheep : getSheep()) {
+                        sheep.setHealth(0);
 			sheep.remove();
 		}
 		getSheep().clear();
