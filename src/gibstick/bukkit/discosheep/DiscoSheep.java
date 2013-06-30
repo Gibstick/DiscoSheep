@@ -1,6 +1,8 @@
 package gibstick.bukkit.discosheep;
 
 import java.util.ArrayList;
+import java.util.Random;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
@@ -12,6 +14,19 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class DiscoSheep extends JavaPlugin {
 
 	private ArrayList<Sheep> sheepArray = new ArrayList<Sheep>();
+	private static final DyeColor[] discoColours = {
+		DyeColor.RED,
+		DyeColor.ORANGE,
+		DyeColor.YELLOW,
+		DyeColor.GREEN,
+		DyeColor.BLUE,
+		DyeColor.LIGHT_BLUE,
+		DyeColor.PINK,
+		DyeColor.MAGENTA,
+		DyeColor.LIME,
+		DyeColor.CYAN,
+		DyeColor.PURPLE
+	}; // array of accetable disco colours (order not important)
 	private DiscoUpdater updater = new DiscoUpdater(this);
 	// radius for random sheep spawns around player
 	private static int sheepSpawnRadius = 5;
@@ -59,10 +74,10 @@ public final class DiscoSheep extends JavaPlugin {
 		sheepArray.clear();
 	}
 
-	// Cycle colours of all sheep in the array
-	void cycleSheepColours() {
+	// Set a random colour for all sheep in array
+	void randomizeSheepColours() {
 		for (int i = 0; i < sheepArray.size(); i++) {
-			//sheepArray.get(i) something something
+			sheepArray.get(i).setColor(discoColours[(int)Math.random() * discoColours.length]);
 		}
 	}
 
