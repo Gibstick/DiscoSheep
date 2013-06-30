@@ -50,6 +50,7 @@ public final class DiscoSheep extends JavaPlugin {
 		Sheep newSheep = (Sheep) world.spawnEntity(loc, EntityType.SHEEP);
 		newSheep.setMaxHealth(10000);
 		newSheep.setHealth(10000);
+                newSheep.setColor(discoColours[(int) Math.random() * discoColours.length]);
 		getSheep().add(newSheep);
 	}
 
