@@ -20,6 +20,9 @@ public final class DiscoSheep extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
+		for (String key:getPartyMap().keySet()) {
+			stopParty(key);
+		}
 	}
 
 	public Map<String, DiscoParty> getPartyMap() {
