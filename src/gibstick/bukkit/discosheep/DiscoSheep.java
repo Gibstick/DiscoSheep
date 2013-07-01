@@ -20,9 +20,7 @@ public final class DiscoSheep extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		for (String key:getPartyMap().keySet()) {
-			stopParty(key);
-		}
+		this.stopAllParties();
 	}
 
 	public Map<String, DiscoParty> getPartyMap() {
@@ -36,6 +34,12 @@ public final class DiscoSheep extends JavaPlugin {
 	public void stopParty(String name) {
 		if (this.hasParty(name)) {
 			this.getParty(name).stopDisco();
+		}
+	}
+	
+	public void stopAllParties(){
+		for(DiscoParty party :this.parties.values()){
+			party.stopDisco();
 		}
 	}
 
