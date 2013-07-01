@@ -10,12 +10,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class DiscoSheep extends JavaPlugin {
 
 	Map<String, DiscoParty> parties = new HashMap<String, DiscoParty>();
-	private BaaBaaBlockSheepEvents deshear = new BaaBaaBlockSheepEvents(this);
+	private BaaBaaBlockSheepEvents blockEvents = new BaaBaaBlockSheepEvents(this);
 
 	@Override
 	public void onEnable() {
 		getCommand("ds").setExecutor(new DiscoSheepCommandExecutor(this));
-		getServer().getPluginManager().registerEvents(deshear, this);
+		getServer().getPluginManager().registerEvents(blockEvents, this);
 	}
 
 	@Override
