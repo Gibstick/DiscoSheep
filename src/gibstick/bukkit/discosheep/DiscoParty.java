@@ -24,6 +24,7 @@ public class DiscoParty {
 	private final int defaultFrequency = 10; // ticks per state change
 	private final int sheepSpawnRadius = 5;
 	private final int defaultSheepAmount = 10;
+	private int state = 0;
 	private DiscoUpdater updater;
 	private static final DyeColor[] discoColours = {
 		DyeColor.RED,
@@ -92,6 +93,12 @@ public class DiscoParty {
 
 	void playSounds() {
 		player.playSound(player.getLocation(), Sound.NOTE_BASS_DRUM, 1.0f, 1.0f);
+		if(this.state%2 == 0){
+			player.playSound(player.getLocation(), Sound.NOTE_SNARE_DRUM, 1.0f, 1.0f);
+		}
+		if(this.state%3 == 0){
+			player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0f, 1.0f);
+		}
 		player.playSound(player.getLocation(), Sound.BURP, frequency, (float) Math.random() + 1);
 	}
 
@@ -101,6 +108,7 @@ public class DiscoParty {
 			playSounds();
 			duration -= frequency;
 			this.scheduleUpdate();
+			this.state++;
 		} else {
 			this.stopDisco();
 		}
