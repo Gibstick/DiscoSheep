@@ -9,7 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class DiscoSheep extends JavaPlugin {
 
-	Map<String,DiscoParty> parties = new HashMap<String,DiscoParty>();
+	Map<String, DiscoParty> parties = new HashMap<String, DiscoParty>();
 	private SheepDeshearer deshear = new SheepDeshearer(this);
 	// array of accetable disco colours (order not important)
 
@@ -23,35 +23,37 @@ public final class DiscoSheep extends JavaPlugin {
 	public void onDisable() {
 	}
 
-	public Map<String,DiscoParty> getPartyMap() {
+	public Map<String, DiscoParty> getPartyMap() {
 		return this.parties;
 	}
-	
-	public List<DiscoParty> getParties(){
+
+	public List<DiscoParty> getParties() {
 		return new ArrayList(this.parties.values());
 	}
-	
-	public void stopParty(String name){
-		if(this.hasParty(name)){
+
+	public void stopParty(String name) {
+		if (this.hasParty(name)) {
 			this.getParty(name).stopDisco();
 		}
 	}
-	
-	public boolean hasParty(String name){
+
+	public boolean hasParty(String name) {
 		return this.parties.containsKey(name);
 	}
-	
-	public DiscoParty getParty(String name){
+
+	public DiscoParty getParty(String name) {
 		return this.parties.get(name);
 	}
-	
-	public void removeParty(String name){
-		if(this.hasParty(name)){
+
+	public void removeParty(String name) {
+		if (this.hasParty(name)) {
 			this.parties.remove(name);
 		}
 	}
 
-	public void startDisco(Player player) {
-		new DiscoParty(this, player).startDisco();
+	public void startParty(Player player) {
+		if (!hasParty(player.getName())) {
+			new DiscoParty(this, player).startDisco();
+		}
 	}
 }
