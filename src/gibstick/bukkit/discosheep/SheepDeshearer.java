@@ -35,7 +35,7 @@ public class SheepDeshearer implements Listener {
 	
 	@EventHandler
 	public void onCreatureSpawn(CreatureSpawnEvent e){
-		if(e.getEntity() instanceof Sheep){
+		if(e.getEntity() instanceof Sheep && e.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.BREEDING)){
 			for(DiscoParty party : parent.getParties()){
 				if(party.getSheep().contains((Sheep)e.getEntity())){
 					e.setCancelled(true);
