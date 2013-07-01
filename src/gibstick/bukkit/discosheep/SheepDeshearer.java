@@ -15,18 +15,18 @@ import org.bukkit.event.player.PlayerShearEntityEvent;
  * @author Mauve
  */
 public class SheepDeshearer implements Listener {
-
+	
 	DiscoSheep parent;
-
+	
 	public SheepDeshearer(DiscoSheep parent) {
 		this.parent = parent;
 	}
-
+	
 	@EventHandler
 	public void onPlayerShear(PlayerShearEntityEvent e) {
-		if (e.getEntity() instanceof Sheep){
-			for(DiscoParty party : parent.getParties()){
-				if(party.getSheep().contains((Sheep)e.getEntity())){
+		if (e.getEntity() instanceof Sheep) {
+			for (DiscoParty party : parent.getParties()) {
+				if (party.getSheep().contains((Sheep) e.getEntity())) {
 					e.setCancelled(true);
 				}
 			}
@@ -34,10 +34,11 @@ public class SheepDeshearer implements Listener {
 	}
 	
 	@EventHandler
-	public void onCreatureSpawn(CreatureSpawnEvent e){
-		if(e.getEntity() instanceof Sheep && e.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.BREEDING)){
-			for(DiscoParty party : parent.getParties()){
-				if(party.getSheep().contains((Sheep)e.getEntity())){
+	public void onCreatureSpawn(CreatureSpawnEvent e) {
+		if (e.getEntity() instanceof Sheep && 
+				e.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.BREEDING)) {
+			for (DiscoParty party : parent.getParties()) {
+				if (party.getSheep().contains((Sheep) e.getEntity())) {
 					e.setCancelled(true);
 				}
 			}

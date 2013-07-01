@@ -133,6 +133,6 @@ public class DiscoParty {
 			updater.cancel();
 		}
 		updater = null;
-		ds.getParties().remove(this.player.getName());
+		ds.getPartyMap().remove(this.player.getName());
 	}
 }
