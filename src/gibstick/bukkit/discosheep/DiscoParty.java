@@ -18,7 +18,7 @@ public class DiscoParty {
 
 	private DiscoSheep ds;
 	private Player player;
-	private ArrayList<Sheep> sheepList;
+	private ArrayList<Sheep> sheepList= new ArrayList<Sheep>();
 	private int duration, frequency = 20, numSheep = 5;
 	private final int defaultDuration = 300; // ticks for entire party
 	private final int defaultFrequency = 10; // ticks per state change
