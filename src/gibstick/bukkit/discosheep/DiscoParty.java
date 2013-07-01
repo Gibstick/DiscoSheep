@@ -87,9 +87,13 @@ public class DiscoParty {
 	}
 
 	// Set a random colour for all sheep in array
-	void randomizeSheepColours() {
-		for (Sheep sheep : getSheep()) {
+	void randomizeSheepColour(Sheep sheep) {
 			sheep.setColor(discoColours[(int) Math.round(Math.random() * (discoColours.length - 1))]);
+	}
+	
+	void updateAllSheep() {
+		for (Sheep sheep: getSheep()) {
+			randomizeSheepColour(sheep);
 		}
 	}
 
@@ -106,7 +110,7 @@ public class DiscoParty {
 
 	void update() {
 		if (duration > 0) {
-			randomizeSheepColours();
+			updateAllSheep();
 			playSounds();
 			duration -= frequency;
 			this.scheduleUpdate();
