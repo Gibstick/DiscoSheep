@@ -4,10 +4,10 @@
  */
 package gibstick.bukkit.discosheep;
 
-import java.util.List;
 import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 
 /**
@@ -25,6 +25,17 @@ public class SheepDeshearer implements Listener {
 	@EventHandler
 	public void onPlayerShear(PlayerShearEntityEvent e) {
 		if (e.getEntity() instanceof Sheep){
+			for(DiscoParty party : parent.getParties()){
+				if(party.getSheep().contains((Sheep)e.getEntity())){
+					e.setCancelled(true);
+				}
+			}
+		}
+	}
+	
+	@EventHandler
+	public void onCreatureSpawn(CreatureSpawnEvent e){
+		if(e.getEntity() instanceof Sheep){
 			for(DiscoParty party : parent.getParties()){
 				if(party.getSheep().contains((Sheep)e.getEntity())){
 					e.setCancelled(true);
