@@ -23,12 +23,12 @@ public final class DiscoSheep extends JavaPlugin {
 		this.stopAllParties();
 	}
 
-	public Map<String, DiscoParty> getPartyMap() {
-		return this.parties;
+	public synchronized Map<String, DiscoParty> getPartyMap() {
+		return this.getPartyMap();
 	}
 
-	public List<DiscoParty> getParties() {
-		return new ArrayList(this.parties.values());
+	public synchronized List<DiscoParty> getParties() {
+		return new ArrayList(this.getPartyMap().values());
 	}
 
 	public void stopParty(String name) {
@@ -38,22 +38,22 @@ public final class DiscoSheep extends JavaPlugin {
 	}
 	
 	public void stopAllParties(){
-		for(DiscoParty party :this.parties.values()){
+		for(DiscoParty party :this.getPartyMap().values()){
 			party.stopDisco();
 		}
 	}
 
 	public boolean hasParty(String name) {
-		return this.parties.containsKey(name);
+		return this.getPartyMap().containsKey(name);
 	}
 
 	public DiscoParty getParty(String name) {
-		return this.parties.get(name);
+		return this.getPartyMap().get(name);
 	}
 
 	public void removeParty(String name) {
 		if (this.hasParty(name)) {
-			this.parties.remove(name);
+			this.getPartyMap().remove(name);
 		}
 	}
 
