@@ -55,6 +55,7 @@ public class DiscoParty {
 		newSheep.setHealth(10000);
 		newSheep.setColor(discoColours[(int) Math.round(Math.random() * (discoColours.length - 1))]);
 		newSheep.setTarget(player);
+		newSheep.setAgeLock(true);
 		getSheep().add(newSheep);
 	}
 
@@ -100,7 +101,7 @@ public class DiscoParty {
 		if(this.state%3 == 0){
 			player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0f, 1.0f);
 		}
-		player.playSound(player.getLocation(), Sound.BURP, frequency, (float) Math.random() + 1);
+		player.playSound(player.getLocation(), Sound.BURP, 0.5f, (float) Math.random() + 1);
 	}
 
 	void update() {

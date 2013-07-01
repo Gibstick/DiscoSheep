@@ -10,8 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class DiscoSheep extends JavaPlugin {
 
 	Map<String, DiscoParty> parties = new HashMap<String, DiscoParty>();
-	private SheepDeshearer deshear = new SheepDeshearer(this);
-	// array of accetable disco colours (order not important)
+	private BaaBaaBlockSheepEvents deshear = new BaaBaaBlockSheepEvents(this);
 
 	@Override
 	public void onEnable() {
