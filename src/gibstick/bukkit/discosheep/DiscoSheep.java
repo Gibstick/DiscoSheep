@@ -38,7 +38,7 @@ public final class DiscoSheep extends JavaPlugin {
 	}
 	
 	public void stopAllParties(){
-		for(DiscoParty party :this.getPartyMap().values()){
+		for(DiscoParty party :this.getParties()){
 			party.stopDisco();
 		}
 	}
