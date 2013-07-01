@@ -24,7 +24,7 @@ public final class DiscoSheep extends JavaPlugin {
 	}
 
 	public synchronized Map<String, DiscoParty> getPartyMap() {
-		return this.getPartyMap();
+		return this.parties;
 	}
 
 	public synchronized List<DiscoParty> getParties() {
