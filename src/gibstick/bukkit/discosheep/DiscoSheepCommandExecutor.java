@@ -16,7 +16,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (sender instanceof Player) {
-			parent.startDisco((Player)sender);
+			parent.startParty((Player)sender);
 		}
 		return true;
 	}
