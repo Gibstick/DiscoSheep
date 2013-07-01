@@ -54,6 +54,7 @@ public class DiscoParty {
 		newSheep.setMaxHealth(10000);
 		newSheep.setHealth(10000);
 		newSheep.setColor(discoColours[(int) Math.round(Math.random() * (discoColours.length - 1))]);
+		newSheep.setTarget(player);
 		getSheep().add(newSheep);
 	}
 
