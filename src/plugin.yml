@@ -4,6 +4,4 @@ version: 0.9
 commands:
   ds:
     description: "Main DiscoSheep command"
-    usage: /ds
-    permission: discosheep.party
-    permission-message: You don't have permission
+    usage: /ds [arguments]

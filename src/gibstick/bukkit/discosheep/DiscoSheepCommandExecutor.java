@@ -1,6 +1,7 @@
 package gibstick.bukkit.discosheep;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.CommandExecutor;
@@ -13,26 +14,81 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 	public DiscoSheepCommandExecutor(DiscoSheep parent) {
 		this.parent = parent;
 	}
+	
+	private CommandSender curSender;
+	
+	private static final String PERMISSION_PARTY = "discosheep.party";
+	private static final String PERMISSION_ALL = "discosheep.partyall";
+	private static final String PERMISSION_FIREWORKS = "discosheep.fireworks";
+	private static final String PERMISSION_STOP = "discosheep.stop";
+	private static final String PERMISSION_SUPER= "disosheep.*";
+	
+	
+	private boolean senderHasPerm(String permission) {
+		return curSender.hasPermission(permission) || curSender.hasPermission(PERMISSION_SUPER);
+	}
+	
+	private void noPermsMessage(String permission) {
+		curSender.sendMessage(ChatColor.RED + "You do not have the permission node " + ChatColor.GRAY + permission);
+	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (args.length == 1) {
-			if ("all".equals(args[0])) {
-				for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-					parent.startParty(player);
-				}
-			}
-			else if ("stop".equals(args[0])) {
-				parent.stopAllParties();
-			} else {
-				sender.sendMessage("Invalid argument.");
-				return true;
-			}
-		} else {
-			if (sender instanceof Player) {
-				parent.startParty((Player) sender);
+		Player player = null;
+		boolean isPlayer = false;
+		boolean fireworks = false;
+		this.curSender = sender;
+
+		if (sender instanceof Player) {
+			player = (Player) sender;
+			isPlayer = true;
+		}
+
+		if (!senderHasPerm(PERMISSION_PARTY)) {
+			noPermsMessage(PERMISSION_PARTY);
+			return true;
+		}
+
+		for (String arg : args) {
+			switch (arg) {
+				case "-fw":
+					if (senderHasPerm(PERMISSION_FIREWORKS)) {
+						fireworks = !fireworks;
+					} else {
+						noPermsMessage(PERMISSION_FIREWORKS);
+					}
 			}
 		}
-		return true;
+
+		if (args.length > 0) {
+			switch (args[0]) {
+				case "all":
+					if (senderHasPerm(PERMISSION_ALL))
+					for (Player p : Bukkit.getServer().getOnlinePlayers()) {
+						parent.startParty(p, fireworks);
+						p.sendMessage(ChatColor.RED + "LET'S DISCO!");
+					} else {
+						noPermsMessage(PERMISSION_ALL);
+					}
+					return true;
+				case "stop":
+					if (senderHasPerm(PERMISSION_STOP)) {
+						parent.stopAllParties();
+					} else {
+						noPermsMessage(PERMISSION_STOP);
+					}
+					return true;
+				case "me":
+					if (isPlayer) {
+						parent.startParty(player, fireworks);
+						return true;
+					}
+				default:
+					sender.sendMessage(ChatColor.RED + "Invalid argument.");
+					return true;
+			}
+		}
+
+		return false;
 	}
 }

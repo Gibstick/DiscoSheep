@@ -30,6 +30,7 @@ public class DiscoParty {
 	private final int defaultFrequency = 10; // ticks per state change
 	private final int sheepSpawnRadius = 5;
 	private final int defaultSheepAmount = 10;
+	private boolean doFireworks = false;
 	private int state = 0;
 	private DiscoUpdater updater;
 	private static final DyeColor[] discoColours = {
@@ -157,7 +158,7 @@ public class DiscoParty {
 	void updateAllSheep() {
 		for (Sheep sheep : getSheep()) {
 			randomizeSheepColour(sheep);
-			if (state % 8 == 0) {
+			if (doFireworks && state % 8 == 0) {
 				spawnRandomFireworkAtSheep(sheep);
 			}
 		}
@@ -222,10 +223,11 @@ public class DiscoParty {
 		updater.runTaskLater(ds, this.frequency);
 	}
 
-	void startDisco(int duration) {
+	void startDisco(int duration, boolean fireworks) {
 		if (this.duration > 0) {
 			stopDisco();
 		}
+		this.doFireworks = fireworks;
 		this.spawnSheep(this.defaultSheepAmount);
 		this.frequency = this.defaultFrequency;
 		this.duration = this.defaultDuration;
@@ -233,8 +235,8 @@ public class DiscoParty {
 		ds.getPartyMap().put(this.player.getName(), this);
 	}
 
-	void startDisco() {
-		this.startDisco(this.defaultDuration);
+	void startDisco(boolean fireworks) {
+		this.startDisco(this.defaultDuration, fireworks);
 	}
 
 	void stopDisco() {
