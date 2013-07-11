@@ -37,6 +37,8 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 		Player player = null;
 		boolean isPlayer = false;
 		boolean fireworks = false;
+		int sheepNumber = 0;
+		int radius = 0;
 		this.curSender = sender;
 
 		if (sender instanceof Player) {
@@ -49,8 +51,8 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 			return true;
 		}
 
-		for (String arg : args) {
-			switch (arg) {
+		for (int i = 1; i < args.length; i++) {
+			switch (args[i]) {
 				case "-fw":
 					if (senderHasPerm(PERMISSION_FIREWORKS)) {
 						fireworks = !fireworks;

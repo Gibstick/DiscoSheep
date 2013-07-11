@@ -28,7 +28,7 @@ public class DiscoParty {
 	private int duration, frequency = 20, numSheep = 5;
 	private final int defaultDuration = 300; // ticks for entire party
 	private final int defaultFrequency = 10; // ticks per state change
-	private final int sheepSpawnRadius = 5;
+	private final int defaultSheepSpawnRadius = 5;
 	private final int defaultSheepAmount = 10;
 	private boolean doFireworks = false;
 	private int state = 0;
@@ -67,7 +67,7 @@ public class DiscoParty {
 	}
 
 	// Spawn some number of sheep next to given player
-	void spawnSheep(int num) {
+	void spawnSheep(int num, int sheepSpawnRadius) {
 		Location loc;
 		World world = player.getWorld();
 
@@ -223,12 +223,12 @@ public class DiscoParty {
 		updater.runTaskLater(ds, this.frequency);
 	}
 
-	void startDisco(int duration, boolean fireworks) {
+	void startDisco(int duration, int sheepAmount, int radius, boolean fireworks) {
 		if (this.duration > 0) {
 			stopDisco();
 		}
 		this.doFireworks = fireworks;
-		this.spawnSheep(this.defaultSheepAmount);
+		this.spawnSheep(sheepAmount, radius);
 		this.frequency = this.defaultFrequency;
 		this.duration = this.defaultDuration;
 		this.scheduleUpdate();
@@ -236,7 +236,7 @@ public class DiscoParty {
 	}
 
 	void startDisco(boolean fireworks) {
-		this.startDisco(this.defaultDuration, fireworks);
+		this.startDisco(this.defaultDuration, this.defaultSheepAmount, this.defaultSheepSpawnRadius, fireworks);
 	}
 
 	void stopDisco() {
