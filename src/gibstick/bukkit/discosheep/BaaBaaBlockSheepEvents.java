@@ -7,7 +7,6 @@ package gibstick.bukkit.discosheep;
 import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 
 /**
