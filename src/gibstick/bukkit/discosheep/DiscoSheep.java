@@ -60,6 +60,9 @@ public final class DiscoSheep extends JavaPlugin {
 	public void startParty(Player player, int duration, int sheepAmount, int radius, boolean fireworksEnabled) {
 		if (!hasParty(player.getName())) {
 			new DiscoParty(this, player).startDisco(duration, sheepAmount, radius, fireworksEnabled);
+		} else {
+			player.sendMessage("You has party");
 		}
 	}
+	
 }

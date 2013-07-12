@@ -89,7 +89,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 			if (args[0].equalsIgnoreCase("all")) {
 				if (senderHasPerm(sender, PERMISSION_ALL)) {
 					for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-						parent.startParty(player, duration, sheepNumber, radius, fireworks);
+						parent.startParty(p, duration, sheepNumber, radius, fireworks);
 						p.sendMessage(ChatColor.RED + "LET'S DISCO!");
 					}
 				} else {
