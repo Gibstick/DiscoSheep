@@ -49,15 +49,15 @@ public final class DiscoSheep extends JavaPlugin {
 	public void onDisable() {
 		this.stopAllParties();
 	}
-	
+
 	int toTicks(double seconds) {
 		return (int) Math.round(seconds * 20.0);
 	}
-	
+
 	double toSeconds(int ticks) {
 		return (double) Math.round(ticks / 20.0);
 	}
-	
+
 	int toSeconds_i(int ticks) {
 		return (int) Math.round(ticks / 20.0);
 	}
