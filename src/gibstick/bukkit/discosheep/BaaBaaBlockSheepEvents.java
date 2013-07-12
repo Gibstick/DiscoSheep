@@ -8,6 +8,7 @@ import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 
 /**
@@ -22,6 +23,7 @@ public class BaaBaaBlockSheepEvents implements Listener {
 		this.parent = parent;
 	}
 
+	// prevent sheep shearing
 	@EventHandler
 	public void onPlayerShear(PlayerShearEntityEvent e) {
 		if (e.getEntity() instanceof Sheep) {
@@ -46,5 +48,12 @@ public class BaaBaaBlockSheepEvents implements Listener {
 				}
 			}
 		}
+	}
+
+	@EventHandler
+	public void onPlayerQuitEvent(PlayerQuitEvent e) {
+		String name = e.getPlayer().getName();
+
+		parent.stopParty(name);
 	}
 }

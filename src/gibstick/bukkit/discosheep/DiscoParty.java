@@ -27,7 +27,6 @@ public class DiscoParty {
 	private Player player;
 	private ArrayList<Sheep> sheepList = new ArrayList<Sheep>();
 	private int duration, frequency = 20;
-	private int numSheep = 5;
 	static int defaultDuration = 300; // ticks for entire party
 	static int defaultPeriod = 10; // ticks per state change
 	static int defaultRadius = 5;
@@ -68,7 +67,6 @@ public class DiscoParty {
 	void spawnSheep(World world, Location loc) {
 		Sheep newSheep = (Sheep) world.spawnEntity(loc, EntityType.SHEEP);
 		newSheep.setColor(discoColours[(int) (Math.random() * (discoColours.length - 1))]);
-		newSheep.setTarget(player);
 		newSheep.setBreed(false);
 		getSheep().add(newSheep);
 	}
@@ -81,12 +79,14 @@ public class DiscoParty {
 		for (int i = 0; i < num; i++) {
 			double x, y, z;
 
-			// random x and z coordinates within a 5 block radius
+			// random x, z, and yaw
 			// safe y-coordinate
 			x = -sheepSpawnRadius + (Math.random() * ((sheepSpawnRadius * 2) + 1)) + player.getLocation().getX();
 			z = -sheepSpawnRadius + (Math.random() * ((sheepSpawnRadius * 2) + 1)) + player.getLocation().getZ();
 			y = world.getHighestBlockYAt((int) x, (int) z);
 			loc = new Location(world, x, y, z);
+			//loc.setYaw(0);
+			//loc.setPitch((float) Math.random() * 360 - 180);
 			spawnSheep(world, loc);
 		}
 	}

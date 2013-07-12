@@ -23,26 +23,26 @@ public final class DiscoSheep extends JavaPlugin {
 
 		config.addDefault("max.sheep", DiscoParty.maxSheep);
 		config.addDefault("max.radius", DiscoParty.maxRadius);
-		config.addDefault("max.duration", DiscoParty.maxDuration);
-		config.addDefault("max.period", DiscoParty.maxPeriod);
-		config.addDefault("min.period", DiscoParty.minPeriod);
+		config.addDefault("max.duration", toSeconds_i(DiscoParty.maxDuration));
+		config.addDefault("max.period-ticks", DiscoParty.maxPeriod);
+		config.addDefault("min.period-ticks", DiscoParty.minPeriod);
 		config.addDefault("default.sheep", DiscoParty.defaultSheep);
 		config.addDefault("default.radius", DiscoParty.defaultRadius);
-		config.addDefault("default.duration", DiscoParty.defaultDuration);
-		config.addDefault("default.period", DiscoParty.defaultPeriod);
+		config.addDefault("default.duration", toSeconds_i(DiscoParty.defaultDuration));
+		config.addDefault("default.period-ticks", DiscoParty.defaultPeriod);
 		config.options().copyDefaults(true);
 
 		saveConfig();
 
 		DiscoParty.maxSheep = getConfig().getInt("max.sheep");
 		DiscoParty.maxRadius = getConfig().getInt("max.radius");
-		DiscoParty.maxDuration = getConfig().getInt("max.duration");
-		DiscoParty.maxPeriod = getConfig().getInt("max.period");
-		DiscoParty.minPeriod = getConfig().getInt("min.period");
+		DiscoParty.maxDuration = toTicks(getConfig().getInt("max.duration"));
+		DiscoParty.maxPeriod = getConfig().getInt("max.period-ticks");
+		DiscoParty.minPeriod = getConfig().getInt("min.period-ticks");
 		DiscoParty.defaultSheep = getConfig().getInt("default.sheep");
 		DiscoParty.defaultRadius = getConfig().getInt("default.radius");
-		DiscoParty.defaultDuration = getConfig().getInt("default.duration");
-		DiscoParty.defaultPeriod = getConfig().getInt("default.period");
+		DiscoParty.defaultDuration = toTicks(getConfig().getInt("default.duration"));
+		DiscoParty.defaultPeriod = getConfig().getInt("default.period-ticks");
 	}
 
 	@Override
@@ -56,6 +56,10 @@ public final class DiscoSheep extends JavaPlugin {
 	
 	double toSeconds(int ticks) {
 		return (double) Math.round(ticks / 20.0);
+	}
+	
+	int toSeconds_i(int ticks) {
+		return (int) Math.round(ticks / 20.0);
 	}
 
 	public synchronized Map<String, DiscoParty> getPartyMap() {

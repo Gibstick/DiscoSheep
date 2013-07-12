@@ -2,6 +2,7 @@ package gibstick.bukkit.discosheep;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.CommandExecutor;
@@ -93,10 +94,10 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 					return true;
 				}
 			} else if (args[i].equalsIgnoreCase("-t")) {
-				duration = parseNextIntArg(args, i);
+				duration = parent.toTicks(parseNextIntArg(args, i));
 
-				if (duration < 1 || duration > parent.toSeconds(DiscoParty.maxDuration)) {
-					sender.sendMessage("The duration in ticks must be an integer within the range [1, "
+				if (duration < 1 || duration > DiscoParty.maxDuration) {
+					sender.sendMessage("The duration in seconds must be an integer within the range [1, "
 							+ parent.toSeconds(DiscoParty.maxDuration) + "]");
 					return true;
 				}
