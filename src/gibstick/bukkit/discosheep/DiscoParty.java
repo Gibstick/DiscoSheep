@@ -180,10 +180,8 @@ public class DiscoParty {
 			}
 
 			if (doJump) {
-				if (state % 4 == 0) {
-					if ((state % 8 == 0) && (i % 2 == 0)) {
-						jumpSheep(sheep);
-					} else if (i % 2 != 0) {
+				if (state % 2 == 0) {
+					if (Math.random() < 0.5) {
 						jumpSheep(sheep);
 					}
 				}
