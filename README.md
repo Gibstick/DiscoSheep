@@ -4,6 +4,10 @@ DiscoSheep
 DiscoSheep plugin for Craftbukkit. It is written for API 1.5.2-R1.0 but it is expected to work with 1.6.
 This is a from-scratch remake of the fabulous DiscoSheep plugin which spawns a dance party of sheep at your whim.
 
+Download latest build
+--------
+https://github.com/Gibstick/DiscoSheep/raw/master/dist/DiscoSheep.jar (use at your own risk!)
+
 ###License###
 Copyright (c) 2013 "Gibstick", "RangerMauve"
 
