@@ -15,6 +15,7 @@ import org.bukkit.entity.Sheep;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Builder;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.util.Vector;
 
 /**
  *
@@ -31,12 +32,14 @@ public class DiscoParty {
 	static int defaultPeriod = 10; // ticks per state change
 	static int defaultRadius = 5;
 	static int defaultSheep = 10;
+	static float defaultSheepJump = 0.5f;
 	static int maxDuration = 2400; // 120 seconds
 	static int maxSheep = 100;
 	static int maxRadius = 100;
 	static int minPeriod = 5;	// 0.25 seconds
 	static int maxPeriod = 40;	// 2.0 seconds
 	private boolean doFireworks = false;
+	private boolean doJump = true;
 	private int state = 0;
 	private DiscoUpdater updater;
 	private static final DyeColor[] discoColours = {
@@ -104,6 +107,13 @@ public class DiscoParty {
 		sheep.setColor(discoColours[(int) Math.round(Math.random() * (discoColours.length - 1))]);
 	}
 
+	void jumpSheep(Sheep sheep) {
+		Vector orgVel = sheep.getVelocity();
+		Vector newVel = (new Vector()).copy(orgVel);
+		newVel.add(new Vector(0, defaultSheepJump, 0));
+		sheep.setVelocity(newVel);
+	}
+
 	private Color getColor(int i) {
 		Color c = null;
 		if (i == 1) {
@@ -164,8 +174,13 @@ public class DiscoParty {
 	void updateAllSheep() {
 		for (Sheep sheep : getSheep()) {
 			randomizeSheepColour(sheep);
-			if (doFireworks && state % 8 == 0) {
-				spawnRandomFireworkAtSheep(sheep);
+			if (state % 8 == 0) { // HA HA IT LOOKS LIKE A PENIS
+				if (doFireworks) {
+					spawnRandomFireworkAtSheep(sheep);
+				}
+				if(doJump){
+					jumpSheep(sheep);
+				}
 			}
 		}
 	}
