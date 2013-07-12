@@ -1,7 +1,35 @@
 name: DiscoSheep
 main: gibstick.bukkit.discosheep.DiscoSheep
-version: 0.9
+authors: [Gibstick, RangerMauve]
+version: 1.0
 commands:
   ds:
     description: "Main DiscoSheep command"
-    usage: /ds [arguments]
+    usage: |
+        <command> <subcommand> [arguments]
+        Use /ds help for more information
+permissions:
+  discosheep.*:
+    description: Permission node for all DiscoSheep commands
+    default: op
+    children:
+      discosheep.party: true
+      discosheep.partyall: true
+      discosheep.fireworks: true
+      discosheep.stop: true
+      discosheep.reload: true
+  discosheep.party:
+    description: Allows a player to have a party of one
+    default: op
+  discosheep.partyall:
+    description: Allows a player to call a server-wide party
+    default: op
+  discosheep.stop:
+    description: Allows a player to stop all parties on the server
+    default: op
+  discosheep.fireworks:
+    description: Allows a player to enable have parties with fireworks
+    default: op
+  discosheep.reload:
+    description: Allows a player to reload settings from config.yml
+    default: op

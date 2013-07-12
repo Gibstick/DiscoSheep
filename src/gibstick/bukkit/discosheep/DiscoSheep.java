@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.bukkit.configuration.MemoryConfiguration;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -13,13 +13,16 @@ public final class DiscoSheep extends JavaPlugin {
 
 	Map<String, DiscoParty> parties = new HashMap<String, DiscoParty>();
 	private BaaBaaBlockSheepEvents blockEvents = new BaaBaaBlockSheepEvents(this);
+	FileConfiguration config;
 
 	@Override
 	public void onEnable() {
 		getCommand("ds").setExecutor(new DiscoSheepCommandExecutor(this));
 		getServer().getPluginManager().registerEvents(blockEvents, this);
 
-		FileConfiguration config = this.getConfig();
+		if (config == null) {
+			config = this.getConfig();
+		}
 
 		config.addDefault("max.sheep", DiscoParty.maxSheep);
 		config.addDefault("max.radius", DiscoParty.maxRadius);
@@ -30,8 +33,12 @@ public final class DiscoSheep extends JavaPlugin {
 		config.addDefault("default.radius", DiscoParty.defaultRadius);
 		config.addDefault("default.duration", toSeconds_i(DiscoParty.defaultDuration));
 		config.addDefault("default.period-ticks", DiscoParty.defaultPeriod);
-		config.options().copyDefaults(true);
 
+		loadConfigFromDisk();
+	}
+
+	void loadConfigFromDisk() {
+		getConfig().options().copyDefaults(true);
 		saveConfig();
 
 		DiscoParty.maxSheep = getConfig().getInt("max.sheep");
@@ -44,10 +51,16 @@ public final class DiscoSheep extends JavaPlugin {
 		DiscoParty.defaultDuration = toTicks(getConfig().getInt("default.duration"));
 		DiscoParty.defaultPeriod = getConfig().getInt("default.period-ticks");
 	}
+	
+	void reloadConfigFromDisk() {
+		reloadConfig();
+		loadConfigFromDisk();
+	}
 
 	@Override
 	public void onDisable() {
 		this.stopAllParties();
+		this.config = null;
 	}
 
 	int toTicks(double seconds) {
