@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.bukkit.configuration.MemoryConfiguration;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -16,11 +18,44 @@ public final class DiscoSheep extends JavaPlugin {
 	public void onEnable() {
 		getCommand("ds").setExecutor(new DiscoSheepCommandExecutor(this));
 		getServer().getPluginManager().registerEvents(blockEvents, this);
+
+		FileConfiguration config = this.getConfig();
+
+		config.addDefault("max.sheep", DiscoParty.maxSheep);
+		config.addDefault("max.radius", DiscoParty.maxRadius);
+		config.addDefault("max.duration", DiscoParty.maxDuration);
+		config.addDefault("max.period", DiscoParty.maxPeriod);
+		config.addDefault("min.period", DiscoParty.minPeriod);
+		config.addDefault("default.sheep", DiscoParty.defaultSheep);
+		config.addDefault("default.radius", DiscoParty.defaultRadius);
+		config.addDefault("default.duration", DiscoParty.defaultDuration);
+		config.addDefault("default.period", DiscoParty.defaultPeriod);
+		config.options().copyDefaults(true);
+
+		saveConfig();
+
+		DiscoParty.maxSheep = getConfig().getInt("max.sheep");
+		DiscoParty.maxRadius = getConfig().getInt("max.radius");
+		DiscoParty.maxDuration = getConfig().getInt("max.duration");
+		DiscoParty.maxPeriod = getConfig().getInt("max.period");
+		DiscoParty.minPeriod = getConfig().getInt("min.period");
+		DiscoParty.defaultSheep = getConfig().getInt("default.sheep");
+		DiscoParty.defaultRadius = getConfig().getInt("default.radius");
+		DiscoParty.defaultDuration = getConfig().getInt("default.duration");
+		DiscoParty.defaultPeriod = getConfig().getInt("default.period");
 	}
 
 	@Override
 	public void onDisable() {
 		this.stopAllParties();
+	}
+	
+	int toTicks(double seconds) {
+		return (int) Math.round(seconds * 20.0);
+	}
+	
+	double toSeconds(int ticks) {
+		return (double) Math.round(ticks / 20.0);
 	}
 
 	public synchronized Map<String, DiscoParty> getPartyMap() {
@@ -36,9 +71,9 @@ public final class DiscoSheep extends JavaPlugin {
 			this.getParty(name).stopDisco();
 		}
 	}
-	
-	public void stopAllParties(){
-		for(DiscoParty party :this.getParties()){
+
+	public void stopAllParties() {
+		for (DiscoParty party : this.getParties()) {
 			party.stopDisco();
 		}
 	}
@@ -57,12 +92,9 @@ public final class DiscoSheep extends JavaPlugin {
 		}
 	}
 
-	public void startParty(Player player, int duration, int sheepAmount, int radius, boolean fireworksEnabled) {
+	public void startParty(Player player, int duration, int sheepAmount, int radius, int period, boolean fireworksEnabled) {
 		if (!hasParty(player.getName())) {
-			new DiscoParty(this, player).startDisco(duration, sheepAmount, radius, fireworksEnabled);
-		} else {
-			player.sendMessage("You has party");
+			new DiscoParty(this, player).startDisco(duration, sheepAmount, radius, period, fireworksEnabled);
 		}
 	}
-	
 }

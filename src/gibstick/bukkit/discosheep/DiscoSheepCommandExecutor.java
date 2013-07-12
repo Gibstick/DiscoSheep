@@ -42,14 +42,22 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 		return -1;
 	}
 
+	private Double parseNextDoubleArg(String[] args, int i) {
+		if (i < args.length - 1) {
+			return Double.parseDouble(args[i + 1]);
+		}
+		return -1.0d;
+	}
+
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		Player player = null;
 		boolean isPlayer = false;
 		boolean fireworks = false;
-		int sheepNumber = DiscoParty.defaultSheepAmount;
-		int radius = DiscoParty.defaultSheepSpawnRadius;
+		int sheepNumber = DiscoParty.defaultSheep;
+		int radius = DiscoParty.defaultRadius;
 		int duration = DiscoParty.defaultDuration;
+		int period = DiscoParty.defaultPeriod;
 
 		if (sender instanceof Player) {
 			player = (Player) sender;
@@ -71,15 +79,36 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 			} else if (args[i].equalsIgnoreCase("-r")) {
 				radius = parseNextIntArg(args, i);
 
-				if (radius < 1 || radius > 100) {
-					sender.sendMessage("Radius must be an integer within the range [1, 100]");
+				if (radius < 1 || radius > DiscoParty.maxRadius) {
+					sender.sendMessage("Radius must be an integer within the range [1, "
+							+ DiscoParty.maxRadius + "]");
 					return true;
 				}
 			} else if (args[i].equalsIgnoreCase("-n")) {
 				sheepNumber = parseNextIntArg(args, i);
 
-				if (sheepNumber < 1 || sheepNumber > 100) {
-					sender.sendMessage("The number of sheep must be an integer within the range [1, 100]");
+				if (sheepNumber < 1 || sheepNumber > DiscoParty.maxSheep) {
+					sender.sendMessage("The number of sheep must be an integer within the range [1, "
+							+ DiscoParty.maxSheep + "]");
+					return true;
+				}
+			} else if (args[i].equalsIgnoreCase("-t")) {
+				duration = parseNextIntArg(args, i);
+
+				if (duration < 1 || duration > parent.toSeconds(DiscoParty.maxDuration)) {
+					sender.sendMessage("The duration in ticks must be an integer within the range [1, "
+							+ parent.toSeconds(DiscoParty.maxDuration) + "]");
+					return true;
+				}
+			} else if (args[i].equalsIgnoreCase("-p")) {
+				period = parseNextIntArg(args, i);
+
+				if (period < DiscoParty.minPeriod || period > DiscoParty.maxPeriod) {
+					sender.sendMessage(
+							"The period in ticks must be within the range ["
+							+ DiscoParty.minPeriod + ", "
+							+ DiscoParty.maxPeriod + "]");
+					return true;
 				}
 			}
 		}
@@ -89,7 +118,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 			if (args[0].equalsIgnoreCase("all")) {
 				if (senderHasPerm(sender, PERMISSION_ALL)) {
 					for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-						parent.startParty(p, duration, sheepNumber, radius, fireworks);
+						parent.startParty(p, duration, sheepNumber, radius, period, fireworks);
 						p.sendMessage(ChatColor.RED + "LET'S DISCO!");
 					}
 				} else {
@@ -105,7 +134,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 				return true;
 			} else if (args[0].equalsIgnoreCase("me")) {
 				if (isPlayer) {
-					parent.startParty(player, duration, sheepNumber, radius, fireworks);
+					parent.startParty(player, duration, sheepNumber, radius, period, fireworks);
 					return true;
 				}
 			} else {
