@@ -178,7 +178,9 @@ public class DiscoParty {
 				if (doFireworks) {
 					spawnRandomFireworkAtSheep(sheep);
 				}
-				if(doJump){
+			}
+			if (state % 4 == 0) {
+				if (doJump) {
 					jumpSheep(sheep);
 				}
 			}
