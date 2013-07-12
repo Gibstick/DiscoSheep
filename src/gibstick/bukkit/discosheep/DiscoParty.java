@@ -26,10 +26,10 @@ public class DiscoParty {
 	private Player player;
 	private ArrayList<Sheep> sheepList = new ArrayList<Sheep>();
 	private int duration, frequency = 20, numSheep = 5;
-	private final int defaultDuration = 300; // ticks for entire party
-	private final int defaultFrequency = 10; // ticks per state change
-	private final int defaultSheepSpawnRadius = 5;
-	private final int defaultSheepAmount = 10;
+	static final int defaultDuration = 300; // ticks for entire party
+	static final int defaultFrequency = 10; // ticks per state change
+	static final int defaultSheepSpawnRadius = 5;
+	static final int defaultSheepAmount = 10;
 	private boolean doFireworks = false;
 	private int state = 0;
 	private DiscoUpdater updater;
@@ -230,13 +230,9 @@ public class DiscoParty {
 		this.doFireworks = fireworks;
 		this.spawnSheep(sheepAmount, radius);
 		this.frequency = this.defaultFrequency;
-		this.duration = this.defaultDuration;
+		this.duration = duration;
 		this.scheduleUpdate();
 		ds.getPartyMap().put(this.player.getName(), this);
-	}
-
-	void startDisco(boolean fireworks) {
-		this.startDisco(this.defaultDuration, this.defaultSheepAmount, this.defaultSheepSpawnRadius, fireworks);
 	}
 
 	void stopDisco() {

@@ -14,22 +14,32 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 	public DiscoSheepCommandExecutor(DiscoSheep parent) {
 		this.parent = parent;
 	}
-	
-	private CommandSender curSender;
-	
 	private static final String PERMISSION_PARTY = "discosheep.party";
 	private static final String PERMISSION_ALL = "discosheep.partyall";
 	private static final String PERMISSION_FIREWORKS = "discosheep.fireworks";
 	private static final String PERMISSION_STOP = "discosheep.stop";
-	private static final String PERMISSION_SUPER= "disosheep.*";
-	
-	
-	private boolean senderHasPerm(String permission) {
-		return curSender.hasPermission(permission) || curSender.hasPermission(PERMISSION_SUPER);
+	private static final String PERMISSION_SUPER = "disosheep.*";
+
+	private boolean senderHasPerm(CommandSender sender, String permission) {
+		return sender.hasPermission(permission) || sender.hasPermission(PERMISSION_SUPER);
 	}
-	
-	private void noPermsMessage(String permission) {
-		curSender.sendMessage(ChatColor.RED + "You do not have the permission node " + ChatColor.GRAY + permission);
+
+	private void noPermsMessage(CommandSender sender, String permission) {
+		sender.sendMessage(ChatColor.RED + "You do not have the permission node " + ChatColor.GRAY + permission);
+	}
+
+	private boolean parseNextArg(String[] args, int i, String compare) {
+		if (i < args.length - 1) {
+			return args[i + 1].equalsIgnoreCase(compare);
+		}
+		return false;
+	}
+
+	private int parseNextIntArg(String[] args, int i) {
+		if (i < args.length - 1) {
+			return Integer.parseInt(args[i + 1]);
+		}
+		return -1;
 	}
 
 	@Override
@@ -37,58 +47,72 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 		Player player = null;
 		boolean isPlayer = false;
 		boolean fireworks = false;
-		int sheepNumber = 0;
-		int radius = 0;
-		this.curSender = sender;
+		int sheepNumber = DiscoParty.defaultSheepAmount;
+		int radius = DiscoParty.defaultSheepSpawnRadius;
+		int duration = DiscoParty.defaultDuration;
 
 		if (sender instanceof Player) {
 			player = (Player) sender;
 			isPlayer = true;
 		}
 
-		if (!senderHasPerm(PERMISSION_PARTY)) {
-			noPermsMessage(PERMISSION_PARTY);
+		if (!senderHasPerm(sender, PERMISSION_PARTY)) {
+			noPermsMessage(sender, PERMISSION_PARTY);
 			return true;
 		}
 
 		for (int i = 1; i < args.length; i++) {
-			switch (args[i]) {
-				case "-fw":
-					if (senderHasPerm(PERMISSION_FIREWORKS)) {
-						fireworks = !fireworks;
-					} else {
-						noPermsMessage(PERMISSION_FIREWORKS);
-					}
+			if (args[i].equalsIgnoreCase("-fw")) {
+				if (senderHasPerm(sender, PERMISSION_FIREWORKS)) {
+					fireworks = !fireworks;
+				} else {
+					noPermsMessage(sender, PERMISSION_FIREWORKS);
+				}
+			} else if (args[i].equalsIgnoreCase("-r")) {
+				radius = parseNextIntArg(args, i);
+
+				if (radius < 1 || radius > 100) {
+					sender.sendMessage("Radius must be an integer within the range [1, 100]");
+					return true;
+				}
+			} else if (args[i].equalsIgnoreCase("-n")) {
+				sheepNumber = parseNextIntArg(args, i);
+
+				if (sheepNumber < 1 || sheepNumber > 100) {
+					sender.sendMessage("The number of sheep must be an integer within the range [1, 100]");
+				}
 			}
 		}
 
 		if (args.length > 0) {
-			switch (args[0]) {
-				case "all":
-					if (senderHasPerm(PERMISSION_ALL))
+
+			if (args[0].equalsIgnoreCase("all")) {
+				if (senderHasPerm(sender, PERMISSION_ALL)) {
 					for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-						parent.startParty(p, fireworks);
+						parent.startParty(player, duration, sheepNumber, radius, fireworks);
 						p.sendMessage(ChatColor.RED + "LET'S DISCO!");
-					} else {
-						noPermsMessage(PERMISSION_ALL);
 					}
+				} else {
+					noPermsMessage(sender, PERMISSION_ALL);
+				}
+				return true;
+			} else if (args[0].equalsIgnoreCase("stop")) {
+				if (senderHasPerm(sender, PERMISSION_STOP)) {
+					parent.stopAllParties();
+				} else {
+					noPermsMessage(sender, PERMISSION_STOP);
+				}
+				return true;
+			} else if (args[0].equalsIgnoreCase("me")) {
+				if (isPlayer) {
+					parent.startParty(player, duration, sheepNumber, radius, fireworks);
 					return true;
-				case "stop":
-					if (senderHasPerm(PERMISSION_STOP)) {
-						parent.stopAllParties();
-					} else {
-						noPermsMessage(PERMISSION_STOP);
-					}
-					return true;
-				case "me":
-					if (isPlayer) {
-						parent.startParty(player, fireworks);
-						return true;
-					}
-				default:
-					sender.sendMessage(ChatColor.RED + "Invalid argument.");
-					return true;
+				}
+			} else {
+				sender.sendMessage(ChatColor.RED + "Invalid argument.");
+				return true;
 			}
+
 		}
 
 		return false;
