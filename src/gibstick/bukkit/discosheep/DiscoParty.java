@@ -172,16 +172,23 @@ public class DiscoParty {
 	}
 
 	void updateAllSheep() {
+		int i = 0;
 		for (Sheep sheep : getSheep()) {
 			randomizeSheepColour(sheep);
-			if (state % 8 == 0) { // HA HA IT LOOKS LIKE A PENIS
-				if (doFireworks) {
-					spawnRandomFireworkAtSheep(sheep);
-				}
-				if(doJump){
-					jumpSheep(sheep);
+			if (doFireworks && state % 8 == 0) {
+				spawnRandomFireworkAtSheep(sheep);
+			}
+
+			if (doJump) {
+				if (state % 4 == 0) {
+					if ((state % 8 == 0) && (i % 2 == 0)) {
+						jumpSheep(sheep);
+					} else if (i % 2 != 0) {
+						jumpSheep(sheep);
+					}
 				}
 			}
+			i++;
 		}
 	}
 
