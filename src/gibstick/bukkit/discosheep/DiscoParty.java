@@ -77,12 +77,16 @@ public class DiscoParty {
 		World world = player.getWorld();
 
 		for (int i = 0; i < num; i++) {
-			double x, y, z;
+			double x = player.getLocation().getX();
+			double z = player.getLocation().getZ();
+			double y;
 
-			// random x, z, and yaw
-			// safe y-coordinate
-			x = -sheepSpawnRadius + (Math.random() * ((sheepSpawnRadius * 2) + 1)) + player.getLocation().getX();
-			z = -sheepSpawnRadius + (Math.random() * ((sheepSpawnRadius * 2) + 1)) + player.getLocation().getZ();
+			// random point on circle with polar coordinates
+			double r = Math.sqrt(Math.random()) * sheepSpawnRadius; // sqrt for uniform distribution
+			double azimuth = Math.random() * 2 * Math.PI; // radians
+			x += r * Math.cos(azimuth);
+			z += r * Math.sin(azimuth);
+
 			y = world.getHighestBlockYAt((int) x, (int) z);
 			loc = new Location(world, x, y, z);
 			//loc.setYaw(0);
