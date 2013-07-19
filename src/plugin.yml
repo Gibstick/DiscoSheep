@@ -8,6 +8,7 @@ commands:
     usage: |
         <command> <subcommand> [arguments]
         Use /ds help for more information
+        To stop your party, use /ds stop.
 permissions:
   discosheep.*:
     description: Permission node for all DiscoSheep commands
