@@ -21,6 +21,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 	private static final String PERMISSION_STOPALL = "discosheep.stopall";
 	private static final String PERMISSION_RELOAD = "discosheep.reload";
 	private static final String PERMISSION_OTHER = "discosheep.partyother";
+	private static final String PERMISSION_CHANGEPERIOD = "discosheep.changeperiod";
 
 	//private static final String DELIM = "[ ]+";
 	private boolean senderHasPerm(CommandSender sender, String permission) {
@@ -60,8 +61,8 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 	// extract a list of players from a list of arguments
 	private String[] parsePlayerList(String[] args, int i) {
 		int j = i;
-		while (j < args.length && !args[i].startsWith("-")) {
-			++j;
+		while (j < args.length && !args[j].startsWith("-")) {
+			j++;
 		}
 		return Arrays.copyOfRange(args, i, j);
 	}
@@ -94,20 +95,28 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 		}
 	}
 
-	private boolean partyCommand(CommandSender sender, int _duration, int _sheepNumber, int _radius, int _period, boolean _fireworks) {
-		if (senderHasPerm(sender, PERMISSION_PARTY)) {
-			parent.startParty((Player) sender, _duration, _sheepNumber, _radius, _period, _fireworks);
+	private boolean partyCommand(Player player, DiscoParty party) {
+		if (senderHasPerm(player, PERMISSION_PARTY)) {
+			if (!parent.hasParty(player.getName())) {
+				party.setPlayer(player);
+				party.startDisco();
+			} else {
+				player.sendMessage("You already have a party. Are you underground?");
+			}
 			return true;
 		} else {
-			return noPermsMessage(sender, PERMISSION_PARTY);
+			return noPermsMessage(player, PERMISSION_PARTY);
 		}
 	}
 
-	private boolean partyAllCommand(CommandSender sender, int _duration, int _sheepNumber, int _radius, int _period, boolean _fireworks) {
+	private boolean partyAllCommand(CommandSender sender, DiscoParty party) {
 		if (senderHasPerm(sender, PERMISSION_ALL)) {
 			for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-				parent.startParty(p, _duration, _sheepNumber, _radius, _period, _fireworks);
-				p.sendMessage(ChatColor.RED + "LET'S DISCO!");
+				if (!parent.hasParty(p.getName())) {
+					DiscoParty individualParty = party.DiscoParty(p);
+					individualParty.startDisco();
+					p.sendMessage(ChatColor.RED + "LET'S DISCO!");
+				}
 			}
 			return true;
 		} else {
@@ -129,13 +138,16 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 		return true;
 	}
 
-	private boolean partySelectCommand(String[] players, CommandSender sender, int _duration, int _sheepNumber, int _radius, int _period, boolean _fireworks) {
+	private boolean partyOtherCommand(String[] players, CommandSender sender, DiscoParty party) {
 		if (senderHasPerm(sender, PERMISSION_OTHER)) {
 			Player p;
 			for (String playerName : players) {
 				p = Bukkit.getServer().getPlayer(playerName);
 				if (p != null) {
-					parent.startParty(p, _duration, _sheepNumber, _radius, _period, _fireworks);
+					if (!parent.hasParty(p.getName())) {
+						DiscoParty individualParty = party.DiscoParty(p);
+						individualParty.startDisco();
+					}
 				} else {
 					sender.sendMessage("Invalid player: " + playerName);
 				}
@@ -151,11 +163,6 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 
 		Player player = null;
 		boolean isPlayer = false;
-		boolean fireworks = false;
-		int sheepNumber = DiscoParty.defaultSheep;
-		int radius = DiscoParty.defaultRadius;
-		int duration = DiscoParty.defaultDuration;
-		int period = DiscoParty.defaultPeriod;
 
 		if (sender instanceof Player) {
 			player = (Player) sender;
@@ -175,19 +182,19 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 			}
 		}
 
-		DiscoParty mainParty = new DiscoParty(parent);
+		DiscoParty parentParty = new DiscoParty(parent);
 
 		for (int i = 1; i < args.length; i++) {
 			if (args[i].equalsIgnoreCase("-fw")) {
 				if (senderHasPerm(sender, PERMISSION_FIREWORKS)) {
-					mainParty.setDoFireworks(true);
+					parentParty.setDoFireworks(true);
 				} else {
 					return noPermsMessage(sender, PERMISSION_FIREWORKS);
 				}
 			} else if (args[i].equalsIgnoreCase("-r")) {
 				try {
-					mainParty.setRadius(parseNextIntArg(args, i));
-					sender.sendMessage("RADIUS OK");
+					parentParty.setRadius(parseNextIntArg(args, i));
+					//sender.sendMessage("RADIUS OK");
 				} catch (IllegalArgumentException e) {
 					sender.sendMessage("Radius must be an integer within the range [1, "
 							+ DiscoParty.maxRadius + "]");
@@ -195,8 +202,8 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 				}
 			} else if (args[i].equalsIgnoreCase("-n")) {
 				try {
-					mainParty.setSheep(parseNextIntArg(args, i));
-					sender.sendMessage("SHEEP OK");
+					parentParty.setSheep(parseNextIntArg(args, i));
+					//sender.sendMessage("SHEEP OK");
 				} catch (IllegalArgumentException e) {
 					sender.sendMessage("The number of sheep must be an integer within the range [1, "
 							+ DiscoParty.maxSheep + "]");
@@ -204,17 +211,20 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 				}
 			} else if (args[i].equalsIgnoreCase("-t")) {
 				try {
-					mainParty.setDuration(parent.toTicks(parseNextIntArg(args, i)));
-					sender.sendMessage("DURATION OK");
+					parentParty.setDuration(parent.toTicks(parseNextIntArg(args, i)));
+					//sender.sendMessage("DURATION OK");
 				} catch (IllegalArgumentException e) {
 					sender.sendMessage("The duration in seconds must be an integer within the range [1, "
 							+ parent.toSeconds(DiscoParty.maxDuration) + "]");
 					return false;
 				}
 			} else if (args[i].equalsIgnoreCase("-p")) {
+				if (!senderHasPerm(sender, PERMISSION_CHANGEPERIOD)) {
+					return noPermsMessage(sender, PERMISSION_CHANGEPERIOD);
+				}
 				try {
-					mainParty.setPeriod(parseNextIntArg(args, i));
-					sender.sendMessage("PERIOD OK");
+					parentParty.setPeriod(parseNextIntArg(args, i));
+					//sender.sendMessage("PERIOD OK");
 				} catch (IllegalArgumentException e) {
 					sender.sendMessage(
 							"The period in ticks must be within the range ["
@@ -227,11 +237,11 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 
 		if (args.length > 0) {
 			if (args[0].equalsIgnoreCase("all")) {
-				return partyAllCommand(sender, duration, sheepNumber, radius, period, fireworks);
+				return partyAllCommand(sender, parentParty);
 			} else if (args[0].equalsIgnoreCase("me") && isPlayer) {
-				return partyCommand(player, duration, sheepNumber, radius, period, fireworks);
+				return partyCommand(player, parentParty);
 			} else if (args[0].equalsIgnoreCase("other")) {
-				return partySelectCommand(parsePlayerList(args, 1), sender, duration, sheepNumber, radius, period, fireworks);
+				return partyOtherCommand(parsePlayerList(args, 1), sender, parentParty);
 			} else {
 				sender.sendMessage(ChatColor.RED + "Invalid argument (certain commands do not work from console).");
 				return false;

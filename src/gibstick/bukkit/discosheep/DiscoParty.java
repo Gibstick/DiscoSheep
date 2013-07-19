@@ -58,10 +58,18 @@ public class DiscoParty {
 	public DiscoParty(DiscoSheep parent, Player player) {
 		this.ds = parent;
 		this.player = player;
+		this.duration = DiscoParty.defaultDuration;
+		this.period = DiscoParty.defaultPeriod;
+		this.radius = DiscoParty.defaultRadius;
+		this.sheep = DiscoParty.defaultSheep;
 	}
-	
+
 	public DiscoParty(DiscoSheep parent) {
 		this.ds = parent;
+		this.duration = DiscoParty.defaultDuration;
+		this.period = DiscoParty.defaultPeriod;
+		this.radius = DiscoParty.defaultRadius;
+		this.sheep = DiscoParty.defaultSheep;
 	}
 
 	// copy but with new player
@@ -76,10 +84,10 @@ public class DiscoParty {
 		newParty.setDuration(this.duration);
 		newParty.setPeriod(this.period);
 		newParty.setRadius(this.radius);
-		newParty.setSheep(this.sheep);
-		return newParty;
+		newParty.setSheep(this.sheep);	
+	return newParty;
 	}
-	
+
 	List<Sheep> getSheep() {
 		return sheepList;
 	}
@@ -332,7 +340,7 @@ public class DiscoParty {
 		this.scheduleUpdate();
 		ds.getPartyMap().put(this.player.getName(), this);
 	}
-	
+
 	void startDisco() {
 		this.spawnSheep(sheep, radius);
 		this.scheduleUpdate();
