@@ -182,7 +182,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 				if (senderHasPerm(sender, PERMISSION_FIREWORKS)) {
 					mainParty.setDoFireworks(true);
 				} else {
-					noPermsMessage(sender, PERMISSION_FIREWORKS);
+					return noPermsMessage(sender, PERMISSION_FIREWORKS);
 				}
 			} else if (args[i].equalsIgnoreCase("-r")) {
 				try {
