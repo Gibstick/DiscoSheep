@@ -60,6 +60,22 @@ public class DiscoParty {
 		this.player = player;
 	}
 
+	// copy but with new player
+	/**
+	 *
+	 * @param player The new player to be stored
+	 * @return A copy of the class with the new player
+	 */
+	public static DiscoParty DiscoParty(Player player) {
+		DiscoParty newParty = new DiscoParty(this.ds, player);
+		newParty.setDoFireworks(this.doFireworks);
+		newParty.setDuration(this.duration);
+		newParty.setPeriod(this.period);
+		newParty.setRadius(this.radius);
+		newParty.setSheep(this.sheep);
+		return newParty;
+	}
+	
 	List<Sheep> getSheep() {
 		return sheepList;
 	}
