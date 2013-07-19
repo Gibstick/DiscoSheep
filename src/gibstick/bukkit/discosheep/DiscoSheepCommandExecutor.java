@@ -45,7 +45,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 				return Integer.parseInt(args[i + 1]);
 			} catch (NumberFormatException e) {
 				return -1;
-			} 
+			}
 		}
 		return -1;
 	}
@@ -161,7 +161,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 			player = (Player) sender;
 			isPlayer = true;
 		}
-		
+
 		// check for commands that don't need a party
 		if (args.length == 1) {
 			if (args[0].equalsIgnoreCase("stopall")) {
@@ -172,58 +172,56 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 				return helpCommand(sender);
 			} else if (args[0].equalsIgnoreCase("reload")) {
 				return reloadCommand(sender);
-			} else {
-				sender.sendMessage(ChatColor.RED + "Invalid argument (certain commands do not work from console).");
-				return false;
 			}
 		}
+
+		DiscoParty mainParty = new DiscoParty(parent);
 
 		for (int i = 1; i < args.length; i++) {
 			if (args[i].equalsIgnoreCase("-fw")) {
 				if (senderHasPerm(sender, PERMISSION_FIREWORKS)) {
-					fireworks = !fireworks;
+					mainParty.setDoFireworks(true);
 				} else {
 					noPermsMessage(sender, PERMISSION_FIREWORKS);
 				}
 			} else if (args[i].equalsIgnoreCase("-r")) {
-				radius = parseNextIntArg(args, i);
-
-				if (radius < 1 || radius > DiscoParty.maxRadius) {
+				try {
+					mainParty.setRadius(parseNextIntArg(args, i));
+				} catch (IllegalArgumentException e) {
 					sender.sendMessage("Radius must be an integer within the range [1, "
 							+ DiscoParty.maxRadius + "]");
-					return true;
+					return false;
 				}
 			} else if (args[i].equalsIgnoreCase("-n")) {
-				sheepNumber = parseNextIntArg(args, i);
-
-				if (sheepNumber < 1 || sheepNumber > DiscoParty.maxSheep) {
+				try {
+					mainParty.setSheep(parseNextIntArg(args, i));
+				} catch (IllegalArgumentException e) {
 					sender.sendMessage("The number of sheep must be an integer within the range [1, "
 							+ DiscoParty.maxSheep + "]");
-					return true;
+					return false;
 				}
 			} else if (args[i].equalsIgnoreCase("-t")) {
-				duration = parent.toTicks(parseNextIntArg(args, i));
-
-				if (duration < 1 || duration > DiscoParty.maxDuration) {
+				try {
+					mainParty.setDuration(parent.toTicks(parseNextIntArg(args, i)));
+				} catch (IllegalArgumentException e) {
 					sender.sendMessage("The duration in seconds must be an integer within the range [1, "
 							+ parent.toSeconds(DiscoParty.maxDuration) + "]");
-					return true;
+					return false;
 				}
 			} else if (args[i].equalsIgnoreCase("-p")) {
-				period = parseNextIntArg(args, i);
-
-				if (period < DiscoParty.minPeriod || period > DiscoParty.maxPeriod) {
+				try {
+					mainParty.setPeriod(parseNextIntArg(args, i));
+				} catch (IllegalArgumentException e) {
 					sender.sendMessage(
 							"The period in ticks must be within the range ["
 							+ DiscoParty.minPeriod + ", "
 							+ DiscoParty.maxPeriod + "]");
-					return true;
+					return false;
 				}
 			}
 		}
 
 		if (args.length > 0) {
-
 			if (args[0].equalsIgnoreCase("all")) {
 				return partyAllCommand(sender, duration, sheepNumber, radius, period, fireworks);
 			} else if (args[0].equalsIgnoreCase("me") && isPlayer) {
@@ -234,7 +232,6 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 				sender.sendMessage(ChatColor.RED + "Invalid argument (certain commands do not work from console).");
 				return false;
 			}
-
 		}
 
 		return false;

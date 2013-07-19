@@ -59,6 +59,10 @@ public class DiscoParty {
 		this.ds = parent;
 		this.player = player;
 	}
+	
+	public DiscoParty(DiscoSheep parent) {
+		this.ds = parent;
+	}
 
 	// copy but with new player
 	/**
