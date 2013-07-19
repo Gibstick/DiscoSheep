@@ -161,6 +161,22 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 			player = (Player) sender;
 			isPlayer = true;
 		}
+		
+		// check for commands that don't need a party
+		if (args.length == 1) {
+			if (args[0].equalsIgnoreCase("stopall")) {
+				return stopAllCommand(sender);
+			} else if (args[0].equalsIgnoreCase("stop") && isPlayer) {
+				return stopMeCommand(sender);
+			} else if (args[0].equalsIgnoreCase("help")) {
+				return helpCommand(sender);
+			} else if (args[0].equalsIgnoreCase("reload")) {
+				return reloadCommand(sender);
+			} else {
+				sender.sendMessage(ChatColor.RED + "Invalid argument (certain commands do not work from console).");
+				return false;
+			}
+		}
 
 		for (int i = 1; i < args.length; i++) {
 			if (args[i].equalsIgnoreCase("-fw")) {
@@ -210,18 +226,10 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 
 			if (args[0].equalsIgnoreCase("all")) {
 				return partyAllCommand(sender, duration, sheepNumber, radius, period, fireworks);
-			} else if (args[0].equalsIgnoreCase("stopall")) {
-				return stopAllCommand(sender);
-			} else if (args[0].equalsIgnoreCase("stop") && isPlayer) {
-				return stopMeCommand(sender);
 			} else if (args[0].equalsIgnoreCase("me") && isPlayer) {
 				return partyCommand(player, duration, sheepNumber, radius, period, fireworks);
 			} else if (args[0].equalsIgnoreCase("other")) {
 				return partySelectCommand(parsePlayerList(args, 1), sender, duration, sheepNumber, radius, period, fireworks);
-			} else if (args[0].equalsIgnoreCase("help")) {
-				return helpCommand(sender);
-			} else if (args[0].equalsIgnoreCase("reload")) {
-				return reloadCommand(sender);
 			} else {
 				sender.sendMessage(ChatColor.RED + "Invalid argument (certain commands do not work from console).");
 				return false;

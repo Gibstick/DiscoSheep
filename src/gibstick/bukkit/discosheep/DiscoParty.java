@@ -66,7 +66,7 @@ public class DiscoParty {
 	 * @param player The new player to be stored
 	 * @return A copy of the class with the new player
 	 */
-	public static DiscoParty DiscoParty(Player player) {
+	public DiscoParty DiscoParty(Player player) {
 		DiscoParty newParty = new DiscoParty(this.ds, player);
 		newParty.setDoFireworks(this.doFireworks);
 		newParty.setDuration(this.duration);
@@ -90,7 +90,7 @@ public class DiscoParty {
 	}
 
 	public DiscoParty setDuration(int duration) throws IllegalArgumentException {
-		if (duration <= DiscoParty.maxDuration) {
+		if (duration <= DiscoParty.maxDuration || duration > 0) {
 			this.duration = duration;
 			return this;
 		} else {
@@ -108,7 +108,7 @@ public class DiscoParty {
 	}
 
 	public DiscoParty setRadius(int radius) throws IllegalArgumentException {
-		if (radius <= DiscoParty.maxRadius) {
+		if (radius <= DiscoParty.maxRadius || radius > 0) {
 			this.radius = radius;
 			return this;
 		} else {
@@ -117,7 +117,7 @@ public class DiscoParty {
 	}
 
 	public DiscoParty setSheep(int sheep) throws IllegalArgumentException {
-		if (sheep <= DiscoParty.maxSheep) {
+		if (sheep <= DiscoParty.maxSheep || sheep > 0) {
 			this.sheep = sheep;
 			return this;
 		} else {
