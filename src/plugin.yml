@@ -33,3 +33,8 @@ permissions:
   discosheep.reload:
     description: Allows a player to reload settings from config.yml
     default: op
+  discosheep.other:
+    description: Allows a player to call parties for other people, including themselves.
+    default: op
+    children:
+      discosheep.party: true

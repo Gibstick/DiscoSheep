@@ -1,8 +1,8 @@
 package gibstick.bukkit.discosheep;
 
+import java.util.Arrays;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.CommandExecutor;
@@ -20,13 +20,16 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 	private static final String PERMISSION_FIREWORKS = "discosheep.fireworks";
 	private static final String PERMISSION_STOP = "discosheep.stop";
 	private static final String PERMISSION_RELOAD = "discosheep.reload";
+	private static final String PERMISSION_OTHER = "discosheep.partyother";
 
+	//private static final String DELIM = "[ ]+";
 	private boolean senderHasPerm(CommandSender sender, String permission) {
 		return sender.hasPermission(permission);
 	}
 
-	private void noPermsMessage(CommandSender sender, String permission) {
+	private boolean noPermsMessage(CommandSender sender, String permission) {
 		sender.sendMessage(ChatColor.RED + "You do not have the permission node " + ChatColor.GRAY + permission);
+		return false;
 	}
 
 	private boolean parseNextArg(String[] args, int i, String compare) {
@@ -50,8 +53,92 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 		return -1.0d;
 	}
 
+	// extract a list of players from a list of arguments
+	private String[] parsePlayerList(String[] args, int i) {
+		int j = i;
+		while (j < args.length && !args[i].startsWith("-")) {
+			++j;
+		}
+		return Arrays.copyOfRange(args, i, j);
+	}
+
+	/*-- Actual commands begin here --*/
+	private boolean helpCommand(CommandSender sender) {
+		sender.sendMessage(ChatColor.YELLOW + "DiscoSheep Help\n"
+				+ ChatColor.GRAY + "  Subcommands\n" + ChatColor.WHITE
+				+ "me: start a party for yourself\n"
+				+ "all: start a party for all players on the server\n"
+				+ "stop: stop all parties (takes no arguments)\n"
+				+ "other <players>: start a party for the space-delimited list of players\n"
+				+ ChatColor.GRAY + "  Arguments\n" + ChatColor.WHITE
+				+ "-n <integer>: set the number of sheep per player that spawn\n"
+				+ "-t <integer>: set the party duration in seconds\n"
+				+ "-p <ticks>: set the number of ticks between each disco beat\n"
+				+ "-r <integer>: set radius of the area in which sheep can spawn\n"
+				+ "-fw: enables fireworks");
+		return true;
+	}
+
+	private boolean reloadCommand(CommandSender sender) {
+		if (senderHasPerm(sender, PERMISSION_RELOAD)) {
+			parent.reloadConfigFromDisk();
+			sender.sendMessage(ChatColor.GREEN + "DiscoSheep config reloaded from disk");
+			return true;
+		} else {
+			return noPermsMessage(sender, PERMISSION_RELOAD);
+		}
+	}
+
+	private boolean partyCommand(CommandSender sender, int _duration, int _sheepNumber, int _radius, int _period, boolean _fireworks) {
+		if (senderHasPerm(sender, PERMISSION_PARTY)) {
+			parent.startParty((Player) sender, _duration, _sheepNumber, _radius, _period, _fireworks);
+			return true;
+		} else {
+			return noPermsMessage(sender, PERMISSION_PARTY);
+		}
+	}
+
+	private boolean partyAllCommand(CommandSender sender, int _duration, int _sheepNumber, int _radius, int _period, boolean _fireworks) {
+		if (senderHasPerm(sender, PERMISSION_ALL)) {
+			for (Player p : Bukkit.getServer().getOnlinePlayers()) {
+				parent.startParty(p, _duration, _sheepNumber, _radius, _period, _fireworks);
+				p.sendMessage(ChatColor.RED + "LET'S DISCO!");
+			}
+			return true;
+		} else {
+			return noPermsMessage(sender, PERMISSION_ALL);
+		}
+	}
+
+	private boolean stopCommand(CommandSender sender) {
+		if (senderHasPerm(sender, PERMISSION_STOP)) {
+			parent.stopAllParties();
+			return true;
+		} else {
+			return noPermsMessage(sender, PERMISSION_STOP);
+		}
+	}
+
+	private boolean partySelectCommand(String[] players, CommandSender sender, int _duration, int _sheepNumber, int _radius, int _period, boolean _fireworks) {
+		if (senderHasPerm(sender, PERMISSION_OTHER)) {
+			Player p;
+			for (String playerName : players) {
+				p = Bukkit.getServer().getPlayer(playerName);
+				if (p != null) {
+					parent.startParty(p, _duration, _sheepNumber, _radius, _period, _fireworks);
+				} else {
+					sender.sendMessage("Invalid player: " + playerName);
+				}
+			}
+			return true;
+		} else {
+			return noPermsMessage(sender, PERMISSION_OTHER);
+		}
+	}
+
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+
 		Player player = null;
 		boolean isPlayer = false;
 		boolean fireworks = false;
@@ -112,50 +199,17 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 		if (args.length > 0) {
 
 			if (args[0].equalsIgnoreCase("all")) {
-				if (senderHasPerm(sender, PERMISSION_ALL)) {
-					for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-						parent.startParty(p, duration, sheepNumber, radius, period, fireworks);
-						p.sendMessage(ChatColor.RED + "LET'S DISCO!");
-					}
-				} else {
-					noPermsMessage(sender, PERMISSION_ALL);
-				}
-				return true;
+				return partyAllCommand(player, duration, sheepNumber, radius, period, fireworks);
 			} else if (args[0].equalsIgnoreCase("stop")) {
-				if (senderHasPerm(sender, PERMISSION_STOP)) {
-					parent.stopAllParties();
-				} else {
-					noPermsMessage(sender, PERMISSION_STOP);
-				}
-				return true;
+				return stopCommand(sender);
 			} else if (args[0].equalsIgnoreCase("me") && isPlayer) {
-				if (senderHasPerm(sender, PERMISSION_PARTY)) {
-					parent.startParty(player, duration, sheepNumber, radius, period, fireworks);
-					return true;
-				} else {
-					noPermsMessage(sender, PERMISSION_PARTY);
-				}
+				return partyCommand(player, duration, sheepNumber, radius, period, fireworks);
+			} else if (args[0].equalsIgnoreCase("other")) {
+				return partySelectCommand(parsePlayerList(args, 1), sender, duration, sheepNumber, radius, period, fireworks);
 			} else if (args[0].equalsIgnoreCase("help")) {
-				sender.sendMessage(ChatColor.YELLOW + "DiscoSheep Help\n"
-						+ ChatColor.GRAY + "  Subcommands\n" + ChatColor.WHITE
-						+ "me: start a party for yourself\n"
-						+ "all: start a party for all players on the server\n"
-						+ "stop: stop all parties (takes no arguments)\n"
-						+ ChatColor.GRAY + "  Arguments\n" + ChatColor.WHITE
-						+ "-n <integer>: set the number of sheep per player that spawn\n"
-						+ "-t <integer>: set the party duration in seconds\n"
-						+ "-p <ticks>: set the number of ticks between each disco beat\n"
-						+ "-r <integer>: set radius of the area in which sheep can spawn\n"
-						+ "-fw: enables fireworks");
-				return true;
+				return helpCommand(sender);
 			} else if (args[0].equalsIgnoreCase("reload")) {
-				if (senderHasPerm(sender, PERMISSION_RELOAD)) {
-					parent.reloadConfigFromDisk();
-					sender.sendMessage(ChatColor.GREEN + "DiscoSheep config reloaded from disk");
-					return true;
-				} else {
-					noPermsMessage(sender, PERMISSION_RELOAD);
-				}
+				return reloadCommand(sender);
 			} else {
 				sender.sendMessage(ChatColor.RED + "Invalid argument.");
 				return false;

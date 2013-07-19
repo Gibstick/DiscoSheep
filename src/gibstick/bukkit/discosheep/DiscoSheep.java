@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -51,7 +50,7 @@ public final class DiscoSheep extends JavaPlugin {
 		DiscoParty.defaultDuration = toTicks(getConfig().getInt("default.duration"));
 		DiscoParty.defaultPeriod = getConfig().getInt("default.period-ticks");
 	}
-	
+
 	void reloadConfigFromDisk() {
 		reloadConfig();
 		loadConfigFromDisk();

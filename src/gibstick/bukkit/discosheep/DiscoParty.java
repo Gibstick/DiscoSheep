@@ -26,7 +26,7 @@ public class DiscoParty {
 	private DiscoSheep ds;
 	private Player player;
 	private ArrayList<Sheep> sheepList = new ArrayList<Sheep>();
-	private int duration, frequency = 20;
+	private int duration, period, radius, sheep;
 	static int defaultDuration = 300; // ticks for entire party
 	static int defaultPeriod = 10; // ticks per state change
 	static int defaultRadius = 5;
@@ -64,6 +64,56 @@ public class DiscoParty {
 		return sheepList;
 	}
 
+	public DiscoParty setPlayer(Player player) {
+		if (player != null) {
+			this.player = player;
+			return this;
+		} else {
+			throw new NullPointerException();
+		}
+	}
+
+	public DiscoParty setDuration(int duration) throws IllegalArgumentException {
+		if (duration < DiscoParty.maxDuration) {
+			this.duration = duration;
+			return this;
+		} else {
+			throw new IllegalArgumentException();
+		}
+	}
+
+	public DiscoParty setPeriod(int period) throws IllegalArgumentException {
+		if (period >= DiscoParty.minPeriod || period <= DiscoParty.maxPeriod) {
+			this.period = period;
+			return this;
+		} else {
+			throw new IllegalArgumentException();
+		}
+	}
+
+	public DiscoParty setRadius(int radius) throws IllegalArgumentException {
+		if (radius < DiscoParty.maxRadius) {
+			this.radius = radius;
+			return this;
+		} else {
+			throw new IllegalArgumentException();
+		}
+	}
+
+	public DiscoParty setSheep(int sheep) throws IllegalArgumentException {
+		if (sheep < DiscoParty.maxSheep) {
+			this.sheep = sheep;
+			return this;
+		} else {
+			throw new IllegalArgumentException();
+		}
+	}
+
+	public DiscoParty setDoFireworks(boolean doFireworks) {
+		this.doFireworks = doFireworks;
+		return this;
+	}
+
 	void spawnSheep(World world, Location loc) {
 		Sheep newSheep = (Sheep) world.spawnEntity(loc, EntityType.SHEEP);
 		newSheep.setColor(discoColours[(int) (Math.random() * (discoColours.length - 1))]);
@@ -97,9 +147,9 @@ public class DiscoParty {
 
 	// Mark all sheep in the sheep array for removal, then clear the array
 	void removeAllSheep() {
-		for (Sheep sheep : getSheep()) {
-			sheep.setHealth(0);
-			sheep.remove();
+		for (Sheep sheeple : getSheep()) {
+			sheeple.setHealth(0);
+			sheeple.remove();
 		}
 		getSheep().clear();
 	}
@@ -175,16 +225,16 @@ public class DiscoParty {
 
 	void updateAllSheep() {
 		int i = 0;
-		for (Sheep sheep : getSheep()) {
-			randomizeSheepColour(sheep);
+		for (Sheep sheeple : getSheep()) {
+			randomizeSheepColour(sheeple);
 			if (doFireworks && state % 8 == 0) {
-				spawnRandomFireworkAtSheep(sheep);
+				spawnRandomFireworkAtSheep(sheeple);
 			}
 
 			if (doJump) {
 				if (state % 2 == 0) {
 					if (Math.random() < 0.5) {
-						jumpSheep(sheep);
+						jumpSheep(sheeple);
 					}
 				}
 			}
@@ -238,7 +288,7 @@ public class DiscoParty {
 		if (duration > 0) {
 			updateAllSheep();
 			playSounds();
-			duration -= frequency;
+			duration -= period;
 			this.scheduleUpdate();
 			this.state++;
 		} else {
@@ -248,16 +298,16 @@ public class DiscoParty {
 
 	void scheduleUpdate() {
 		updater = new DiscoUpdater(this);
-		updater.runTaskLater(ds, this.frequency);
+		updater.runTaskLater(ds, this.period);
 	}
 
-	void startDisco(int duration, int sheepAmount, int radius, int frequency, boolean fireworks) {
+	void startDisco(int duration, int sheepAmount, int radius, int period, boolean fireworks) {
 		if (this.duration > 0) {
 			stopDisco();
 		}
-		this.doFireworks = fireworks;
 		this.spawnSheep(sheepAmount, radius);
-		this.frequency = frequency;
+		this.doFireworks = fireworks;
+		this.period = period;
 		this.duration = duration;
 		this.scheduleUpdate();
 		ds.getPartyMap().put(this.player.getName(), this);
