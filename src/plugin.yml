@@ -1,7 +1,7 @@
 name: DiscoSheep
 main: gibstick.bukkit.discosheep.DiscoSheep
 authors: [Gibstick, RangerMauve]
-version: 1.0
+version: 1.0.1
 commands:
   ds:
     description: "Main DiscoSheep command"
