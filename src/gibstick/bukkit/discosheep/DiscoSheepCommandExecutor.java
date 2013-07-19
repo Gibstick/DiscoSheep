@@ -18,7 +18,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 	private static final String PERMISSION_PARTY = "discosheep.party";
 	private static final String PERMISSION_ALL = "discosheep.partyall";
 	private static final String PERMISSION_FIREWORKS = "discosheep.fireworks";
-	private static final String PERMISSION_STOP = "discosheep.stop";
+	private static final String PERMISSION_STOPALL = "discosheep.stopall";
 	private static final String PERMISSION_RELOAD = "discosheep.reload";
 	private static final String PERMISSION_OTHER = "discosheep.partyother";
 
@@ -110,13 +110,18 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 		}
 	}
 
-	private boolean stopCommand(CommandSender sender) {
-		if (senderHasPerm(sender, PERMISSION_STOP)) {
+	private boolean stopAllCommand(CommandSender sender) {
+		if (senderHasPerm(sender, PERMISSION_STOPALL)) {
 			parent.stopAllParties();
 			return true;
 		} else {
-			return noPermsMessage(sender, PERMISSION_STOP);
+			return noPermsMessage(sender, PERMISSION_STOPALL);
 		}
+	}
+
+	private boolean stopMeCommand(CommandSender sender) {
+		parent.stopParty(sender.getName());
+		return true;
 	}
 
 	private boolean partySelectCommand(String[] players, CommandSender sender, int _duration, int _sheepNumber, int _radius, int _period, boolean _fireworks) {
@@ -200,8 +205,10 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 
 			if (args[0].equalsIgnoreCase("all")) {
 				return partyAllCommand(player, duration, sheepNumber, radius, period, fireworks);
-			} else if (args[0].equalsIgnoreCase("stop")) {
-				return stopCommand(sender);
+			} else if (args[0].equalsIgnoreCase("stopall")) {
+				return stopAllCommand(sender);
+			} else if (args[0].equalsIgnoreCase("stop") && isPlayer) {
+				return stopMeCommand(sender);
 			} else if (args[0].equalsIgnoreCase("me") && isPlayer) {
 				return partyCommand(player, duration, sheepNumber, radius, period, fireworks);
 			} else if (args[0].equalsIgnoreCase("other")) {

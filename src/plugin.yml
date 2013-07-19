@@ -16,7 +16,7 @@ permissions:
       discosheep.party: true
       discosheep.partyall: true
       discosheep.fireworks: true
-      discosheep.stop: true
+      discosheep.stopall: true
       discosheep.reload: true
   discosheep.party:
     description: Allows a player to have a party of one
@@ -24,7 +24,7 @@ permissions:
   discosheep.partyall:
     description: Allows a player to call a server-wide party
     default: op
-  discosheep.stop:
+  discosheep.stopall:
     description: Allows a player to stop all parties on the server
     default: op
   discosheep.fireworks:
