@@ -20,7 +20,7 @@ permissions:
       discosheep.stopall: true
       discosheep.reload: true
       discosheep.other: true
-      discosheep.period: true
+      discosheep.changeperiod: true
   discosheep.party:
     description: Allows a player to have a party of one
     default: op
