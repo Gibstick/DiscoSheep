@@ -94,7 +94,7 @@ public class DiscoParty {
 	}
 
 	public DiscoParty setDuration(int duration) throws IllegalArgumentException {
-		if (duration <= DiscoParty.maxDuration || duration > 0) {
+		if (duration <= DiscoParty.maxDuration && duration > 0) {
 			this.duration = duration;
 			return this;
 		} else {
@@ -103,7 +103,7 @@ public class DiscoParty {
 	}
 
 	public DiscoParty setPeriod(int period) throws IllegalArgumentException {
-		if (period >= DiscoParty.minPeriod || period <= DiscoParty.maxPeriod) {
+		if (period >= DiscoParty.minPeriod && period <= DiscoParty.maxPeriod) {
 			this.period = period;
 			return this;
 		} else {
@@ -112,7 +112,7 @@ public class DiscoParty {
 	}
 
 	public DiscoParty setRadius(int radius) throws IllegalArgumentException {
-		if (radius <= DiscoParty.maxRadius || radius > 0) {
+		if (radius <= DiscoParty.maxRadius && radius > 0) {
 			this.radius = radius;
 			return this;
 		} else {
@@ -121,7 +121,7 @@ public class DiscoParty {
 	}
 
 	public DiscoParty setSheep(int sheep) throws IllegalArgumentException {
-		if (sheep <= DiscoParty.maxSheep || sheep > 0) {
+		if (sheep <= DiscoParty.maxSheep && sheep > 0) {
 			this.sheep = sheep;
 			return this;
 		} else {

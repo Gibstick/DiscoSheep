@@ -187,6 +187,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 			} else if (args[i].equalsIgnoreCase("-r")) {
 				try {
 					mainParty.setRadius(parseNextIntArg(args, i));
+					sender.sendMessage("RADIUS OK");
 				} catch (IllegalArgumentException e) {
 					sender.sendMessage("Radius must be an integer within the range [1, "
 							+ DiscoParty.maxRadius + "]");
@@ -195,6 +196,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 			} else if (args[i].equalsIgnoreCase("-n")) {
 				try {
 					mainParty.setSheep(parseNextIntArg(args, i));
+					sender.sendMessage("SHEEP OK");
 				} catch (IllegalArgumentException e) {
 					sender.sendMessage("The number of sheep must be an integer within the range [1, "
 							+ DiscoParty.maxSheep + "]");
@@ -203,6 +205,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 			} else if (args[i].equalsIgnoreCase("-t")) {
 				try {
 					mainParty.setDuration(parent.toTicks(parseNextIntArg(args, i)));
+					sender.sendMessage("DURATION OK");
 				} catch (IllegalArgumentException e) {
 					sender.sendMessage("The duration in seconds must be an integer within the range [1, "
 							+ parent.toSeconds(DiscoParty.maxDuration) + "]");
@@ -211,6 +214,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 			} else if (args[i].equalsIgnoreCase("-p")) {
 				try {
 					mainParty.setPeriod(parseNextIntArg(args, i));
+					sender.sendMessage("PERIOD OK");
 				} catch (IllegalArgumentException e) {
 					sender.sendMessage(
 							"The period in ticks must be within the range ["
