@@ -67,8 +67,9 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 		sender.sendMessage(ChatColor.YELLOW + "DiscoSheep Help\n"
 				+ ChatColor.GRAY + "  Subcommands\n" + ChatColor.WHITE
 				+ "me: start a party for yourself\n"
+				+ "stop: stop your own party\n"
 				+ "all: start a party for all players on the server\n"
-				+ "stop: stop all parties (takes no arguments)\n"
+				+ "stopall: stop all parties (takes no arguments)\n"
 				+ "other <players>: start a party for the space-delimited list of players\n"
 				+ ChatColor.GRAY + "  Arguments\n" + ChatColor.WHITE
 				+ "-n <integer>: set the number of sheep per player that spawn\n"
