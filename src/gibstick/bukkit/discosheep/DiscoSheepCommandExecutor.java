@@ -15,6 +15,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 	public DiscoSheepCommandExecutor(DiscoSheep parent) {
 		this.parent = parent;
 	}
+	
 	private static final String PERMISSION_PARTY = "discosheep.party";
 	private static final String PERMISSION_ALL = "discosheep.partyall";
 	private static final String PERMISSION_FIREWORKS = "discosheep.fireworks";
@@ -205,7 +206,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 		if (args.length > 0) {
 
 			if (args[0].equalsIgnoreCase("all")) {
-				return partyAllCommand(player, duration, sheepNumber, radius, period, fireworks);
+				return partyAllCommand(sender, duration, sheepNumber, radius, period, fireworks);
 			} else if (args[0].equalsIgnoreCase("stopall")) {
 				return stopAllCommand(sender);
 			} else if (args[0].equalsIgnoreCase("stop") && isPlayer) {
@@ -219,7 +220,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 			} else if (args[0].equalsIgnoreCase("reload")) {
 				return reloadCommand(sender);
 			} else {
-				sender.sendMessage(ChatColor.RED + "Invalid argument.");
+				sender.sendMessage(ChatColor.RED + "Invalid argument (certain commands do not work from console).");
 				return false;
 			}
 

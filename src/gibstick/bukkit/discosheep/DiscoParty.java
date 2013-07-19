@@ -312,6 +312,12 @@ public class DiscoParty {
 		this.scheduleUpdate();
 		ds.getPartyMap().put(this.player.getName(), this);
 	}
+	
+	void startDisco() {
+		this.spawnSheep(sheep, radius);
+		this.scheduleUpdate();
+		ds.getPartyMap().put(this.player.getName(), this);
+	}
 
 	void stopDisco() {
 		removeAllSheep();
