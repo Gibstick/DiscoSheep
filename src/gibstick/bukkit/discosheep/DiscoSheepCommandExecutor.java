@@ -15,7 +15,6 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 	public DiscoSheepCommandExecutor(DiscoSheep parent) {
 		this.parent = parent;
 	}
-	
 	private static final String PERMISSION_PARTY = "discosheep.party";
 	private static final String PERMISSION_ALL = "discosheep.partyall";
 	private static final String PERMISSION_FIREWORKS = "discosheep.fireworks";
@@ -42,7 +41,11 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 
 	private int parseNextIntArg(String[] args, int i) {
 		if (i < args.length - 1) {
-			return Integer.parseInt(args[i + 1]);
+			try {
+				return Integer.parseInt(args[i + 1]);
+			} catch (NumberFormatException e) {
+				return -1;
+			} 
 		}
 		return -1;
 	}
