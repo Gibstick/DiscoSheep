@@ -31,7 +31,7 @@ public class DiscoParty {
 	static int defaultPeriod = 10; // ticks per state change
 	static int defaultRadius = 5;
 	static int defaultSheep = 10;
-	static float defaultSheepJump = 0.5f;
+	static float defaultSheepJump = 0.35f;
 	static int maxDuration = 2400; // 120 seconds
 	static int maxSheep = 100;
 	static int maxRadius = 100;
@@ -52,7 +52,9 @@ public class DiscoParty {
 		DyeColor.MAGENTA,
 		DyeColor.LIME,
 		DyeColor.CYAN,
-		DyeColor.PURPLE
+		DyeColor.PURPLE,
+		DyeColor.BLACK,
+		DyeColor.WHITE
 	};
 
 	public DiscoParty(DiscoSheep parent, Player player) {
@@ -254,11 +256,13 @@ public class DiscoParty {
 	}
 
 	void updateAllSheep() {
-		int i = 0;
 		for (Sheep sheeple : getSheep()) {
 			randomizeSheepColour(sheeple);
+			
 			if (doFireworks && state % 8 == 0) {
-				spawnRandomFireworkAtSheep(sheeple);
+				if (Math.random() < 0.50) {
+					spawnRandomFireworkAtSheep(sheeple);
+				}
 			}
 
 			if (doJump) {
@@ -268,7 +272,6 @@ public class DiscoParty {
 					}
 				}
 			}
-			i++;
 		}
 	}
 
@@ -303,7 +306,7 @@ public class DiscoParty {
 
 		// set random effect and randomize power
 		meta.addEffect(effect.build());
-		meta.setPower(r.nextInt(2));
+		meta.setPower(r.nextInt(2)+1);
 
 		// apply it to the given firework
 		firework.setFireworkMeta(meta);
