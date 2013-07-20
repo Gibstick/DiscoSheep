@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package gibstick.bukkit.discosheep;
+package ca.gibstick.discosheep;
 
 import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;

@@ -1,4 +1,4 @@
-package gibstick.bukkit.discosheep;
+package ca.gibstick.discosheep;
 
 import org.bukkit.scheduler.BukkitRunnable;
 
