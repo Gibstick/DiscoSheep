@@ -84,8 +84,8 @@ public class DiscoParty {
 		newParty.setDuration(this.duration);
 		newParty.setPeriod(this.period);
 		newParty.setRadius(this.radius);
-		newParty.setSheep(this.sheep);	
-	return newParty;
+		newParty.setSheep(this.sheep);
+		return newParty;
 	}
 
 	List<Sheep> getSheep() {
@@ -167,8 +167,6 @@ public class DiscoParty {
 
 			y = world.getHighestBlockYAt((int) x, (int) z);
 			loc = new Location(world, x, y, z);
-			//loc.setYaw(0);
-			//loc.setPitch((float) Math.random() * 360 - 180);
 			spawnSheep(world, loc);
 		}
 	}
