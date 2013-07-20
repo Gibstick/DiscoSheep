@@ -142,13 +142,6 @@ public class DiscoParty {
 		return this;
 	}
 
-	void spawnSheep(World world, Location loc) {
-		Sheep newSheep = (Sheep) world.spawnEntity(loc, EntityType.SHEEP);
-		newSheep.setColor(discoColours[(int) (Math.random() * (discoColours.length - 1))]);
-		newSheep.setBreed(false);
-		getSheep().add(newSheep);
-	}
-
 	// Spawn some number of sheep next to given player
 	void spawnSheep(int num, int sheepSpawnRadius) {
 		Location loc;
@@ -167,8 +160,19 @@ public class DiscoParty {
 
 			y = world.getHighestBlockYAt((int) x, (int) z);
 			loc = new Location(world, x, y, z);
+			//loc.setPitch((float) ((180f / Math.PI) * Math.atan((loc.getX() - player.getLocation().getX()) / (loc.getZ() - player.getLocation().getZ()))));
+			loc.setPitch((float) Math.random() * 360 - 180);
+			loc.setYaw(0);
 			spawnSheep(world, loc);
 		}
+	}
+
+	void spawnSheep(World world, Location loc) {
+		Sheep newSheep = (Sheep) world.spawnEntity(loc, EntityType.SHEEP);
+		newSheep.setColor(discoColours[(int) (Math.random() * (discoColours.length - 1))]);
+		newSheep.setBreed(false);
+		newSheep.teleport(loc); // for sheep orientation
+		getSheep().add(newSheep);
 	}
 
 	// Mark all sheep in the sheep array for removal, then clear the array
