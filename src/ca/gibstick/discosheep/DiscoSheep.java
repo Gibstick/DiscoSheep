@@ -4,10 +4,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class DiscoSheep extends JavaPlugin {
+	
+	static final String PERMISSION_PARTY = "discosheep.party";
+	static final String PERMISSION_ALL = "discosheep.partyall";
+	static final String PERMISSION_FIREWORKS = "discosheep.fireworks";
+	static final String PERMISSION_STOPALL = "discosheep.stopall";
+	static final String PERMISSION_RELOAD = "discosheep.reload";
+	static final String PERMISSION_OTHER = "discosheep.partyother";
+	static final String PERMISSION_CHANGEPERIOD = "discosheep.changeperiod";
 
 	Map<String, DiscoParty> parties = new HashMap<String, DiscoParty>();
 	private BaaBaaBlockSheepEvents blockEvents = new BaaBaaBlockSheepEvents(this);
@@ -105,5 +117,89 @@ public final class DiscoSheep extends JavaPlugin {
 		if (this.hasParty(name)) {
 			this.getPartyMap().remove(name);
 		}
+	}
+
+	/*-- Actual commands begin here --*/
+	 boolean helpCommand(CommandSender sender) {
+		sender.sendMessage(ChatColor.YELLOW + "DiscoSheep Help\n" + ChatColor.GRAY + "  Subcommands\n" + ChatColor.WHITE + "me, stop, all, stopall\n" + "You do not need permission to use the \"stop\" command\n" + "other <players>: start a party for the space-delimited list of players\n" + ChatColor.GRAY + "  Arguments\n" + ChatColor.WHITE + "-n <integer>: set the number of sheep per player that spawn\n" + "-t <integer>: set the party duration in seconds\n" + "-p <ticks>: set the number of ticks between each disco beat\n" + "-r <integer>: set radius of the area in which sheep can spawn\n" + "-fw: enables fireworks");
+		return true;
+	}
+
+	 boolean stopMeCommand(CommandSender sender, DiscoSheepCommandExecutor discoSheepCommandExecutor) {
+		stopParty(sender.getName());
+		return true;
+	}
+
+	 boolean stopAllCommand(CommandSender sender, DiscoSheepCommandExecutor discoSheepCommandExecutor) {
+		if (sender.hasPermission(DiscoSheep.PERMISSION_STOPALL)) {
+			stopAllParties();
+			return true;
+		} else {
+			return noPermsMessage(sender, DiscoSheep.PERMISSION_STOPALL);
+		}
+	}
+
+	 boolean partyCommand(Player player, DiscoParty party, DiscoSheepCommandExecutor discoSheepCommandExecutor) {
+		if (player.hasPermission(DiscoSheep.PERMISSION_PARTY)) {
+			if (!hasParty(player.getName())) {
+				party.setPlayer(player);
+				party.startDisco();
+			} else {
+				player.sendMessage(ChatColor.RED + "You already have a party. Are you underground?");
+			}
+			return true;
+		} else {
+			return noPermsMessage(player, DiscoSheep.PERMISSION_PARTY);
+		}
+	}
+
+	 boolean reloadCommand(CommandSender sender, DiscoSheepCommandExecutor discoSheepCommandExecutor) {
+		if (sender.hasPermission(DiscoSheep.PERMISSION_RELOAD)) {
+			reloadConfigFromDisk();
+			sender.sendMessage(ChatColor.GREEN + "DiscoSheep config reloaded from disk");
+			return true;
+		} else {
+			return noPermsMessage(sender, DiscoSheep.PERMISSION_RELOAD);
+		}
+	}
+
+	 boolean partyOtherCommand(String[] players, CommandSender sender, DiscoParty party, DiscoSheepCommandExecutor discoSheepCommandExecutor) {
+		if (sender.hasPermission(DiscoSheep.PERMISSION_OTHER)) {
+			Player p;
+			for (String playerName : players) {
+				p = Bukkit.getServer().getPlayer(playerName);
+				if (p != null) {
+					if (!hasParty(p.getName())) {
+						DiscoParty individualParty = party.DiscoParty(p);
+						individualParty.startDisco();
+					}
+				} else {
+					sender.sendMessage("Invalid player: " + playerName);
+				}
+			}
+			return true;
+		} else {
+			return noPermsMessage(sender, DiscoSheep.PERMISSION_OTHER);
+		}
+	}
+
+	 boolean partyAllCommand(CommandSender sender, DiscoParty party, DiscoSheepCommandExecutor discoSheepCommandExecutor) {
+		if (sender.hasPermission(DiscoSheep.PERMISSION_ALL)) {
+			for (Player p : Bukkit.getServer().getOnlinePlayers()) {
+				if (!hasParty(p.getName())) {
+					DiscoParty individualParty = party.DiscoParty(p);
+					individualParty.startDisco();
+					p.sendMessage(ChatColor.RED + "LET'S DISCO!");
+				}
+			}
+			return true;
+		} else {
+			return noPermsMessage(sender, DiscoSheep.PERMISSION_ALL);
+		}
+	}
+
+	 boolean noPermsMessage(CommandSender sender, String permission) {
+		sender.sendMessage(ChatColor.RED + "You do not have the permission node " + ChatColor.GRAY + permission);
+		return false;
 	}
 }
