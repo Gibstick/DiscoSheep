@@ -10,6 +10,7 @@ commands:
         Use /ds help for more information
         To stop your party, use /ds stop.
 permissions:
+  # If default is set to false, console will not have permission!
   discosheep.*:
     description: Permission node for all DiscoSheep commands
     default: op

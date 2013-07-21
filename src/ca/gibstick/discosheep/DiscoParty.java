@@ -39,7 +39,7 @@ public class DiscoParty {
 	static int maxPeriod = 40;	// 2.0 seconds
 	private boolean doFireworks = false;
 	private boolean doJump = true;
-	private int state = 0;
+	private int state = 0; // basically our own tick system
 	private DiscoUpdater updater;
 	private static final DyeColor[] discoColours = {
 		DyeColor.RED,
@@ -75,11 +75,7 @@ public class DiscoParty {
 	}
 
 	// copy but with new player
-	/**
-	 *
-	 * @param player The new player to be stored
-	 * @return A copy of the class with the new player
-	 */
+	// used for /ds other and /ds all
 	public DiscoParty DiscoParty(Player player) {
 		DiscoParty newParty = new DiscoParty(this.ds, player);
 		newParty.setDoFireworks(this.doFireworks);
@@ -154,15 +150,16 @@ public class DiscoParty {
 			double z = player.getLocation().getZ();
 			double y;
 
-			// random point on circle with polar coordinates
-			double r = Math.sqrt(Math.random()) * sheepSpawnRadius; // sqrt for uniform distribution
+			/* random point on circle with polar coordinates
+			 * random number must be square rooted to obtain uniform distribution
+			 * otherwise the sheep are biased toward the centre */
+			double r = Math.sqrt(Math.random()) * sheepSpawnRadius;
 			double azimuth = Math.random() * 2 * Math.PI; // radians
 			x += r * Math.cos(azimuth);
 			z += r * Math.sin(azimuth);
-
 			y = world.getHighestBlockYAt((int) x, (int) z);
+
 			loc = new Location(world, x, y, z);
-			//loc.setPitch((float) ((180f / Math.PI) * Math.atan((loc.getX() - player.getLocation().getX()) / (loc.getZ() - player.getLocation().getZ()))));
 			loc.setPitch((float) Math.random() * 360 - 180);
 			loc.setYaw(0);
 			spawnSheep(world, loc);
@@ -172,15 +169,15 @@ public class DiscoParty {
 	void spawnSheep(World world, Location loc) {
 		Sheep newSheep = (Sheep) world.spawnEntity(loc, EntityType.SHEEP);
 		newSheep.setColor(discoColours[(int) (Math.random() * (discoColours.length - 1))]);
-		newSheep.setBreed(false);
-		newSheep.teleport(loc); // for sheep orientation
+		newSheep.setBreed(false); // this prevents breeding - no event listener required
+		newSheep.teleport(loc); // teleport is needed to set orientation
 		getSheep().add(newSheep);
 	}
 
 	// Mark all sheep in the sheep array for removal, then clear the array
 	void removeAllSheep() {
 		for (Sheep sheeple : getSheep()) {
-			sheeple.setHealth(0);
+			//sheeple.setHealth(0); // removed to make it more resilient to updates
 			sheeple.remove();
 		}
 		getSheep().clear();
@@ -198,6 +195,7 @@ public class DiscoParty {
 		sheep.setVelocity(newVel);
 	}
 
+	// WHY ISN'T THERE A Color.getValue() ?!?!?!?!
 	private Color getColor(int i) {
 		Color c = null;
 		if (i == 1) {
@@ -258,7 +256,7 @@ public class DiscoParty {
 	void updateAllSheep() {
 		for (Sheep sheeple : getSheep()) {
 			randomizeSheepColour(sheeple);
-			
+
 			if (doFireworks && state % 8 == 0) {
 				if (Math.random() < 0.50) {
 					spawnRandomFireworkAtSheep(sheeple);
@@ -306,7 +304,7 @@ public class DiscoParty {
 
 		// set random effect and randomize power
 		meta.addEffect(effect.build());
-		meta.setPower(r.nextInt(2)+1);
+		meta.setPower(r.nextInt(2) + 1);
 
 		// apply it to the given firework
 		firework.setFireworkMeta(meta);
@@ -323,7 +321,11 @@ public class DiscoParty {
 			playSounds();
 			duration -= period;
 			this.scheduleUpdate();
-			this.state++;
+			if (state < 10000) {
+				this.state++;
+			} else {
+				state = 1; // prevent overflow
+			}
 		} else {
 			this.stopDisco();
 		}

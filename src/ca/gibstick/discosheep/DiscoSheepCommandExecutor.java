@@ -23,11 +23,6 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 	private static final String PERMISSION_OTHER = "discosheep.partyother";
 	private static final String PERMISSION_CHANGEPERIOD = "discosheep.changeperiod";
 
-	//private static final String DELIM = "[ ]+";
-	private boolean senderHasPerm(CommandSender sender, String permission) {
-		return sender.hasPermission(permission);
-	}
-
 	private boolean noPermsMessage(CommandSender sender, String permission) {
 		sender.sendMessage(ChatColor.RED + "You do not have the permission node " + ChatColor.GRAY + permission);
 		return false;
@@ -45,20 +40,24 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 			try {
 				return Integer.parseInt(args[i + 1]);
 			} catch (NumberFormatException e) {
-				return -1;
+				return -1; // so that it fails limit checks elsewhere
 			}
 		}
-		return -1;
+		return -1; // ibid
 	}
 
 	private Double parseNextDoubleArg(String[] args, int i) {
 		if (i < args.length - 1) {
-			return Double.parseDouble(args[i + 1]);
+			try {
+				return Double.parseDouble(args[i + 1]);
+			} catch (NumberFormatException e) {
+				return -1.0d; // so that it fais limit checks elsewhere
+			}
 		}
-		return -1.0d;
+		return -1.0d; // ibid
 	}
 
-	// extract a list of players from a list of arguments
+	// return portion of the array that contains the list of players
 	private String[] parsePlayerList(String[] args, int i) {
 		int j = i;
 		while (j < args.length && !args[j].startsWith("-")) {
@@ -71,10 +70,8 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 	private boolean helpCommand(CommandSender sender) {
 		sender.sendMessage(ChatColor.YELLOW + "DiscoSheep Help\n"
 				+ ChatColor.GRAY + "  Subcommands\n" + ChatColor.WHITE
-				+ "me: start a party for yourself\n"
-				+ "stop: stop your own party\n"
-				+ "all: start a party for all players on the server\n"
-				+ "stopall: stop all parties (takes no arguments)\n"
+				+ "me, stop, all, stopall\n"
+				+ "You do not need permission to use the \"stop\" command\n"
 				+ "other <players>: start a party for the space-delimited list of players\n"
 				+ ChatColor.GRAY + "  Arguments\n" + ChatColor.WHITE
 				+ "-n <integer>: set the number of sheep per player that spawn\n"
@@ -86,7 +83,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 	}
 
 	private boolean reloadCommand(CommandSender sender) {
-		if (senderHasPerm(sender, PERMISSION_RELOAD)) {
+		if (sender.hasPermission(PERMISSION_RELOAD)) {
 			parent.reloadConfigFromDisk();
 			sender.sendMessage(ChatColor.GREEN + "DiscoSheep config reloaded from disk");
 			return true;
@@ -96,12 +93,12 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 	}
 
 	private boolean partyCommand(Player player, DiscoParty party) {
-		if (senderHasPerm(player, PERMISSION_PARTY)) {
+		if (player.hasPermission(PERMISSION_PARTY)) {
 			if (!parent.hasParty(player.getName())) {
 				party.setPlayer(player);
 				party.startDisco();
 			} else {
-				player.sendMessage("You already have a party. Are you underground?");
+				player.sendMessage(ChatColor.RED + "You already have a party. Are you underground?");
 			}
 			return true;
 		} else {
@@ -110,7 +107,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 	}
 
 	private boolean partyAllCommand(CommandSender sender, DiscoParty party) {
-		if (senderHasPerm(sender, PERMISSION_ALL)) {
+		if (sender.hasPermission(PERMISSION_ALL)) {
 			for (Player p : Bukkit.getServer().getOnlinePlayers()) {
 				if (!parent.hasParty(p.getName())) {
 					DiscoParty individualParty = party.DiscoParty(p);
@@ -125,7 +122,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 	}
 
 	private boolean stopAllCommand(CommandSender sender) {
-		if (senderHasPerm(sender, PERMISSION_STOPALL)) {
+		if (sender.hasPermission(PERMISSION_STOPALL)) {
 			parent.stopAllParties();
 			return true;
 		} else {
@@ -139,7 +136,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 	}
 
 	private boolean partyOtherCommand(String[] players, CommandSender sender, DiscoParty party) {
-		if (senderHasPerm(sender, PERMISSION_OTHER)) {
+		if (sender.hasPermission(PERMISSION_OTHER)) {
 			Player p;
 			for (String playerName : players) {
 				p = Bukkit.getServer().getPlayer(playerName);
@@ -167,9 +164,11 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 		if (sender instanceof Player) {
 			player = (Player) sender;
 			isPlayer = true;
-		}
+		} // check isPlayer before "stop" and "me" commands
 
 		// check for commands that don't need a party
+		// so that we get them out of the way, and 
+		// prevent needless construction of parties
 		if (args.length == 1) {
 			if (args[0].equalsIgnoreCase("stopall")) {
 				return stopAllCommand(sender);
@@ -182,19 +181,20 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 			}
 		}
 
-		DiscoParty parentParty = new DiscoParty(parent);
+		// construct a main party; all other parties will copy from this
+		DiscoParty mainParty = new DiscoParty(parent);
 
+		// omg I love argument parsing and I know the best way!
 		for (int i = 1; i < args.length; i++) {
 			if (args[i].equalsIgnoreCase("-fw")) {
-				if (senderHasPerm(sender, PERMISSION_FIREWORKS)) {
-					parentParty.setDoFireworks(true);
+				if (sender.hasPermission(PERMISSION_FIREWORKS)) {
+					mainParty.setDoFireworks(true);
 				} else {
 					return noPermsMessage(sender, PERMISSION_FIREWORKS);
 				}
 			} else if (args[i].equalsIgnoreCase("-r")) {
 				try {
-					parentParty.setRadius(parseNextIntArg(args, i));
-					//sender.sendMessage("RADIUS OK");
+					mainParty.setRadius(parseNextIntArg(args, i));
 				} catch (IllegalArgumentException e) {
 					sender.sendMessage("Radius must be an integer within the range [1, "
 							+ DiscoParty.maxRadius + "]");
@@ -202,8 +202,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 				}
 			} else if (args[i].equalsIgnoreCase("-n")) {
 				try {
-					parentParty.setSheep(parseNextIntArg(args, i));
-					//sender.sendMessage("SHEEP OK");
+					mainParty.setSheep(parseNextIntArg(args, i));
 				} catch (IllegalArgumentException e) {
 					sender.sendMessage("The number of sheep must be an integer within the range [1, "
 							+ DiscoParty.maxSheep + "]");
@@ -211,20 +210,18 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 				}
 			} else if (args[i].equalsIgnoreCase("-t")) {
 				try {
-					parentParty.setDuration(parent.toTicks(parseNextIntArg(args, i)));
-					//sender.sendMessage("DURATION OK");
+					mainParty.setDuration(parent.toTicks(parseNextIntArg(args, i)));
 				} catch (IllegalArgumentException e) {
 					sender.sendMessage("The duration in seconds must be an integer within the range [1, "
 							+ parent.toSeconds(DiscoParty.maxDuration) + "]");
 					return false;
 				}
 			} else if (args[i].equalsIgnoreCase("-p")) {
-				if (!senderHasPerm(sender, PERMISSION_CHANGEPERIOD)) {
+				if (!sender.hasPermission(PERMISSION_CHANGEPERIOD)) {
 					return noPermsMessage(sender, PERMISSION_CHANGEPERIOD);
 				}
 				try {
-					parentParty.setPeriod(parseNextIntArg(args, i));
-					//sender.sendMessage("PERIOD OK");
+					mainParty.setPeriod(parseNextIntArg(args, i));
 				} catch (IllegalArgumentException e) {
 					sender.sendMessage(
 							"The period in ticks must be within the range ["
@@ -237,11 +234,11 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 
 		if (args.length > 0) {
 			if (args[0].equalsIgnoreCase("all")) {
-				return partyAllCommand(sender, parentParty);
+				return partyAllCommand(sender, mainParty);
 			} else if (args[0].equalsIgnoreCase("me") && isPlayer) {
-				return partyCommand(player, parentParty);
+				return partyCommand(player, mainParty);
 			} else if (args[0].equalsIgnoreCase("other")) {
-				return partyOtherCommand(parsePlayerList(args, 1), sender, parentParty);
+				return partyOtherCommand(parsePlayerList(args, 1), sender, mainParty);
 			} else {
 				sender.sendMessage(ChatColor.RED + "Invalid argument (certain commands do not work from console).");
 				return false;

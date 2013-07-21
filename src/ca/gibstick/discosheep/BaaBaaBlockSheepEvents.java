@@ -1,6 +1,7 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * BaaBaaBlockSheep have you any wool?
+ * Nope, event got cancelled.
+ * Also listens to other events, not just sheep events
  */
 package ca.gibstick.discosheep;
 
@@ -42,7 +43,7 @@ public class BaaBaaBlockSheepEvents implements Listener {
 			for (DiscoParty party : parent.getParties()) {
 				if (party.getSheep().contains((Sheep) e.getEntity())) {
 					{
-						party.jumpSheep((Sheep) e.getEntity());
+						party.jumpSheep((Sheep) e.getEntity()); // for kicks
 						e.setCancelled(true);
 					}
 				}
@@ -53,7 +54,7 @@ public class BaaBaaBlockSheepEvents implements Listener {
 	@EventHandler
 	public void onPlayerQuitEvent(PlayerQuitEvent e) {
 		String name = e.getPlayer().getName();
-
 		parent.stopParty(name);
+		// stop party on player quit or else it will CONTINUE FOR ETERNITY
 	}
 }
