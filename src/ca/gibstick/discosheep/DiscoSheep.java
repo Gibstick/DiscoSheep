@@ -18,7 +18,7 @@ public final class DiscoSheep extends JavaPlugin {
 	static final String PERMISSION_FIREWORKS = "discosheep.fireworks";
 	static final String PERMISSION_STOPALL = "discosheep.stopall";
 	static final String PERMISSION_RELOAD = "discosheep.reload";
-	static final String PERMISSION_OTHER = "discosheep.partyother";
+	static final String PERMISSION_OTHER = "discosheep.other";
 	static final String PERMISSION_CHANGEPERIOD = "discosheep.changeperiod";
 
 	Map<String, DiscoParty> parties = new HashMap<String, DiscoParty>();
