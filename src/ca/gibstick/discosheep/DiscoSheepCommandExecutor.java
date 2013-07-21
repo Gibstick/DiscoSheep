@@ -59,6 +59,8 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 
 		Player player = null;
 		boolean isPlayer = false;
+		boolean specialRadius = false;
+		// flag to determine if we calculate a radius so that the sheep spawn densely in an area
 
 		if (sender instanceof Player) {
 			player = (Player) sender;
@@ -89,15 +91,20 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 				if (sender.hasPermission(DiscoSheep.PERMISSION_FIREWORKS)) {
 					mainParty.setDoFireworks(true);
 				} else {
-					return parent.noPermsMessage(sender,DiscoSheep.PERMISSION_FIREWORKS);
+					return parent.noPermsMessage(sender, DiscoSheep.PERMISSION_FIREWORKS);
 				}
 			} else if (args[i].equalsIgnoreCase("-r")) {
-				try {
-					mainParty.setRadius(parseNextIntArg(args, i));
-				} catch (IllegalArgumentException e) {
-					sender.sendMessage("Radius must be an integer within the range [1, "
-							+ DiscoParty.maxRadius + "]");
-					return false;
+				if (parseNextArg(args, i, "dense")) {
+					specialRadius = true;
+				}
+				if (!specialRadius) {
+					try {
+						mainParty.setRadius(parseNextIntArg(args, i));
+					} catch (IllegalArgumentException e) {
+						sender.sendMessage("Radius must be an integer within the range [1, "
+								+ DiscoParty.maxRadius + "]");
+						return false;
+					}
 				}
 			} else if (args[i].equalsIgnoreCase("-n")) {
 				try {
@@ -129,6 +136,10 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 					return false;
 				}
 			}
+		}
+
+		if (specialRadius) {
+			mainParty.setDenseRadius(mainParty.getSheep());
 		}
 
 		if (args.length > 0) {

@@ -26,7 +26,6 @@ public class DiscoParty {
 	private DiscoSheep ds;
 	private Player player;
 	private ArrayList<Sheep> sheepList = new ArrayList<Sheep>();
-	private int duration, period, radius, sheep;
 	static int defaultDuration = 300; // ticks for entire party
 	static int defaultPeriod = 10; // ticks per state change
 	static int defaultRadius = 5;
@@ -39,6 +38,7 @@ public class DiscoParty {
 	static int maxPeriod = 40;	// 2.0 seconds
 	private boolean doFireworks = false;
 	private boolean doJump = true;
+	private int duration, period, radius, sheep;
 	private int state = 0; // basically our own tick system
 	private DiscoUpdater updater;
 	private static final DyeColor[] discoColours = {
@@ -86,8 +86,12 @@ public class DiscoParty {
 		return newParty;
 	}
 
-	List<Sheep> getSheep() {
+	List<Sheep> getSheepList() {
 		return sheepList;
+	}
+
+	public int getSheep() {
+		return this.sheep;
 	}
 
 	public DiscoParty setPlayer(Player player) {
@@ -124,6 +128,19 @@ public class DiscoParty {
 		} else {
 			throw new IllegalArgumentException();
 		}
+	}
+
+	public DiscoParty setDenseRadius(int sheepNo) throws IllegalArgumentException {
+		Integer r = (int) Math.floor(Math.sqrt(sheep / Math.PI));
+		if (r > DiscoParty.maxRadius) {
+			r = DiscoParty.maxRadius;
+		}
+		if (r < 1) {
+			r = 1;
+		}
+		
+		this.setRadius(r);
+		return this;
 	}
 
 	public DiscoParty setSheep(int sheep) throws IllegalArgumentException {
@@ -171,16 +188,16 @@ public class DiscoParty {
 		newSheep.setColor(discoColours[(int) (Math.random() * (discoColours.length - 1))]);
 		newSheep.setBreed(false); // this prevents breeding - no event listener required
 		newSheep.teleport(loc); // teleport is needed to set orientation
-		getSheep().add(newSheep);
+		getSheepList().add(newSheep);
 	}
 
 	// Mark all sheep in the sheep array for removal, then clear the array
 	void removeAllSheep() {
-		for (Sheep sheeple : getSheep()) {
+		for (Sheep sheeple : getSheepList()) {
 			//sheeple.setHealth(0); // removed to make it more resilient to updates
 			sheeple.remove();
 		}
-		getSheep().clear();
+		getSheepList().clear();
 	}
 
 	// Set a random colour for all sheep in array
@@ -254,7 +271,7 @@ public class DiscoParty {
 	}
 
 	void updateAllSheep() {
-		for (Sheep sheeple : getSheep()) {
+		for (Sheep sheeple : getSheepList()) {
 			randomizeSheepColour(sheeple);
 
 			if (doFireworks && state % 8 == 0) {

@@ -32,7 +32,7 @@ public class BaaBaaBlockSheepEvents implements Listener {
 	public void onPlayerShear(PlayerShearEntityEvent e) {
 		if (e.getEntity() instanceof Sheep) {
 			for (DiscoParty party : parent.getParties()) {
-				if (party.getSheep().contains((Sheep) e.getEntity())) {
+				if (party.getSheepList().contains((Sheep) e.getEntity())) {
 					e.setCancelled(true);
 				}
 			}
@@ -44,7 +44,7 @@ public class BaaBaaBlockSheepEvents implements Listener {
 	public void onEntityDamageEvent(EntityDamageEvent e) {
 		if (e.getEntity() instanceof Sheep) {
 			for (DiscoParty party : parent.getParties()) {
-				if (party.getSheep().contains((Sheep) e.getEntity())) {
+				if (party.getSheepList().contains((Sheep) e.getEntity())) {
 					{
 						party.jumpSheep((Sheep) e.getEntity()); // for kicks
 						e.setCancelled(true);
