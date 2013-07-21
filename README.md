@@ -6,6 +6,8 @@ A plugin for [Bukkit](http://bukkit.org/), the Minecraft server API. This is a f
 ###Versions###
 Tested up to CraftBukkit build 2815; can be built with Java 6.
 
+###[BukkitDev](http://dev.bukkit.org/bukkit-plugins/superdiscosheep/)###
+
 ###License###
 Copyright (c) 2013 "Gibstick", "RangerMauve"
 
