@@ -71,13 +71,13 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 		// prevent needless construction of parties
 		if (args.length == 1) {
 			if (args[0].equalsIgnoreCase("stopall")) {
-				return parent.stopAllCommand(sender, this);
+				return parent.stopAllCommand(sender);
 			} else if (args[0].equalsIgnoreCase("stop") && isPlayer) {
-				return parent.stopMeCommand(sender, this);
+				return parent.stopMeCommand(sender);
 			} else if (args[0].equalsIgnoreCase("help")) {
 				return parent.helpCommand(sender);
 			} else if (args[0].equalsIgnoreCase("reload")) {
-				return parent.reloadCommand(sender, this);
+				return parent.reloadCommand(sender);
 			}
 		}
 
@@ -143,11 +143,11 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 
 		if (args.length > 0) {
 			if (args[0].equalsIgnoreCase("all")) {
-				return parent.partyAllCommand(sender, mainParty, this);
+				return parent.partyAllCommand(sender, mainParty);
 			} else if (args[0].equalsIgnoreCase("me") && isPlayer) {
-				return parent.partyCommand(player, mainParty, this);
+				return parent.partyCommand(player, mainParty);
 			} else if (args[0].equalsIgnoreCase("other")) {
-				return parent.partyOtherCommand(parsePlayerList(args, 1), sender, mainParty, this);
+				return parent.partyOtherCommand(parsePlayerList(args, 1), sender, mainParty);
 			} else {
 				sender.sendMessage(ChatColor.RED + "Invalid argument (certain commands do not work from console).");
 				return false;

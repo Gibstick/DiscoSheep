@@ -125,12 +125,12 @@ public final class DiscoSheep extends JavaPlugin {
 		return true;
 	}
 
-	 boolean stopMeCommand(CommandSender sender, DiscoSheepCommandExecutor discoSheepCommandExecutor) {
+	 boolean stopMeCommand(CommandSender sender) {
 		stopParty(sender.getName());
 		return true;
 	}
 
-	 boolean stopAllCommand(CommandSender sender, DiscoSheepCommandExecutor discoSheepCommandExecutor) {
+	 boolean stopAllCommand(CommandSender sender) {
 		if (sender.hasPermission(DiscoSheep.PERMISSION_STOPALL)) {
 			stopAllParties();
 			return true;
@@ -139,7 +139,7 @@ public final class DiscoSheep extends JavaPlugin {
 		}
 	}
 
-	 boolean partyCommand(Player player, DiscoParty party, DiscoSheepCommandExecutor discoSheepCommandExecutor) {
+	 boolean partyCommand(Player player, DiscoParty party) {
 		if (player.hasPermission(DiscoSheep.PERMISSION_PARTY)) {
 			if (!hasParty(player.getName())) {
 				party.setPlayer(player);
@@ -153,7 +153,7 @@ public final class DiscoSheep extends JavaPlugin {
 		}
 	}
 
-	 boolean reloadCommand(CommandSender sender, DiscoSheepCommandExecutor discoSheepCommandExecutor) {
+	 boolean reloadCommand(CommandSender sender) {
 		if (sender.hasPermission(DiscoSheep.PERMISSION_RELOAD)) {
 			reloadConfigFromDisk();
 			sender.sendMessage(ChatColor.GREEN + "DiscoSheep config reloaded from disk");
@@ -163,7 +163,7 @@ public final class DiscoSheep extends JavaPlugin {
 		}
 	}
 
-	 boolean partyOtherCommand(String[] players, CommandSender sender, DiscoParty party, DiscoSheepCommandExecutor discoSheepCommandExecutor) {
+	 boolean partyOtherCommand(String[] players, CommandSender sender, DiscoParty party) {
 		if (sender.hasPermission(DiscoSheep.PERMISSION_OTHER)) {
 			Player p;
 			for (String playerName : players) {
@@ -183,7 +183,7 @@ public final class DiscoSheep extends JavaPlugin {
 		}
 	}
 
-	 boolean partyAllCommand(CommandSender sender, DiscoParty party, DiscoSheepCommandExecutor discoSheepCommandExecutor) {
+	 boolean partyAllCommand(CommandSender sender, DiscoParty party) {
 		if (sender.hasPermission(DiscoSheep.PERMISSION_ALL)) {
 			for (Player p : Bukkit.getServer().getOnlinePlayers()) {
 				if (!hasParty(p.getName())) {
