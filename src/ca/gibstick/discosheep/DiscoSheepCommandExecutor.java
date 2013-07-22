@@ -78,6 +78,8 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 				return parent.helpCommand(sender);
 			} else if (args[0].equalsIgnoreCase("reload")) {
 				return parent.reloadCommand(sender);
+			} else if (args[0].equalsIgnoreCase("save") || args[0].equalsIgnoreCase("saveconfig")) {
+				return parent.saveConfigCommand(sender);
 			}
 		}
 
@@ -150,8 +152,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 				return parent.partyOtherCommand(parsePlayerList(args, 1), sender, mainParty);
 			} else if (args[0].equalsIgnoreCase("defaults")) {
 				return parent.setDefaultsCommand(sender, mainParty);
-			}
-			else {
+			} else {
 				sender.sendMessage(ChatColor.RED + "Invalid argument (certain commands do not work from console).");
 				return false;
 			}

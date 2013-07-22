@@ -23,6 +23,14 @@ permissions:
       discosheep.other: true
       discosheep.changeperiod: true
       discosheep.changedefaults: true
+  discosheep.admin:
+    description: Suggested permissions for administrators
+    default: op
+    children:
+      discosheep.stopall: true
+      discosheep.reload: true
+      discosheep.changedefaults: true
+      discosheep.saveconfig: true
   discosheep.party:
     description: Allows a player to have a party of one
     default: op
@@ -49,4 +57,6 @@ permissions:
   discosheep.changedefaults:
     description: Allows a player to change the default settings
     default: op
-  
+  discosheep.saveconfig:
+    description: Allows a player to save the config with current values set in memory
+    default: op

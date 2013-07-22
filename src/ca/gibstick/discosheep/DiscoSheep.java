@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class DiscoSheep extends JavaPlugin {
-	
+
 	static final String PERMISSION_PARTY = "discosheep.party";
 	static final String PERMISSION_ALL = "discosheep.partyall";
 	static final String PERMISSION_FIREWORKS = "discosheep.fireworks";
@@ -21,7 +21,7 @@ public final class DiscoSheep extends JavaPlugin {
 	static final String PERMISSION_OTHER = "discosheep.other";
 	static final String PERMISSION_CHANGEPERIOD = "discosheep.changeperiod";
 	static final String PERMISSION_CHANGEDEFAULTS = "discosheep.changedefaults";
-
+	static final String PERMISSION_SAVECONFIG = "discosheep.saveconfig";
 	Map<String, DiscoParty> parties = new HashMap<String, DiscoParty>();
 	private BaaBaaBlockSheepEvents blockEvents = new BaaBaaBlockSheepEvents(this);
 	FileConfiguration config;
@@ -66,6 +66,18 @@ public final class DiscoSheep extends JavaPlugin {
 	void reloadConfigFromDisk() {
 		reloadConfig();
 		loadConfigFromDisk();
+	}
+
+	void saveConfigToDisk() {
+		if (config == null) {
+			config = getConfig();
+		}
+
+		config.set("default.sheep", DiscoParty.defaultSheep);
+		config.set("default.radius", DiscoParty.defaultRadius);
+		config.set("default.duration", toSeconds_i(DiscoParty.defaultDuration));
+		config.set("default.period-ticks", DiscoParty.defaultPeriod);
+		saveConfig();
 	}
 
 	@Override
@@ -121,17 +133,17 @@ public final class DiscoSheep extends JavaPlugin {
 	}
 
 	/*-- Actual commands begin here --*/
-	 boolean helpCommand(CommandSender sender) {
+	boolean helpCommand(CommandSender sender) {
 		sender.sendMessage(ChatColor.YELLOW + "DiscoSheep Help\n" + ChatColor.GRAY + "  Subcommands\n" + ChatColor.WHITE + "me, stop, all, stopall\n" + "You do not need permission to use the \"stop\" command\n" + "other <players>: start a party for the space-delimited list of players\n" + ChatColor.GRAY + "  Arguments\n" + ChatColor.WHITE + "-n <integer>: set the number of sheep per player that spawn\n" + "-t <integer>: set the party duration in seconds\n" + "-p <ticks>: set the number of ticks between each disco beat\n" + "-r <integer>: set radius of the area in which sheep can spawn\n" + "-fw: enables fireworks");
 		return true;
 	}
 
-	 boolean stopMeCommand(CommandSender sender) {
+	boolean stopMeCommand(CommandSender sender) {
 		stopParty(sender.getName());
 		return true;
 	}
 
-	 boolean stopAllCommand(CommandSender sender) {
+	boolean stopAllCommand(CommandSender sender) {
 		if (sender.hasPermission(PERMISSION_STOPALL)) {
 			stopAllParties();
 			return true;
@@ -140,7 +152,7 @@ public final class DiscoSheep extends JavaPlugin {
 		}
 	}
 
-	 boolean partyCommand(Player player, DiscoParty party) {
+	boolean partyCommand(Player player, DiscoParty party) {
 		if (player.hasPermission(PERMISSION_PARTY)) {
 			if (!hasParty(player.getName())) {
 				party.setPlayer(player);
@@ -154,7 +166,7 @@ public final class DiscoSheep extends JavaPlugin {
 		}
 	}
 
-	 boolean reloadCommand(CommandSender sender) {
+	boolean reloadCommand(CommandSender sender) {
 		if (sender.hasPermission(PERMISSION_RELOAD)) {
 			reloadConfigFromDisk();
 			sender.sendMessage(ChatColor.GREEN + "DiscoSheep config reloaded from disk");
@@ -164,7 +176,7 @@ public final class DiscoSheep extends JavaPlugin {
 		}
 	}
 
-	 boolean partyOtherCommand(String[] players, CommandSender sender, DiscoParty party) {
+	boolean partyOtherCommand(String[] players, CommandSender sender, DiscoParty party) {
 		if (sender.hasPermission(PERMISSION_OTHER)) {
 			Player p;
 			for (String playerName : players) {
@@ -184,7 +196,7 @@ public final class DiscoSheep extends JavaPlugin {
 		}
 	}
 
-	 boolean partyAllCommand(CommandSender sender, DiscoParty party) {
+	boolean partyAllCommand(CommandSender sender, DiscoParty party) {
 		if (sender.hasPermission(PERMISSION_ALL)) {
 			for (Player p : Bukkit.getServer().getOnlinePlayers()) {
 				if (!hasParty(p.getName())) {
@@ -198,16 +210,27 @@ public final class DiscoSheep extends JavaPlugin {
 			return noPermsMessage(sender, PERMISSION_ALL);
 		}
 	}
-	 
-	 boolean setDefaultsCommand(CommandSender sender, DiscoParty party) {
-		 if (sender.hasPermission(PERMISSION_CHANGEDEFAULTS)) {
-			 party.setDefaultsFromCurrent();
-			 return true;
-		 }
-		 else return noPermsMessage(sender, PERMISSION_CHANGEDEFAULTS);
-	 }
 
-	 boolean noPermsMessage(CommandSender sender, String permission) {
+	boolean setDefaultsCommand(CommandSender sender, DiscoParty party) {
+		if (sender.hasPermission(PERMISSION_CHANGEDEFAULTS)) {
+			party.setDefaultsFromCurrent();
+			return true;
+		} else {
+			return noPermsMessage(sender, PERMISSION_CHANGEDEFAULTS);
+		}
+	}
+
+	boolean saveConfigCommand(CommandSender sender) {
+		if (sender.hasPermission(PERMISSION_SAVECONFIG)) {
+			saveConfigToDisk();
+			return true;
+		} else {
+			return noPermsMessage(sender, PERMISSION_SAVECONFIG);
+		}
+
+	}
+
+	boolean noPermsMessage(CommandSender sender, String permission) {
 		sender.sendMessage(ChatColor.RED + "You do not have the permission node " + ChatColor.GRAY + permission);
 		return false;
 	}
