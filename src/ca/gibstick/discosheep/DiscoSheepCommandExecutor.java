@@ -148,7 +148,10 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 				return parent.partyCommand(player, mainParty);
 			} else if (args[0].equalsIgnoreCase("other")) {
 				return parent.partyOtherCommand(parsePlayerList(args, 1), sender, mainParty);
-			} else {
+			} else if (args[0].equalsIgnoreCase("defaults")) {
+				return parent.setDefaultsCommand(sender, mainParty);
+			}
+			else {
 				sender.sendMessage(ChatColor.RED + "Invalid argument (certain commands do not work from console).");
 				return false;
 			}

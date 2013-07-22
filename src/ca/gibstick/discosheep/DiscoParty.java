@@ -156,6 +156,15 @@ public class DiscoParty {
 		this.doFireworks = doFireworks;
 		return this;
 	}
+	
+	// use current settings as new defaults
+	public DiscoParty setDefaultsFromCurrent() {
+		DiscoParty.defaultDuration = this.duration;
+		DiscoParty.defaultPeriod = this.period;
+		DiscoParty.defaultRadius = this.radius;
+		DiscoParty.defaultSheep = this.sheep;
+		return this;
+	}
 
 	// Spawn some number of sheep next to given player
 	void spawnSheep(int num, int sheepSpawnRadius) {

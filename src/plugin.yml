@@ -22,6 +22,7 @@ permissions:
       discosheep.reload: true
       discosheep.other: true
       discosheep.changeperiod: true
+      discosheep.changedefaults: true
   discosheep.party:
     description: Allows a player to have a party of one
     default: op
@@ -45,3 +46,7 @@ permissions:
   discosheep.changeperiod:
     description: Allows a player to use the -p switch
     default: op
+  discosheep.changedefaults:
+    description: Allows a player to change the default settings
+    default: op
+  

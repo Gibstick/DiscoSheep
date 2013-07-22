@@ -20,6 +20,7 @@ public final class DiscoSheep extends JavaPlugin {
 	static final String PERMISSION_RELOAD = "discosheep.reload";
 	static final String PERMISSION_OTHER = "discosheep.other";
 	static final String PERMISSION_CHANGEPERIOD = "discosheep.changeperiod";
+	static final String PERMISSION_CHANGEDEFAULTS = "discosheep.changedefaults";
 
 	Map<String, DiscoParty> parties = new HashMap<String, DiscoParty>();
 	private BaaBaaBlockSheepEvents blockEvents = new BaaBaaBlockSheepEvents(this);
@@ -131,16 +132,16 @@ public final class DiscoSheep extends JavaPlugin {
 	}
 
 	 boolean stopAllCommand(CommandSender sender) {
-		if (sender.hasPermission(DiscoSheep.PERMISSION_STOPALL)) {
+		if (sender.hasPermission(PERMISSION_STOPALL)) {
 			stopAllParties();
 			return true;
 		} else {
-			return noPermsMessage(sender, DiscoSheep.PERMISSION_STOPALL);
+			return noPermsMessage(sender, PERMISSION_STOPALL);
 		}
 	}
 
 	 boolean partyCommand(Player player, DiscoParty party) {
-		if (player.hasPermission(DiscoSheep.PERMISSION_PARTY)) {
+		if (player.hasPermission(PERMISSION_PARTY)) {
 			if (!hasParty(player.getName())) {
 				party.setPlayer(player);
 				party.startDisco();
@@ -149,22 +150,22 @@ public final class DiscoSheep extends JavaPlugin {
 			}
 			return true;
 		} else {
-			return noPermsMessage(player, DiscoSheep.PERMISSION_PARTY);
+			return noPermsMessage(player, PERMISSION_PARTY);
 		}
 	}
 
 	 boolean reloadCommand(CommandSender sender) {
-		if (sender.hasPermission(DiscoSheep.PERMISSION_RELOAD)) {
+		if (sender.hasPermission(PERMISSION_RELOAD)) {
 			reloadConfigFromDisk();
 			sender.sendMessage(ChatColor.GREEN + "DiscoSheep config reloaded from disk");
 			return true;
 		} else {
-			return noPermsMessage(sender, DiscoSheep.PERMISSION_RELOAD);
+			return noPermsMessage(sender, PERMISSION_RELOAD);
 		}
 	}
 
 	 boolean partyOtherCommand(String[] players, CommandSender sender, DiscoParty party) {
-		if (sender.hasPermission(DiscoSheep.PERMISSION_OTHER)) {
+		if (sender.hasPermission(PERMISSION_OTHER)) {
 			Player p;
 			for (String playerName : players) {
 				p = Bukkit.getServer().getPlayer(playerName);
@@ -179,12 +180,12 @@ public final class DiscoSheep extends JavaPlugin {
 			}
 			return true;
 		} else {
-			return noPermsMessage(sender, DiscoSheep.PERMISSION_OTHER);
+			return noPermsMessage(sender, PERMISSION_OTHER);
 		}
 	}
 
 	 boolean partyAllCommand(CommandSender sender, DiscoParty party) {
-		if (sender.hasPermission(DiscoSheep.PERMISSION_ALL)) {
+		if (sender.hasPermission(PERMISSION_ALL)) {
 			for (Player p : Bukkit.getServer().getOnlinePlayers()) {
 				if (!hasParty(p.getName())) {
 					DiscoParty individualParty = party.DiscoParty(p);
@@ -194,9 +195,17 @@ public final class DiscoSheep extends JavaPlugin {
 			}
 			return true;
 		} else {
-			return noPermsMessage(sender, DiscoSheep.PERMISSION_ALL);
+			return noPermsMessage(sender, PERMISSION_ALL);
 		}
 	}
+	 
+	 boolean setDefaultsCommand(CommandSender sender, DiscoParty party) {
+		 if (sender.hasPermission(PERMISSION_CHANGEDEFAULTS)) {
+			 party.setDefaultsFromCurrent();
+			 return true;
+		 }
+		 else return noPermsMessage(sender, PERMISSION_CHANGEDEFAULTS);
+	 }
 
 	 boolean noPermsMessage(CommandSender sender, String permission) {
 		sender.sendMessage(ChatColor.RED + "You do not have the permission node " + ChatColor.GRAY + permission);
