@@ -5,10 +5,13 @@
  */
 package ca.gibstick.discosheep;
 
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 
@@ -39,7 +42,7 @@ public class BaaBaaBlockSheepEvents implements Listener {
 
 	// actually make sheep invincible
 	@EventHandler
-	public void onEntityDamageEvent(EntityDamageEvent e) {
+	public void onLivingEntityDamageEvent(EntityDamageEvent e) {
 		if (e.getEntity() instanceof Sheep) {
 			for (DiscoParty party : parent.getParties()) {
 				if (party.getSheepList().contains((Sheep) e.getEntity())) {
@@ -50,6 +53,22 @@ public class BaaBaaBlockSheepEvents implements Listener {
 				}
 			}
 		}
+		for (DiscoParty party : parent.getParties()) {
+			if (party.getGuestList().contains(e.getEntity())) {
+				e.setCancelled(true);
+			}
+		}
+
+	}
+
+	// prevent uninvited guests from targetting players
+	@EventHandler
+	public void onEntityTargetLivingEntityEvent(EntityTargetEvent e) {
+		for (DiscoParty party : parent.getParties()) {
+			if (party.getGuestList().contains(e.getEntity())) { // safe; event is only triggered by LivingEntity targetting LivingEntity
+				e.setCancelled(true);
+			}
+		}
 	}
 
 	@EventHandler
@@ -57,5 +76,12 @@ public class BaaBaaBlockSheepEvents implements Listener {
 		String name = e.getPlayer().getName();
 		parent.stopParty(name);
 		// stop party on player quit or else it will CONTINUE FOR ETERNITY
+	}
+
+	@EventHandler
+	public void onPlayerJoinEvent(PlayerJoinEvent e) {
+		Player player = e.getPlayer();
+		DiscoParty party = new DiscoParty(parent, player);
+		parent.partyOnJoin(player);
 	}
 }

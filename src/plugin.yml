@@ -60,3 +60,6 @@ permissions:
   discosheep.saveconfig:
     description: Allows a player to save the config with current values set in memory
     default: op
+  discosheep.partyonjoin:
+    description: Gives a player a disco party on join
+    default: false

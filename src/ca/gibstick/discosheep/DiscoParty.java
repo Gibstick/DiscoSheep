@@ -1,8 +1,10 @@
 package ca.gibstick.discosheep;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
+import java.util.logging.Level;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -14,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Builder;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.util.Vector;
 
@@ -26,16 +29,20 @@ public class DiscoParty {
 	private DiscoSheep ds;
 	private Player player;
 	private ArrayList<Sheep> sheepList = new ArrayList<Sheep>();
+	private ArrayList<LivingEntity> guestList = new ArrayList<LivingEntity>();
 	static int defaultDuration = 300; // ticks for entire party
 	static int defaultPeriod = 10; // ticks per state change
 	static int defaultRadius = 5;
 	static int defaultSheep = 10;
+	static int defaultCreepers = 1;
 	static float defaultSheepJump = 0.35f;
 	static int maxDuration = 2400; // 120 seconds
 	static int maxSheep = 100;
 	static int maxRadius = 100;
 	static int minPeriod = 5;	// 0.25 seconds
 	static int maxPeriod = 40;	// 2.0 seconds
+	static int maxCreepers = 5;
+	private HashMap<String, Integer> guestNumbers = new HashMap<String, Integer>();
 	private boolean doFireworks = false;
 	private boolean doJump = true;
 	private int duration, period, radius, sheep;
@@ -78,16 +85,20 @@ public class DiscoParty {
 	// used for /ds other and /ds all
 	public DiscoParty DiscoParty(Player player) {
 		DiscoParty newParty = new DiscoParty(this.ds, player);
-		newParty.setDoFireworks(this.doFireworks);
-		newParty.setDuration(this.duration);
-		newParty.setPeriod(this.period);
-		newParty.setRadius(this.radius);
-		newParty.setSheep(this.sheep);
+		newParty.doFireworks = this.doFireworks;
+		newParty.duration = this.duration;
+		newParty.period = this.period;
+		newParty.radius = this.radius;
+		newParty.sheep = this.sheep;
 		return newParty;
 	}
 
-	List<Sheep> getSheepList() {
+	ArrayList<Sheep> getSheepList() {
 		return sheepList;
+	}
+
+	ArrayList<LivingEntity> getGuestList() {
+		return guestList;
 	}
 
 	public int getSheep() {
@@ -138,7 +149,7 @@ public class DiscoParty {
 		if (r < 1) {
 			r = 1;
 		}
-		
+
 		this.setRadius(r);
 		return this;
 	}
@@ -156,7 +167,7 @@ public class DiscoParty {
 		this.doFireworks = doFireworks;
 		return this;
 	}
-	
+
 	// use current settings as new defaults
 	public DiscoParty setDefaultsFromCurrent() {
 		DiscoParty.defaultDuration = this.duration;
@@ -166,29 +177,50 @@ public class DiscoParty {
 		return this;
 	}
 
-	// Spawn some number of sheep next to given player
-	void spawnSheep(int num, int sheepSpawnRadius) {
+	Location getRandomSpawnLocation(double x, double z, World world, int spawnRadius) {
+		Location loc;
+
+		double y;
+
+
+		/* random point on circle with polar coordinates
+		 * random number must be square rooted to obtain uniform distribution
+		 * otherwise the sheep are biased toward the centre */
+		double r = Math.sqrt(Math.random()) * spawnRadius;
+		double azimuth = Math.random() * 2 * Math.PI; // radians
+		x += r * Math.cos(azimuth);
+		z += r * Math.sin(azimuth);
+		y = world.getHighestBlockYAt((int) x, (int) z);
+
+		loc = new Location(world, x, y, z);
+		loc.setPitch((float) Math.random() * 360 - 180);
+		loc.setYaw(0);
+
+		return loc;
+	}
+
+	// Spawn some number of guests next to given player
+	void spawnAll(int sheep, int spawnRadius) {
 		Location loc;
 		World world = player.getWorld();
 
-		for (int i = 0; i < num; i++) {
-			double x = player.getLocation().getX();
-			double z = player.getLocation().getZ();
-			double y;
 
-			/* random point on circle with polar coordinates
-			 * random number must be square rooted to obtain uniform distribution
-			 * otherwise the sheep are biased toward the centre */
-			double r = Math.sqrt(Math.random()) * sheepSpawnRadius;
-			double azimuth = Math.random() * 2 * Math.PI; // radians
-			x += r * Math.cos(azimuth);
-			z += r * Math.sin(azimuth);
-			y = world.getHighestBlockYAt((int) x, (int) z);
-
-			loc = new Location(world, x, y, z);
-			loc.setPitch((float) Math.random() * 360 - 180);
-			loc.setYaw(0);
+		double x = player.getLocation().getX();
+		double z = player.getLocation().getZ();
+		for (int i = 0; i < sheep; i++) {
+			loc = getRandomSpawnLocation(x, z, world, spawnRadius);
 			spawnSheep(world, loc);
+		}
+
+		// loop through hashmap of other guests and spawn accordingly
+		for (Map.Entry entry : guestNumbers.entrySet()) {
+			EntityType ent = EntityType.fromName((String) entry.getKey());
+			int num = (Integer) entry.getValue();
+
+			for (int i = 0; i < num; i++) {
+				loc = getRandomSpawnLocation(x, z, world, spawnRadius);
+				spawnGuest(world, loc, ent);
+			}
 		}
 	}
 
@@ -200,13 +232,22 @@ public class DiscoParty {
 		getSheepList().add(newSheep);
 	}
 
-	// Mark all sheep in the sheep array for removal, then clear the array
-	void removeAllSheep() {
+	void spawnGuest(World world, Location loc, EntityType type) {
+		LivingEntity newGuest = (LivingEntity) world.spawnEntity(loc, type);
+		getGuestList().add(newGuest);
+		ds.getLogger().log(Level.INFO, "SPAWNING GUEST");
+	}
+
+	// Mark all guests for removal, then clear the array
+	void removeAllGuests() {
 		for (Sheep sheeple : getSheepList()) {
-			//sheeple.setHealth(0); // removed to make it more resilient to updates
 			sheeple.remove();
 		}
+		for (LivingEntity guest : getGuestList()) {
+			guest.remove();
+		}
 		getSheepList().clear();
+		getGuestList().clear();
 	}
 
 	// Set a random colour for all sheep in array
@@ -362,11 +403,12 @@ public class DiscoParty {
 		updater.runTaskLater(ds, this.period);
 	}
 
+	@Deprecated
 	void startDisco(int duration, int sheepAmount, int radius, int period, boolean fireworks) {
 		if (this.duration > 0) {
 			stopDisco();
 		}
-		this.spawnSheep(sheepAmount, radius);
+		this.spawnAll(sheepAmount, radius);
 		this.doFireworks = fireworks;
 		this.period = period;
 		this.duration = duration;
@@ -375,13 +417,14 @@ public class DiscoParty {
 	}
 
 	void startDisco() {
-		this.spawnSheep(sheep, radius);
+		this.guestNumbers.put("CREEPER", 5);
+		this.spawnAll(sheep, radius);
 		this.scheduleUpdate();
 		ds.getPartyMap().put(this.player.getName(), this);
 	}
 
 	void stopDisco() {
-		removeAllSheep();
+		removeAllGuests();
 		this.duration = 0;
 		if (updater != null) {
 			updater.cancel();

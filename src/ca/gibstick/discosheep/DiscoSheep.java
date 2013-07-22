@@ -2,7 +2,6 @@ package ca.gibstick.discosheep;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -22,6 +21,7 @@ public final class DiscoSheep extends JavaPlugin {
 	static final String PERMISSION_CHANGEPERIOD = "discosheep.changeperiod";
 	static final String PERMISSION_CHANGEDEFAULTS = "discosheep.changedefaults";
 	static final String PERMISSION_SAVECONFIG = "discosheep.saveconfig";
+	static final String PERMISSION_ONJOIN = "discosheep.onjoin";
 	Map<String, DiscoParty> parties = new HashMap<String, DiscoParty>();
 	private BaaBaaBlockSheepEvents blockEvents = new BaaBaaBlockSheepEvents(this);
 	FileConfiguration config;
@@ -102,9 +102,10 @@ public final class DiscoSheep extends JavaPlugin {
 		return this.parties;
 	}
 
-	public synchronized List<DiscoParty> getParties() {
+	public synchronized ArrayList<DiscoParty> getParties() {
 		return new ArrayList(this.getPartyMap().values());
 	}
+
 
 	public void stopParty(String name) {
 		if (this.hasParty(name)) {
@@ -208,6 +209,13 @@ public final class DiscoSheep extends JavaPlugin {
 			return true;
 		} else {
 			return noPermsMessage(sender, PERMISSION_ALL);
+		}
+	}
+
+	void partyOnJoin(Player player) {
+		if (player.hasPermission(PERMISSION_ONJOIN)) {
+			DiscoParty party = new DiscoParty(this, player);
+			party.startDisco();
 		}
 	}
 
