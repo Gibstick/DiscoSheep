@@ -40,7 +40,7 @@ public class BaaBaaBlockSheepEvents implements Listener {
 		}
 	}
 
-	// actually make sheep invincible
+	// actually make sheep and other guests invincible
 	@EventHandler
 	public void onLivingEntityDamageEvent(EntityDamageEvent e) {
 		if (e.getEntity() instanceof Sheep) {
@@ -53,6 +53,7 @@ public class BaaBaaBlockSheepEvents implements Listener {
 				}
 			}
 		}
+
 		for (DiscoParty party : parent.getParties()) {
 			if (party.getGuestList().contains(e.getEntity())) {
 				e.setCancelled(true);

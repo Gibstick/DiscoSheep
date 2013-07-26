@@ -34,15 +34,14 @@ public class DiscoParty {
 	static int defaultPeriod = 10; // ticks per state change
 	static int defaultRadius = 5;
 	static int defaultSheep = 10;
-	static int defaultCreepers = 1;
 	static float defaultSheepJump = 0.35f;
 	static int maxDuration = 2400; // 120 seconds
 	static int maxSheep = 100;
 	static int maxRadius = 100;
 	static int minPeriod = 5;	// 0.25 seconds
 	static int maxPeriod = 40;	// 2.0 seconds
-	static int maxCreepers = 5;
 	private HashMap<String, Integer> guestNumbers = new HashMap<String, Integer>();
+	static HashMap<String, Integer> defaultGuestNumbers = new HashMap<String, Integer>();
 	private boolean doFireworks = false;
 	private boolean doJump = true;
 	private int duration, period, radius, sheep;
@@ -71,6 +70,8 @@ public class DiscoParty {
 		this.period = DiscoParty.defaultPeriod;
 		this.radius = DiscoParty.defaultRadius;
 		this.sheep = DiscoParty.defaultSheep;
+
+		this.guestNumbers = DiscoParty.getDefaultGuestNumbers();
 	}
 
 	public DiscoParty(DiscoSheep parent) {
@@ -79,6 +80,7 @@ public class DiscoParty {
 		this.period = DiscoParty.defaultPeriod;
 		this.radius = DiscoParty.defaultRadius;
 		this.sheep = DiscoParty.defaultSheep;
+		this.guestNumbers = DiscoParty.getDefaultGuestNumbers();
 	}
 
 	// copy but with new player
@@ -99,6 +101,10 @@ public class DiscoParty {
 
 	ArrayList<LivingEntity> getGuestList() {
 		return guestList;
+	}
+
+	public static HashMap<String, Integer> getDefaultGuestNumbers() {
+		return defaultGuestNumbers;
 	}
 
 	public int getSheep() {
@@ -227,8 +233,8 @@ public class DiscoParty {
 	void spawnSheep(World world, Location loc) {
 		Sheep newSheep = (Sheep) world.spawnEntity(loc, EntityType.SHEEP);
 		newSheep.setColor(discoColours[(int) (Math.random() * (discoColours.length - 1))]);
-		newSheep.setBreed(false); // this prevents breeding - no event listener required
-		newSheep.teleport(loc); // teleport is needed to set orientation
+		newSheep.setBreed(false);	// this prevents breeding - no event listener required
+		newSheep.teleport(loc);	// teleport is needed to set orientation
 		getSheepList().add(newSheep);
 	}
 
@@ -239,7 +245,7 @@ public class DiscoParty {
 	}
 
 	// Mark all guests for removal, then clear the array
-	void removeAllGuests() {
+	void removeAll() {
 		for (Sheep sheeple : getSheepList()) {
 			sheeple.remove();
 		}
@@ -417,14 +423,13 @@ public class DiscoParty {
 	}
 
 	void startDisco() {
-		this.guestNumbers.put("CREEPER", 5);
 		this.spawnAll(sheep, radius);
 		this.scheduleUpdate();
 		ds.getPartyMap().put(this.player.getName(), this);
 	}
 
 	void stopDisco() {
-		removeAllGuests();
+		removeAll();
 		this.duration = 0;
 		if (updater != null) {
 			updater.cancel();
