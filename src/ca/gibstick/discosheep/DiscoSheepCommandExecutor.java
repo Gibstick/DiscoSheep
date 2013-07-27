@@ -22,7 +22,15 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 		return false;
 	}
 
-	private int parseNextIntArg(String[] args, int i) {
+	private String getNextArg(String[] args, int i) {
+		if (i < args.length - 1) {
+			return args[i + 1];
+		} else {
+			return null;
+		}
+	}
+
+	private int getNextIntArg(String[] args, int i) {
 		if (i < args.length - 1) {
 			try {
 				return Integer.parseInt(args[i + 1]);
@@ -33,7 +41,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 		return -1; // ibid
 	}
 
-	private Double parseNextDoubleArg(String[] args, int i) {
+	private Double getNextDoubleArg(String[] args, int i) {
 		if (i < args.length - 1) {
 			try {
 				return Double.parseDouble(args[i + 1]);
@@ -44,8 +52,9 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 		return -1.0d; // ibid
 	}
 
-	// return portion of the array that contains the list of players
-	private String[] parsePlayerList(String[] args, int i) {
+	// return portion of the array that contains space-separated args,
+	// stopping at the end of the array or the next -switch
+	private String[] getNextArgs(String[] args, int i) {
 		int j = i;
 		while (j < args.length && !args[j].startsWith("-")) {
 			j++;
@@ -100,7 +109,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 				}
 				if (!specialRadius) {
 					try {
-						mainParty.setRadius(parseNextIntArg(args, i));
+						mainParty.setRadius(getNextIntArg(args, i));
 					} catch (IllegalArgumentException e) {
 						sender.sendMessage("Radius must be an integer within the range [1, "
 								+ DiscoParty.maxRadius + "]");
@@ -109,7 +118,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 				}
 			} else if (args[i].equalsIgnoreCase("-n")) {
 				try {
-					mainParty.setSheep(parseNextIntArg(args, i));
+					mainParty.setSheep(getNextIntArg(args, i));
 				} catch (IllegalArgumentException e) {
 					sender.sendMessage("The number of sheep must be an integer within the range [1, "
 							+ DiscoParty.maxSheep + "]");
@@ -117,7 +126,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 				}
 			} else if (args[i].equalsIgnoreCase("-t")) {
 				try {
-					mainParty.setDuration(parent.toTicks(parseNextIntArg(args, i)));
+					mainParty.setDuration(parent.toTicks(getNextIntArg(args, i)));
 				} catch (IllegalArgumentException e) {
 					sender.sendMessage("The duration in seconds must be an integer within the range [1, "
 							+ parent.toSeconds(DiscoParty.maxDuration) + "]");
@@ -128,13 +137,28 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 					return parent.noPermsMessage(sender, DiscoSheep.PERMISSION_CHANGEPERIOD);
 				}
 				try {
-					mainParty.setPeriod(parseNextIntArg(args, i));
+					mainParty.setPeriod(getNextIntArg(args, i));
 				} catch (IllegalArgumentException e) {
 					sender.sendMessage(
 							"The period in ticks must be within the range ["
 							+ DiscoParty.minPeriod + ", "
 							+ DiscoParty.maxPeriod + "]");
 					return false;
+				}
+			} else if (args[i].equalsIgnoreCase("-g")) {
+				if (!sender.hasPermission(DiscoSheep.PERMISSION_SPAWNGUESTS)) {
+					return parent.noPermsMessage(sender, DiscoSheep.PERMISSION_SPAWNGUESTS);
+				}
+				String[] guests = getNextArgs(args, i + 1);
+				int j = 0;
+				while (j < guests.length) {
+					try {
+						mainParty.setGuestNumber(guests[j], getNextIntArg(guests, j));
+					} catch (IllegalArgumentException e) {
+						sender.sendMessage("Invalid arguments: " + guests[j] + ", " + guests[j + 1]
+								+ ".\nEither a name typo or a number that is not within limits.");
+					}
+					j += 2; // skip over two arguments, since they come in pairs of entity-number
 				}
 			}
 		}
@@ -149,7 +173,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 			} else if (args[0].equalsIgnoreCase("me") && isPlayer) {
 				return parent.partyCommand(player, mainParty);
 			} else if (args[0].equalsIgnoreCase("other")) {
-				return parent.partyOtherCommand(parsePlayerList(args, 1), sender, mainParty);
+				return parent.partyOtherCommand(getNextArgs(args, 1), sender, mainParty);
 			} else if (args[0].equalsIgnoreCase("defaults")) {
 				return parent.setDefaultsCommand(sender, mainParty);
 			} else {

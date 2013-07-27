@@ -26,41 +26,43 @@ public final class DiscoSheep extends JavaPlugin {
 	static final String PERMISSION_SPAWNGUESTS = "discosheep.spawnguests";
 	Map<String, DiscoParty> parties = new HashMap<String, DiscoParty>();
 	private BaaBaaBlockSheepEvents blockEvents = new BaaBaaBlockSheepEvents(this);
-	FileConfiguration config;
 
 	@Override
 	public void onEnable() {
 		getCommand("ds").setExecutor(new DiscoSheepCommandExecutor(this));
 		getServer().getPluginManager().registerEvents(blockEvents, this);
 
-		if (config == null) {
-			config = this.getConfig();
-		}
+		getConfig().addDefault("max.sheep", DiscoParty.maxSheep);
+		getConfig().addDefault("max.radius", DiscoParty.maxRadius);
+		getConfig().addDefault("max.duration", toSeconds_i(DiscoParty.maxDuration));
+		getConfig().addDefault("max.period-ticks", DiscoParty.maxPeriod);
+		getConfig().addDefault("min.period-ticks", DiscoParty.minPeriod);
+		getConfig().addDefault("default.sheep", DiscoParty.defaultSheep);
+		getConfig().addDefault("default.radius", DiscoParty.defaultRadius);
+		getConfig().addDefault("default.duration", toSeconds_i(DiscoParty.defaultDuration));
+		getConfig().addDefault("default.period-ticks", DiscoParty.defaultPeriod);
 
-		config.addDefault("max.sheep", DiscoParty.maxSheep);
-		config.addDefault("max.radius", DiscoParty.maxRadius);
-		config.addDefault("max.duration", toSeconds_i(DiscoParty.maxDuration));
-		config.addDefault("max.period-ticks", DiscoParty.maxPeriod);
-		config.addDefault("min.period-ticks", DiscoParty.minPeriod);
-		config.addDefault("default.sheep", DiscoParty.defaultSheep);
-		config.addDefault("default.radius", DiscoParty.defaultRadius);
-		config.addDefault("default.duration", toSeconds_i(DiscoParty.defaultDuration));
-		config.addDefault("default.period-ticks", DiscoParty.defaultPeriod);
-
-		Map<String, Integer> defaultGuests = new HashMap<String, Integer>();
+		Map<String, Integer> tempMap = new HashMap<String, Integer>(); // temporary map to store guest config values
 
 
 		// create a default hashmap of <EntityType, 0> for all living entities
 		// this creates a default config entry with all living entites present
-		// except for bosses (they throw NPE for some reason)
+		// except for bosses, pigzombie (NPE for some reason)
 		for (EntityType ent : EntityType.values()) {
-			if (ent.isAlive() && !ent.equals(EntityType.ENDER_DRAGON) && !ent.equals(EntityType.WITHER)) {
-				defaultGuests.put(ent.toString(), 0);
+			if (ent.isAlive() && !ent.equals(EntityType.ENDER_DRAGON) && !ent.equals(EntityType.WITHER)
+					&& !ent.equals(EntityType.PIG_ZOMBIE)) {
+				tempMap.put(ent.toString(), 0);
 			}
 		}
 
-		for (Map.Entry<String, Integer> entry : defaultGuests.entrySet()) {
-			config.addDefault("default.guests." + entry.getKey(), entry.getValue());
+		for (Map.Entry<String, Integer> entry : tempMap.entrySet()) {
+			getConfig().addDefault("default.guests." + entry.getKey(), entry.getValue());
+		}
+
+		// same thing, but for limits (no default limits)
+
+		for (Map.Entry<String, Integer> entry : tempMap.entrySet()) {
+			getConfig().addDefault("max.guests." + entry.getKey(), entry.getValue());
 		}
 
 		loadConfigFromDisk();
@@ -84,6 +86,10 @@ public final class DiscoSheep extends JavaPlugin {
 			DiscoParty.getDefaultGuestNumbers().put(key, getConfig().getInt("default.guests." + key));
 		}
 
+		for (String key : getConfig().getConfigurationSection("max.guests").getKeys(false)) {
+			DiscoParty.getMaxGuestNumbers().put(key, getConfig().getInt("max.guests." + key));
+		}
+
 	}
 
 	void reloadConfigFromDisk() {
@@ -92,25 +98,21 @@ public final class DiscoSheep extends JavaPlugin {
 	}
 
 	void saveConfigToDisk() {
-		if (config == null) {
-			config = getConfig();
-		}
-
-		config.set("default.sheep", DiscoParty.defaultSheep);
-		config.set("default.radius", DiscoParty.defaultRadius);
-		config.set("default.duration", toSeconds_i(DiscoParty.defaultDuration));
-		config.set("default.period-ticks", DiscoParty.defaultPeriod);
+		getConfig().set("default.sheep", DiscoParty.defaultSheep);
+		getConfig().set("default.radius", DiscoParty.defaultRadius);
+		getConfig().set("default.duration", toSeconds_i(DiscoParty.defaultDuration));
+		getConfig().set("default.period-ticks", DiscoParty.defaultPeriod);
 
 		for (Map.Entry<String, Integer> entry : DiscoParty.getDefaultGuestNumbers().entrySet()) {
-			config.addDefault("default.guests." + entry.getKey(), entry.getValue());
+			getConfig().set("default.guests." + entry.getKey(), entry.getValue());
 		}
+		
 		saveConfig();
 	}
 
 	@Override
 	public void onDisable() {
 		this.stopAllParties(); // or else the parties will continue FOREVER
-		this.config = null;
 	}
 
 	int toTicks(double seconds) {
@@ -161,7 +163,20 @@ public final class DiscoSheep extends JavaPlugin {
 
 	/*-- Actual commands begin here --*/
 	boolean helpCommand(CommandSender sender) {
-		sender.sendMessage(ChatColor.YELLOW + "DiscoSheep Help\n" + ChatColor.GRAY + "  Subcommands\n" + ChatColor.WHITE + "me, stop, all, stopall\n" + "You do not need permission to use the \"stop\" command\n" + "other <players>: start a party for the space-delimited list of players\n" + ChatColor.GRAY + "  Arguments\n" + ChatColor.WHITE + "-n <integer>: set the number of sheep per player that spawn\n" + "-t <integer>: set the party duration in seconds\n" + "-p <ticks>: set the number of ticks between each disco beat\n" + "-r <integer>: set radius of the area in which sheep can spawn\n" + "-fw: enables fireworks");
+		sender.sendMessage(ChatColor.YELLOW 
+				+ "DiscoSheep Help\n" 
+				+ ChatColor.GRAY 
+				+ "  Subcommands\n" 
+				+ ChatColor.WHITE + "me, stop, all, stopall, save, reload\n" 
+				+ "other <players>: start a party for the space-delimited list of players\n"
+				+ "defaults: Change the default settings for parties (takes normal arguments)\n"
+				+ ChatColor.GRAY + "  Arguments\n" 
+				+ ChatColor.WHITE + "-n <integer>: set the number of sheep per player that spawn\n" 
+				+ "-t <integer>: set the party duration in seconds\n" 
+				+ "-p <ticks>: set the number of ticks between each disco beat\n" 
+				+ "-r <integer>: set radius of the area in which sheep can spawn\n"
+				+ "-g <mob> <number>: set spawns for other mobs"
+				+ "-fw: enables fireworks");
 		return true;
 	}
 
@@ -248,6 +263,7 @@ public final class DiscoSheep extends JavaPlugin {
 	boolean setDefaultsCommand(CommandSender sender, DiscoParty party) {
 		if (sender.hasPermission(PERMISSION_CHANGEDEFAULTS)) {
 			party.setDefaultsFromCurrent();
+			sender.sendMessage(ChatColor.GREEN + "DiscoSheep configured with new defaults (not saved to disk yet)");
 			return true;
 		} else {
 			return noPermsMessage(sender, PERMISSION_CHANGEDEFAULTS);
@@ -257,6 +273,7 @@ public final class DiscoSheep extends JavaPlugin {
 	boolean saveConfigCommand(CommandSender sender) {
 		if (sender.hasPermission(PERMISSION_SAVECONFIG)) {
 			saveConfigToDisk();
+			sender.sendMessage(ChatColor.GREEN + "DiscoSheep config saved to disk");
 			return true;
 		} else {
 			return noPermsMessage(sender, PERMISSION_SAVECONFIG);

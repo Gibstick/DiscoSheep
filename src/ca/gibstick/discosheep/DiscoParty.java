@@ -41,7 +41,8 @@ public class DiscoParty {
 	static int minPeriod = 5;	// 0.25 seconds
 	static int maxPeriod = 40;	// 2.0 seconds
 	private HashMap<String, Integer> guestNumbers = new HashMap<String, Integer>();
-	static HashMap<String, Integer> defaultGuestNumbers = new HashMap<String, Integer>();
+	private static HashMap<String, Integer> defaultGuestNumbers = new HashMap<String, Integer>();
+	private static HashMap<String, Integer> maxGuestNumbers = new HashMap<String, Integer>();
 	private boolean doFireworks = false;
 	private boolean doJump = true;
 	private int duration, period, radius, sheep;
@@ -70,8 +71,7 @@ public class DiscoParty {
 		this.period = DiscoParty.defaultPeriod;
 		this.radius = DiscoParty.defaultRadius;
 		this.sheep = DiscoParty.defaultSheep;
-
-		this.guestNumbers = DiscoParty.getDefaultGuestNumbers();
+		this.guestNumbers = (HashMap) DiscoParty.getDefaultGuestNumbers().clone();
 	}
 
 	public DiscoParty(DiscoSheep parent) {
@@ -80,7 +80,7 @@ public class DiscoParty {
 		this.period = DiscoParty.defaultPeriod;
 		this.radius = DiscoParty.defaultRadius;
 		this.sheep = DiscoParty.defaultSheep;
-		this.guestNumbers = DiscoParty.getDefaultGuestNumbers();
+		this.guestNumbers = (HashMap) DiscoParty.getDefaultGuestNumbers().clone();
 	}
 
 	// copy but with new player
@@ -92,6 +92,7 @@ public class DiscoParty {
 		newParty.period = this.period;
 		newParty.radius = this.radius;
 		newParty.sheep = this.sheep;
+		newParty.guestNumbers = this.getGuestNumbers();
 		return newParty;
 	}
 
@@ -105,6 +106,14 @@ public class DiscoParty {
 
 	public static HashMap<String, Integer> getDefaultGuestNumbers() {
 		return defaultGuestNumbers;
+	}
+
+	public HashMap<String, Integer> getGuestNumbers() {
+		return guestNumbers;
+	}
+
+	public static HashMap<String, Integer> getMaxGuestNumbers() {
+		return maxGuestNumbers;
 	}
 
 	public int getSheep() {
@@ -174,12 +183,24 @@ public class DiscoParty {
 		return this;
 	}
 
+	public DiscoParty setGuestNumber(String key, int n) throws IllegalArgumentException {
+		if (getMaxGuestNumbers().containsKey(key.toUpperCase())) {
+			if (n <= getMaxGuestNumbers().get(key.toUpperCase()) && n >= 0) { // so that /ds defaults can take 0 as arg
+				getGuestNumbers().put(key, n);
+
+				return this;
+			}
+		}
+		throw new IllegalArgumentException();
+	}
+
 	// use current settings as new defaults
 	public DiscoParty setDefaultsFromCurrent() {
 		DiscoParty.defaultDuration = this.duration;
 		DiscoParty.defaultPeriod = this.period;
 		DiscoParty.defaultRadius = this.radius;
 		DiscoParty.defaultSheep = this.sheep;
+		DiscoParty.defaultGuestNumbers = (HashMap) this.getGuestNumbers().clone();
 		return this;
 	}
 
@@ -241,7 +262,6 @@ public class DiscoParty {
 	void spawnGuest(World world, Location loc, EntityType type) {
 		LivingEntity newGuest = (LivingEntity) world.spawnEntity(loc, type);
 		getGuestList().add(newGuest);
-		ds.getLogger().log(Level.INFO, "SPAWNING GUEST");
 	}
 
 	// Mark all guests for removal, then clear the array
@@ -261,11 +281,11 @@ public class DiscoParty {
 		sheep.setColor(discoColours[(int) Math.round(Math.random() * (discoColours.length - 1))]);
 	}
 
-	void jumpSheep(Sheep sheep) {
-		Vector orgVel = sheep.getVelocity();
+	void jump(LivingEntity entity) {
+		Vector orgVel = entity.getVelocity();
 		Vector newVel = (new Vector()).copy(orgVel);
 		newVel.add(new Vector(0, defaultSheepJump, 0));
-		sheep.setVelocity(newVel);
+		entity.setVelocity(newVel);
 	}
 
 	// WHY ISN'T THERE A Color.getValue() ?!?!?!?!
@@ -326,7 +346,7 @@ public class DiscoParty {
 		return c;
 	}
 
-	void updateAllSheep() {
+	void updateAll() {
 		for (Sheep sheeple : getSheepList()) {
 			randomizeSheepColour(sheeple);
 
@@ -337,10 +357,16 @@ public class DiscoParty {
 			}
 
 			if (doJump) {
-				if (state % 2 == 0) {
-					if (Math.random() < 0.5) {
-						jumpSheep(sheeple);
-					}
+				if (state % 2 == 0 && Math.random() < 0.5) {
+					jump(sheeple);
+				}
+			}
+		}
+
+		for (LivingEntity guest : getGuestList()) {
+			if (doJump) {
+				if (state % 2 == 0 && Math.random() < 0.5) {
+					jump(guest);
 				}
 			}
 		}
@@ -390,7 +416,7 @@ public class DiscoParty {
 
 	void update() {
 		if (duration > 0) {
-			updateAllSheep();
+			updateAll();
 			playSounds();
 			duration -= period;
 			this.scheduleUpdate();

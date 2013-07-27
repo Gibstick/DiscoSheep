@@ -5,6 +5,7 @@
  */
 package ca.gibstick.discosheep;
 
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
@@ -47,7 +48,7 @@ public class BaaBaaBlockSheepEvents implements Listener {
 			for (DiscoParty party : parent.getParties()) {
 				if (party.getSheepList().contains((Sheep) e.getEntity())) {
 					{
-						party.jumpSheep((Sheep) e.getEntity()); // for kicks
+						party.jump((LivingEntity) e.getEntity()); // for kicks
 						e.setCancelled(true);
 					}
 				}
@@ -56,6 +57,7 @@ public class BaaBaaBlockSheepEvents implements Listener {
 
 		for (DiscoParty party : parent.getParties()) {
 			if (party.getGuestList().contains(e.getEntity())) {
+				party.jump((LivingEntity) e.getEntity());
 				e.setCancelled(true);
 			}
 		}

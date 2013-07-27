@@ -63,3 +63,6 @@ permissions:
   discosheep.partyonjoin:
     description: Gives a player a disco party on join
     default: false
+  discosheep.spawnguests:
+    description: Allow a player to spawn other mobs
+    default: op
