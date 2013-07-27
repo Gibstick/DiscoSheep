@@ -62,6 +62,7 @@ public class DiscoParty {
 		DyeColor.BLACK,
 		DyeColor.WHITE
 	};
+	private Random random;
 
 	public DiscoParty(DiscoSheep parent, Player player) {
 		this.ds = parent;
@@ -71,6 +72,7 @@ public class DiscoParty {
 		this.radius = DiscoParty.defaultRadius;
 		this.sheep = DiscoParty.defaultSheep;
 		this.guestNumbers = (HashMap) DiscoParty.getDefaultGuestNumbers().clone();
+		random = new Random();
 	}
 
 	public DiscoParty(DiscoSheep parent) {
@@ -80,6 +82,7 @@ public class DiscoParty {
 		this.radius = DiscoParty.defaultRadius;
 		this.sheep = DiscoParty.defaultSheep;
 		this.guestNumbers = (HashMap) DiscoParty.getDefaultGuestNumbers().clone();
+		random = new Random();
 	}
 
 	// copy but with new player
@@ -92,6 +95,7 @@ public class DiscoParty {
 		newParty.radius = this.radius;
 		newParty.sheep = this.sheep;
 		newParty.guestNumbers = this.getGuestNumbers();
+		newParty.random = new Random();
 		return newParty;
 	}
 
@@ -277,7 +281,7 @@ public class DiscoParty {
 
 	// Set a random colour for all sheep in array
 	void randomizeSheepColour(Sheep sheep) {
-		sheep.setColor(discoColours[(int) Math.round(Math.random() * (discoColours.length - 1))]);
+		sheep.setColor(discoColours[(random.nextInt(discoColours.length))]);
 	}
 
 	void jump(LivingEntity entity) {
