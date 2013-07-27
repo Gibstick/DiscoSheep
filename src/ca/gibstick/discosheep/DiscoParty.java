@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import java.util.logging.Level;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
