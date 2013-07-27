@@ -48,9 +48,13 @@ public final class DiscoSheep extends JavaPlugin {
 		// create a default hashmap of <EntityType, 0> for all living entities
 		// this creates a default config entry with all living entites present
 		// except for bosses, pigzombie (NPE for some reason)
+		// and horses (until 1.6.2 stable)
 		for (EntityType ent : EntityType.values()) {
-			if (ent.isAlive() && !ent.equals(EntityType.ENDER_DRAGON) && !ent.equals(EntityType.WITHER)
-					&& !ent.equals(EntityType.PIG_ZOMBIE)) {
+			if (ent.isAlive()
+					&& !ent.equals(EntityType.ENDER_DRAGON)
+					&& !ent.equals(EntityType.WITHER)
+					&& !ent.equals(EntityType.PIG_ZOMBIE)
+					&& !ent.equals(EntityType.HORSE)) {
 				tempMap.put(ent.toString(), 0);
 			}
 		}
