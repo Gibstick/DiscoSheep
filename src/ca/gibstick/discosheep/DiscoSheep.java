@@ -106,7 +106,7 @@ public final class DiscoSheep extends JavaPlugin {
 		for (Map.Entry<String, Integer> entry : DiscoParty.getDefaultGuestNumbers().entrySet()) {
 			getConfig().set("default.guests." + entry.getKey(), entry.getValue());
 		}
-		
+
 		saveConfig();
 	}
 
@@ -163,17 +163,17 @@ public final class DiscoSheep extends JavaPlugin {
 
 	/*-- Actual commands begin here --*/
 	boolean helpCommand(CommandSender sender) {
-		sender.sendMessage(ChatColor.YELLOW 
-				+ "DiscoSheep Help\n" 
-				+ ChatColor.GRAY 
-				+ "  Subcommands\n" 
-				+ ChatColor.WHITE + "me, stop, all, stopall, save, reload\n" 
+		sender.sendMessage(ChatColor.YELLOW
+				+ "DiscoSheep Help\n"
+				+ ChatColor.GRAY
+				+ "  Subcommands\n"
+				+ ChatColor.WHITE + "me, stop, all, stopall, save, reload\n"
 				+ "other <players>: start a party for the space-delimited list of players\n"
 				+ "defaults: Change the default settings for parties (takes normal arguments)\n"
-				+ ChatColor.GRAY + "  Arguments\n" 
-				+ ChatColor.WHITE + "-n <integer>: set the number of sheep per player that spawn\n" 
-				+ "-t <integer>: set the party duration in seconds\n" 
-				+ "-p <ticks>: set the number of ticks between each disco beat\n" 
+				+ ChatColor.GRAY + "  Arguments\n"
+				+ ChatColor.WHITE + "-n <integer>: set the number of sheep per player that spawn\n"
+				+ "-t <integer>: set the party duration in seconds\n"
+				+ "-p <ticks>: set the number of ticks between each disco beat\n"
 				+ "-r <integer>: set radius of the area in which sheep can spawn\n"
 				+ "-g <mob> <number>: set spawns for other mobs"
 				+ "-fw: enables fireworks");
@@ -279,6 +279,11 @@ public final class DiscoSheep extends JavaPlugin {
 			return noPermsMessage(sender, PERMISSION_SAVECONFIG);
 		}
 
+	}
+
+	boolean zeroGuests(DiscoParty party) {
+		party.getGuestNumbers().clear();
+		return true;
 	}
 
 	boolean noPermsMessage(CommandSender sender, String permission) {

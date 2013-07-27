@@ -149,6 +149,11 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 				if (!sender.hasPermission(DiscoSheep.PERMISSION_SPAWNGUESTS)) {
 					return parent.noPermsMessage(sender, DiscoSheep.PERMISSION_SPAWNGUESTS);
 				}
+				
+				if (parseNextArg(args, i, "none")) {
+					return parent.zeroGuests(mainParty);
+				}
+				
 				String[] guests = getNextArgs(args, i + 1);
 				int j = 0;
 				while (j < guests.length) {
