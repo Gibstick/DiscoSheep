@@ -23,6 +23,8 @@ permissions:
       discosheep.other: true
       discosheep.changeperiod: true
       discosheep.changedefaults: true
+      discosheep.saveconfig: true
+      discosheep.spawnguests: true
   discosheep.admin:
     description: Suggested permissions for administrators
     default: op
