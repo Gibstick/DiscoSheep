@@ -41,31 +41,21 @@ public final class DiscoSheep extends JavaPlugin {
 		getConfig().addDefault("default.duration", toSeconds_i(DiscoParty.defaultDuration));
 		getConfig().addDefault("default.period-ticks", DiscoParty.defaultPeriod);
 
-		Map<String, Integer> tempMap = new HashMap<String, Integer>(); // temporary map to store guest config values
-
-
-		// create a default hashmap of <EntityType, 0> for all living entities
-		// this creates a default config entry with all living entites present
-		// except for bosses, pigzombie (NPE for some reason)
-		// and horses (until 1.6.2 stable)
+		/*
+		 * Iterate through all live entities and create default configuration values for them
+		 * excludes bosses and pigmen since they throw NPE for some reason
+		 * excludes horses for 1.5.2 compatibility (also NPE)
+		 */
 		for (EntityType ent : EntityType.values()) {
 			if (ent.isAlive()
 					&& !ent.equals(EntityType.ENDER_DRAGON)
 					&& !ent.equals(EntityType.WITHER)
 					&& !ent.equals(EntityType.PIG_ZOMBIE)
-					&& !ent.equals(EntityType.HORSE)) {
-				tempMap.put(ent.toString(), 0);
+					&& !ent.equals(EntityType.HORSE)
+					&& !ent.equals(EntityType.PLAYER)) {
+				getConfig().addDefault("default.guests." + ent.toString(), 0);
+				getConfig().addDefault("max.guests." + ent.toString(), 0);
 			}
-		}
-
-		for (Map.Entry<String, Integer> entry : tempMap.entrySet()) {
-			getConfig().addDefault("default.guests." + entry.getKey(), entry.getValue());
-		}
-
-		// same thing, but for limits (no default limits)
-
-		for (Map.Entry<String, Integer> entry : tempMap.entrySet()) {
-			getConfig().addDefault("max.guests." + entry.getKey(), entry.getValue());
 		}
 
 		loadConfigFromDisk();
