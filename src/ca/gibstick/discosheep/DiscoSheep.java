@@ -26,14 +26,13 @@ public final class DiscoSheep extends JavaPlugin {
 	static final String PERMISSION_TOGGLEPARTYONJOIN = "discosheep.admin.toggleonjoin";
 	static boolean partyOnJoin = true;
 	Map<String, DiscoParty> parties = new HashMap<String, DiscoParty>();
-	private GlobalEvents globalEvents = new GlobalEvents(this);
 
 	@Override
 	public void onEnable() {
 		getCommand("ds").setExecutor(new DiscoSheepCommandExecutor(this));
-		getServer().getPluginManager().registerEvents(globalEvents, this);
+		getServer().getPluginManager().registerEvents(new GlobalEvents(this), this);
 
-		getConfig().addDefault("party-on-join.enabled", partyOnJoin);
+		getConfig().addDefault("on-join.enabled", partyOnJoin);
 		getConfig().addDefault("max.sheep", DiscoParty.maxSheep);
 		getConfig().addDefault("max.radius", DiscoParty.maxRadius);
 		getConfig().addDefault("max.duration", toSeconds_i(DiscoParty.maxDuration));
@@ -71,7 +70,7 @@ public final class DiscoSheep extends JavaPlugin {
 		getConfig().options().copyDefaults(true);
 		saveConfig();
 
-		partyOnJoin = getConfig().getBoolean("party-on-join.enabled");
+		partyOnJoin = getConfig().getBoolean("on-join.enabled");
 		DiscoParty.maxSheep = getConfig().getInt("max.sheep");
 		DiscoParty.maxRadius = getConfig().getInt("max.radius");
 		DiscoParty.maxDuration = toTicks(getConfig().getInt("max.duration"));
@@ -98,6 +97,7 @@ public final class DiscoSheep extends JavaPlugin {
 	}
 
 	void saveConfigToDisk() {
+		getConfig().set("on-join.enabled", partyOnJoin);
 		getConfig().set("default.sheep", DiscoParty.defaultSheep);
 		getConfig().set("default.radius", DiscoParty.defaultRadius);
 		getConfig().set("default.duration", toSeconds_i(DiscoParty.defaultDuration));
@@ -244,7 +244,7 @@ public final class DiscoSheep extends JavaPlugin {
 				if (!hasParty(p.getName())) {
 					DiscoParty individualParty = party.DiscoParty(p);
 					individualParty.startDisco();
-					p.sendMessage(ChatColor.RED + "LET'S DISCO!");
+					p.sendMessage(ChatColor.RED + "LET'S DISCO!!");
 				}
 			}
 			return true;
