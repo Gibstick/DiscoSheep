@@ -23,7 +23,6 @@ import org.bukkit.event.player.PlayerShearEntityEvent;
 public class BaaBaaBlockSheepEvents implements Listener {
 
 	DiscoSheep parent;
-	static DiscoSheepCommandExecutor CommExec;
 
 	public BaaBaaBlockSheepEvents(DiscoSheep parent) {
 		this.parent = parent;
