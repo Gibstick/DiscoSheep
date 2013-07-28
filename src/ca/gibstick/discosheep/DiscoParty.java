@@ -16,6 +16,7 @@ import org.bukkit.entity.Sheep;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Builder;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.util.Vector;
 
@@ -25,7 +26,7 @@ import org.bukkit.util.Vector;
  */
 public class DiscoParty {
 
-	private DiscoSheep ds;
+	private DiscoSheep parent;
 	private Player player;
 	private ArrayList<Sheep> sheepList = new ArrayList<Sheep>();
 	private ArrayList<LivingEntity> guestList = new ArrayList<LivingEntity>();
@@ -42,6 +43,7 @@ public class DiscoParty {
 	private HashMap<String, Integer> guestNumbers = new HashMap<String, Integer>();
 	private static HashMap<String, Integer> defaultGuestNumbers = new HashMap<String, Integer>();
 	private static HashMap<String, Integer> maxGuestNumbers = new HashMap<String, Integer>();
+	static boolean partyOnJoin = true;
 	private boolean doFireworks = false;
 	private boolean doJump = true;
 	private int duration, period, radius, sheep;
@@ -63,9 +65,10 @@ public class DiscoParty {
 		DyeColor.WHITE
 	};
 	private Random r;
+	private PartyEvents partyEvents;
 
 	public DiscoParty(DiscoSheep parent, Player player) {
-		this.ds = parent;
+		this.parent = parent;
 		this.player = player;
 		this.duration = DiscoParty.defaultDuration;
 		this.period = DiscoParty.defaultPeriod;
@@ -76,7 +79,7 @@ public class DiscoParty {
 	}
 
 	public DiscoParty(DiscoSheep parent) {
-		this.ds = parent;
+		this.parent = parent;
 		this.duration = DiscoParty.defaultDuration;
 		this.period = DiscoParty.defaultPeriod;
 		this.radius = DiscoParty.defaultRadius;
@@ -88,7 +91,8 @@ public class DiscoParty {
 	// copy but with new player
 	// used for /ds other and /ds all
 	public DiscoParty DiscoParty(Player player) {
-		DiscoParty newParty = new DiscoParty(this.ds, player);
+		DiscoParty newParty;
+		newParty = new DiscoParty(this.parent, player);
 		newParty.doFireworks = this.doFireworks;
 		newParty.duration = this.duration;
 		newParty.period = this.period;
@@ -435,7 +439,7 @@ public class DiscoParty {
 
 	void scheduleUpdate() {
 		updater = new DiscoUpdater(this);
-		updater.runTaskLater(ds, this.period);
+		updater.runTaskLater(parent, this.period);
 	}
 
 	@Deprecated
@@ -448,13 +452,16 @@ public class DiscoParty {
 		this.period = period;
 		this.duration = duration;
 		this.scheduleUpdate();
-		ds.getPartyMap().put(this.player.getName(), this);
+		parent.getPartyMap().put(this.player.getName(), this);
 	}
 
 	void startDisco() {
 		this.spawnAll(sheep, radius);
 		this.scheduleUpdate();
-		ds.getPartyMap().put(this.player.getName(), this);
+		parent.getPartyMap().put(this.player.getName(), this);
+		// start listening
+		this.partyEvents = new PartyEvents(this.parent);
+		parent.getServer().getPluginManager().registerEvents(this.partyEvents, this.parent);
 	}
 
 	void stopDisco() {
@@ -464,6 +471,8 @@ public class DiscoParty {
 			updater.cancel();
 		}
 		updater = null;
-		ds.getPartyMap().remove(this.player.getName());
+		parent.getPartyMap().remove(this.player.getName());
+		// stop listening
+		HandlerList.unregisterAll(this.partyEvents);
 	}
 }

@@ -24,13 +24,14 @@ public final class DiscoSheep extends JavaPlugin {
 	static final String PERMISSION_ONJOIN = "discosheep.onjoin";
 	static final String PERMISSION_SPAWNGUESTS = "discosheep.spawnguests";
 	Map<String, DiscoParty> parties = new HashMap<String, DiscoParty>();
-	private BaaBaaBlockSheepEvents blockEvents = new BaaBaaBlockSheepEvents(this);
+	private GlobalEvents globalEvents = new GlobalEvents(this);
 
 	@Override
 	public void onEnable() {
 		getCommand("ds").setExecutor(new DiscoSheepCommandExecutor(this));
-		getServer().getPluginManager().registerEvents(blockEvents, this);
+		getServer().getPluginManager().registerEvents(globalEvents, this);
 
+		getConfig().addDefault("party-on-join.enabled", DiscoParty.partyOnJoin);
 		getConfig().addDefault("max.sheep", DiscoParty.maxSheep);
 		getConfig().addDefault("max.radius", DiscoParty.maxRadius);
 		getConfig().addDefault("max.duration", toSeconds_i(DiscoParty.maxDuration));
@@ -65,6 +66,7 @@ public final class DiscoSheep extends JavaPlugin {
 		getConfig().options().copyDefaults(true);
 		saveConfig();
 
+		DiscoParty.partyOnJoin = getConfig().getBoolean("party-on-join.enabled");
 		DiscoParty.maxSheep = getConfig().getInt("max.sheep");
 		DiscoParty.maxRadius = getConfig().getInt("max.radius");
 		DiscoParty.maxDuration = toTicks(getConfig().getInt("max.duration"));
