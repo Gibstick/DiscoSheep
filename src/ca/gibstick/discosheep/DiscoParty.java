@@ -74,7 +74,7 @@ public class DiscoParty {
 		this.period = DiscoParty.defaultPeriod;
 		this.radius = DiscoParty.defaultRadius;
 		this.sheep = DiscoParty.defaultSheep;
-		this.guestNumbers = (HashMap) DiscoParty.getDefaultGuestNumbers().clone();
+		this.guestNumbers = new HashMap<String, Integer>(DiscoParty.defaultGuestNumbers);
 		r = new Random();
 	}
 
@@ -84,7 +84,7 @@ public class DiscoParty {
 		this.period = DiscoParty.defaultPeriod;
 		this.radius = DiscoParty.defaultRadius;
 		this.sheep = DiscoParty.defaultSheep;
-		this.guestNumbers = (HashMap) DiscoParty.getDefaultGuestNumbers().clone();
+		this.guestNumbers = new HashMap<String, Integer>(DiscoParty.defaultGuestNumbers);
 		r = new Random();
 	}
 
@@ -207,7 +207,7 @@ public class DiscoParty {
 		DiscoParty.defaultPeriod = this.period;
 		DiscoParty.defaultRadius = this.radius;
 		DiscoParty.defaultSheep = this.sheep;
-		DiscoParty.defaultGuestNumbers = (HashMap) this.getGuestNumbers().clone();
+		DiscoParty.defaultGuestNumbers = new HashMap<String, Integer>(this.getGuestNumbers());
 		return this;
 	}
 
