@@ -8,6 +8,9 @@ Tested up to CraftBukkit build 2820; can be built with Java 6.
 
 ###[BukkitDev](http://dev.bukkit.org/bukkit-plugins/superdiscosheep/)###
 
+###Releases###
+See BukkitDev, or https://github.com/Gibstick/DiscoSheep/releases
+
 ###License###
 Copyright (c) 2013 "Gibstick", "RangerMauve"
 
