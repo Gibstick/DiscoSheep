@@ -84,7 +84,6 @@ public class BaaBaaBlockSheepEvents implements Listener {
 	@EventHandler
 	public void onPlayerJoinEvent(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
-		DiscoParty party = new DiscoParty(parent, player);
 		parent.partyOnJoin(player);
 	}
 }
