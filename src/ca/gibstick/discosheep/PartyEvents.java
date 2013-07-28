@@ -1,6 +1,5 @@
 package ca.gibstick.discosheep;
 
-import java.util.logging.Level;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
@@ -18,6 +17,12 @@ public class PartyEvents implements Listener {
 
 	DiscoSheep parent;
 	DiscoParty party;
+	/*
+	 * There will be multiple isntances of PartyEvents,
+	 * and each instance will only listen for its own party.
+	 * That way, we don't have multiple instances iterating through
+	 * the entire parties hashmap redunandtly 
+	 */
 
 	public PartyEvents(DiscoSheep parent, DiscoParty party) {
 		this.parent = parent;
@@ -54,8 +59,6 @@ public class PartyEvents implements Listener {
 			party.jump((LivingEntity) e.getEntity());
 			e.setCancelled(true);
 		}
-
-		parent.getLogger().log(Level.INFO, "Debug: EVENT TRIGGERED");
 	}
 
 	// prevent uninvited guests from targetting players

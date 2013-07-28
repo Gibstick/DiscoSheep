@@ -44,15 +44,18 @@ public final class DiscoSheep extends JavaPlugin {
 
 		/*
 		 * Iterate through all live entities and create default configuration values for them
-		 * excludes bosses and pigmen since they throw NPE for some reason
-		 * excludes horses for 1.5.2 compatibility (also NPE)
+		 * excludes bosses and other mobs that throw NPE
 		 */
 		for (EntityType ent : EntityType.values()) {
 			if (ent.isAlive()
 					&& !ent.equals(EntityType.ENDER_DRAGON)
 					&& !ent.equals(EntityType.WITHER)
 					&& !ent.equals(EntityType.PIG_ZOMBIE)
-					&& !ent.equals(EntityType.HORSE)
+					&& !ent.equals(EntityType.OCELOT)
+					&& !ent.equals(EntityType.CAVE_SPIDER)
+					&& !ent.equals(EntityType.MAGMA_CUBE)
+					&& !ent.equals(EntityType.MUSHROOM_COW)
+					&& !ent.equals(EntityType.IRON_GOLEM)
 					&& !ent.equals(EntityType.PLAYER)) {
 				getConfig().addDefault("default.guests." + ent.toString(), 0);
 				getConfig().addDefault("max.guests." + ent.toString(), 0);

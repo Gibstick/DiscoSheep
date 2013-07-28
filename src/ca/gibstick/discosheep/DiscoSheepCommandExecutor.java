@@ -156,7 +156,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 				
 				String[] guests = getNextArgs(args, i + 1);
 				int j = 0;
-				while (j < guests.length) {
+				while (j < guests.length - 1) {
 					try {
 						mainParty.setGuestNumber(guests[j], getNextIntArg(guests, j));
 					} catch (IllegalArgumentException e) {
