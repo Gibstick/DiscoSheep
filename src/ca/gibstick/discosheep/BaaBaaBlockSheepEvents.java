@@ -30,7 +30,7 @@ public class BaaBaaBlockSheepEvents implements Listener {
 	}
 
 	// prevent sheep shearing
-	@EventHandler (priority = EventPriority.HIGHEST)
+	@EventHandler (priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerShear(PlayerShearEntityEvent e) {
 		if (e.getEntity() instanceof Sheep) {
 			for (DiscoParty party : parent.getParties()) {
@@ -42,7 +42,7 @@ public class BaaBaaBlockSheepEvents implements Listener {
 	}
 
 	// actually make sheep and other guests invincible
-	@EventHandler (priority = EventPriority.NORMAL)
+	@EventHandler (priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onLivingEntityDamageEvent(EntityDamageEvent e) {
 		if (e.getEntity() instanceof Sheep) {
 			for (DiscoParty party : parent.getParties()) {
@@ -65,7 +65,7 @@ public class BaaBaaBlockSheepEvents implements Listener {
 	}
 
 	// prevent uninvited guests from targetting players
-	@EventHandler (priority = EventPriority.HIGHEST)
+	@EventHandler (priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onEntityTargetLivingEntityEvent(EntityTargetEvent e) {
 		for (DiscoParty party : parent.getParties()) {
 			if (party.getGuestList().contains(e.getEntity())) { // safe; event is only triggered by LivingEntity targetting LivingEntity
