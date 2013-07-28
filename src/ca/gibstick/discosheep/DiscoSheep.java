@@ -12,17 +12,19 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class DiscoSheep extends JavaPlugin {
 
-	static final String PERMISSION_PARTY = "discosheep.party";
-	static final String PERMISSION_ALL = "discosheep.partyall";
-	static final String PERMISSION_FIREWORKS = "discosheep.fireworks";
-	static final String PERMISSION_STOPALL = "discosheep.stopall";
-	static final String PERMISSION_RELOAD = "discosheep.reload";
-	static final String PERMISSION_OTHER = "discosheep.other";
-	static final String PERMISSION_CHANGEPERIOD = "discosheep.changeperiod";
-	static final String PERMISSION_CHANGEDEFAULTS = "discosheep.changedefaults";
-	static final String PERMISSION_SAVECONFIG = "discosheep.saveconfig";
-	static final String PERMISSION_ONJOIN = "discosheep.onjoin";
-	static final String PERMISSION_SPAWNGUESTS = "discosheep.spawnguests";
+	static final String PERMISSION_PARTY = "discosheep.party.me";
+	static final String PERMISSION_ALL = "discosheep.party.all";
+	static final String PERMISSION_FIREWORKS = "discosheep.party.fireworks";
+	static final String PERMISSION_STOPALL = "discosheep.admin.stopall";
+	static final String PERMISSION_RELOAD = "discosheep.admin.reload";
+	static final String PERMISSION_OTHER = "discosheep.party.other";
+	static final String PERMISSION_CHANGEPERIOD = "discosheep.party.changeperiod";
+	static final String PERMISSION_CHANGEDEFAULTS = "discosheep.admin.changedefaults";
+	static final String PERMISSION_SAVECONFIG = "discosheep.admin.saveconfig";
+	static final String PERMISSION_ONJOIN = "discosheep.party.onjoin";
+	static final String PERMISSION_SPAWNGUESTS = "discosheep.party.spawnguests";
+	static final String PERMISSION_TOGGLEPARTYONJOIN = "discosheep.admin.toggleonjoin";
+	static boolean partyOnJoin = true;
 	Map<String, DiscoParty> parties = new HashMap<String, DiscoParty>();
 	private GlobalEvents globalEvents = new GlobalEvents(this);
 
@@ -31,7 +33,7 @@ public final class DiscoSheep extends JavaPlugin {
 		getCommand("ds").setExecutor(new DiscoSheepCommandExecutor(this));
 		getServer().getPluginManager().registerEvents(globalEvents, this);
 
-		getConfig().addDefault("party-on-join.enabled", DiscoParty.partyOnJoin);
+		getConfig().addDefault("party-on-join.enabled", partyOnJoin);
 		getConfig().addDefault("max.sheep", DiscoParty.maxSheep);
 		getConfig().addDefault("max.radius", DiscoParty.maxRadius);
 		getConfig().addDefault("max.duration", toSeconds_i(DiscoParty.maxDuration));
@@ -69,7 +71,7 @@ public final class DiscoSheep extends JavaPlugin {
 		getConfig().options().copyDefaults(true);
 		saveConfig();
 
-		DiscoParty.partyOnJoin = getConfig().getBoolean("party-on-join.enabled");
+		partyOnJoin = getConfig().getBoolean("party-on-join.enabled");
 		DiscoParty.maxSheep = getConfig().getInt("max.sheep");
 		DiscoParty.maxRadius = getConfig().getInt("max.radius");
 		DiscoParty.maxDuration = toTicks(getConfig().getInt("max.duration"));
@@ -252,10 +254,26 @@ public final class DiscoSheep extends JavaPlugin {
 	}
 
 	void partyOnJoin(Player player) {
+		if (!partyOnJoin) {
+			return;
+		}
 		if (player.hasPermission(PERMISSION_ONJOIN)) {
 			DiscoParty party = new DiscoParty(this, player);
 			party.startDisco();
 		}
+	}
+
+	boolean togglePartyOnJoinCommand(CommandSender sender) {
+		if (!sender.hasPermission(PERMISSION_TOGGLEPARTYONJOIN)) {
+			return noPermsMessage(sender, PERMISSION_TOGGLEPARTYONJOIN);
+		}
+		partyOnJoin = !partyOnJoin;
+		if (partyOnJoin) {
+			sender.sendMessage(ChatColor.GREEN + "DiscoSheep party on join functionality enabled.");
+		} else {
+			sender.sendMessage(ChatColor.GREEN + "DiscoSheep party on join functionality disabled.");
+		}
+		return true;
 	}
 
 	boolean setDefaultsCommand(CommandSender sender, DiscoParty party) {

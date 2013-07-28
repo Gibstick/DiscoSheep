@@ -24,7 +24,6 @@ public class GlobalEvents implements Listener {
 		this.parent = parent;
 	}
 
-
 	@EventHandler (priority = EventPriority.MONITOR)
 	public void onPlayerQuitEvent(PlayerQuitEvent e) {
 		String name = e.getPlayer().getName();

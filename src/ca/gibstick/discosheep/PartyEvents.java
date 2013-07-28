@@ -17,10 +17,11 @@ public class PartyEvents implements Listener {
 	DiscoSheep parent;
 	DiscoParty party;
 	/*
-	 * There will be multiple isntances of PartyEvents,
+	 * There will be multiple instances of PartyEvents,
 	 * and each instance will only listen for its own party.
 	 * That way, we don't have multiple instances iterating through
-	 * the entire parties hashmap redunandtly 
+	 * the entire parties hashmap redundantly, yet we can still
+	 * unregister the listeners when no parties are running.
 	 */
 
 	public PartyEvents(DiscoSheep parent, DiscoParty party) {
@@ -52,8 +53,6 @@ public class PartyEvents implements Listener {
 			}
 
 		}
-
-
 		if (party.getGuestList().contains(e.getEntity())) {
 			party.jump(e.getEntity());
 			e.setCancelled(true);

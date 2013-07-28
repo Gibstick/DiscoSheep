@@ -43,7 +43,6 @@ public class DiscoParty {
 	private HashMap<String, Integer> guestNumbers = new HashMap<String, Integer>();
 	private static HashMap<String, Integer> defaultGuestNumbers = new HashMap<String, Integer>();
 	private static HashMap<String, Integer> maxGuestNumbers = new HashMap<String, Integer>();
-	static boolean partyOnJoin = true;
 	private boolean doFireworks = false;
 	private boolean doJump = true;
 	private int duration, period, radius, sheep;

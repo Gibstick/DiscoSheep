@@ -89,6 +89,8 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 				return parent.reloadCommand(sender);
 			} else if (args[0].equalsIgnoreCase("save") || args[0].equalsIgnoreCase("saveconfig")) {
 				return parent.saveConfigCommand(sender);
+			} else if (args[0].equalsIgnoreCase("togglejoin")) {
+				return parent.togglePartyOnJoinCommand(sender);
 			}
 		}
 
@@ -149,11 +151,11 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 				if (!sender.hasPermission(DiscoSheep.PERMISSION_SPAWNGUESTS)) {
 					return parent.noPermsMessage(sender, DiscoSheep.PERMISSION_SPAWNGUESTS);
 				}
-				
+
 				if (parseNextArg(args, i, "none")) {
 					return parent.zeroGuests(mainParty);
 				}
-				
+
 				String[] guests = getNextArgs(args, i + 1);
 				int j = 0;
 				while (j < guests.length - 1) {
