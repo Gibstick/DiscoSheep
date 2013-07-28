@@ -9,6 +9,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
@@ -29,7 +30,7 @@ public class BaaBaaBlockSheepEvents implements Listener {
 	}
 
 	// prevent sheep shearing
-	@EventHandler
+	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onPlayerShear(PlayerShearEntityEvent e) {
 		if (e.getEntity() instanceof Sheep) {
 			for (DiscoParty party : parent.getParties()) {
@@ -41,7 +42,7 @@ public class BaaBaaBlockSheepEvents implements Listener {
 	}
 
 	// actually make sheep and other guests invincible
-	@EventHandler
+	@EventHandler (priority = EventPriority.NORMAL)
 	public void onLivingEntityDamageEvent(EntityDamageEvent e) {
 		if (e.getEntity() instanceof Sheep) {
 			for (DiscoParty party : parent.getParties()) {
@@ -64,7 +65,7 @@ public class BaaBaaBlockSheepEvents implements Listener {
 	}
 
 	// prevent uninvited guests from targetting players
-	@EventHandler
+	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onEntityTargetLivingEntityEvent(EntityTargetEvent e) {
 		for (DiscoParty party : parent.getParties()) {
 			if (party.getGuestList().contains(e.getEntity())) { // safe; event is only triggered by LivingEntity targetting LivingEntity
@@ -73,14 +74,14 @@ public class BaaBaaBlockSheepEvents implements Listener {
 		}
 	}
 
-	@EventHandler
+	@EventHandler (priority = EventPriority.MONITOR)
 	public void onPlayerQuitEvent(PlayerQuitEvent e) {
 		String name = e.getPlayer().getName();
 		parent.stopParty(name);
 		// stop party on player quit or else it will CONTINUE FOR ETERNITY
 	}
 
-	@EventHandler
+	@EventHandler (priority = EventPriority.MONITOR)
 	public void onPlayerJoinEvent(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
 		parent.partyOnJoin(player);
