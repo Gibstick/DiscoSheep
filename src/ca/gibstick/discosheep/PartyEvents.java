@@ -17,54 +17,54 @@ import org.bukkit.event.player.PlayerShearEntityEvent;
 public class PartyEvents implements Listener {
 
 	DiscoSheep parent;
+	DiscoParty party;
 
-	public PartyEvents(DiscoSheep parent) {
+	public PartyEvents(DiscoSheep parent, DiscoParty party) {
 		this.parent = parent;
+		this.party = party;
 	}
-	
+
 	// prevent sheep shearing
-	@EventHandler (priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerShear(PlayerShearEntityEvent e) {
 		if (e.getEntity() instanceof Sheep) {
-			for (DiscoParty party : parent.getParties()) {
-				if (party.getSheepList().contains((Sheep) e.getEntity())) {
-					e.setCancelled(true);
-				}
+
+			if (party.getSheepList().contains((Sheep) e.getEntity())) {
+				e.setCancelled(true);
 			}
+
 		}
 	}
 
 	// actually make sheep and other guests invincible
-	@EventHandler (priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onLivingEntityDamageEvent(EntityDamageEvent e) {
 		if (e.getEntity() instanceof Sheep) {
-			for (DiscoParty party : parent.getParties()) {
-				if (party.getSheepList().contains((Sheep) e.getEntity())) {
-					{
-						party.jump((LivingEntity) e.getEntity()); // for kicks
-						e.setCancelled(true);
-					}
+			if (party.getSheepList().contains((Sheep) e.getEntity())) {
+				{
+					party.jump((LivingEntity) e.getEntity()); // for kicks
+					e.setCancelled(true);
 				}
 			}
+
 		}
 
-		for (DiscoParty party : parent.getParties()) {
-			if (party.getGuestList().contains(e.getEntity())) {
-				party.jump((LivingEntity) e.getEntity());
-				e.setCancelled(true);
-			}
+
+		if (party.getGuestList().contains(e.getEntity())) {
+			party.jump((LivingEntity) e.getEntity());
+			e.setCancelled(true);
 		}
+
 		parent.getLogger().log(Level.INFO, "Debug: EVENT TRIGGERED");
 	}
 
 	// prevent uninvited guests from targetting players
-	@EventHandler (priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onEntityTargetLivingEntityEvent(EntityTargetEvent e) {
-		for (DiscoParty party : parent.getParties()) {
-			if (party.getGuestList().contains(e.getEntity())) { // safe; event is only triggered by LivingEntity targetting LivingEntity
-				e.setCancelled(true);
-			}
+
+		if (party.getGuestList().contains(e.getEntity())) { // safe; event is only triggered by LivingEntity targetting LivingEntity
+			e.setCancelled(true);
 		}
+
 	}
-	
 }

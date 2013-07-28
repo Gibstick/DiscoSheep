@@ -460,7 +460,7 @@ public class DiscoParty {
 		this.scheduleUpdate();
 		parent.getPartyMap().put(this.player.getName(), this);
 		// start listening
-		this.partyEvents = new PartyEvents(this.parent);
+		this.partyEvents = new PartyEvents(this.parent, this);
 		parent.getServer().getPluginManager().registerEvents(this.partyEvents, this.parent);
 	}
 
