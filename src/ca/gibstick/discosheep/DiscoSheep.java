@@ -130,7 +130,7 @@ public final class DiscoSheep extends JavaPlugin {
 	}
 
 	public synchronized ArrayList<DiscoParty> getParties() {
-		return new ArrayList(this.getPartyMap().values());
+		return new ArrayList<DiscoParty>(this.getPartyMap().values());
 	}
 
 	public void stopParty(String name) {

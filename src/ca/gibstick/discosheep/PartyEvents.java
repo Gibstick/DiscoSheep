@@ -1,6 +1,5 @@
 package ca.gibstick.discosheep;
 
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -47,7 +46,7 @@ public class PartyEvents implements Listener {
 		if (e.getEntity() instanceof Sheep) {
 			if (party.getSheepList().contains((Sheep) e.getEntity())) {
 				{
-					party.jump((LivingEntity) e.getEntity()); // for kicks
+					party.jump(e.getEntity()); // for kicks
 					e.setCancelled(true);
 				}
 			}
@@ -56,7 +55,7 @@ public class PartyEvents implements Listener {
 
 
 		if (party.getGuestList().contains(e.getEntity())) {
-			party.jump((LivingEntity) e.getEntity());
+			party.jump(e.getEntity());
 			e.setCancelled(true);
 		}
 	}
@@ -65,7 +64,7 @@ public class PartyEvents implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onEntityTargetLivingEntityEvent(EntityTargetEvent e) {
 
-		if (party.getGuestList().contains(e.getEntity())) { // safe; event is only triggered by LivingEntity targetting LivingEntity
+		if (party.getGuestList().contains(e.getEntity())) {
 			e.setCancelled(true);
 		}
 

@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Builder;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.util.Vector;
@@ -29,7 +29,7 @@ public class DiscoParty {
 	private DiscoSheep parent;
 	private Player player;
 	private ArrayList<Sheep> sheepList = new ArrayList<Sheep>();
-	private ArrayList<LivingEntity> guestList = new ArrayList<LivingEntity>();
+	private ArrayList<Entity> guestList = new ArrayList<Entity>();
 	static int defaultDuration = 300; // ticks for entire party
 	static int defaultPeriod = 10; // ticks per state change
 	static int defaultRadius = 5;
@@ -107,7 +107,7 @@ public class DiscoParty {
 		return sheepList;
 	}
 
-	ArrayList<LivingEntity> getGuestList() {
+	ArrayList<Entity> getGuestList() {
 		return guestList;
 	}
 
@@ -267,7 +267,7 @@ public class DiscoParty {
 	}
 
 	void spawnGuest(World world, Location loc, EntityType type) {
-		LivingEntity newGuest = (LivingEntity) world.spawnEntity(loc, type);
+		Entity newGuest = world.spawnEntity(loc, type);
 		getGuestList().add(newGuest);
 	}
 
@@ -276,7 +276,7 @@ public class DiscoParty {
 		for (Sheep sheeple : getSheepList()) {
 			sheeple.remove();
 		}
-		for (LivingEntity guest : getGuestList()) {
+		for (Entity guest : getGuestList()) {
 			guest.remove();
 		}
 		getSheepList().clear();
@@ -288,7 +288,7 @@ public class DiscoParty {
 		sheep.setColor(discoColours[(r.nextInt(discoColours.length))]);
 	}
 
-	void jump(LivingEntity entity) {
+	void jump(Entity entity) {
 		Vector orgVel = entity.getVelocity();
 		Vector newVel = (new Vector()).copy(orgVel);
 		newVel.add(new Vector(0, defaultSheepJump, 0));
@@ -370,7 +370,7 @@ public class DiscoParty {
 			}
 		}
 
-		for (LivingEntity guest : getGuestList()) {
+		for (Entity guest : getGuestList()) {
 			if (doJump) {
 				if (state % 2 == 0 && r.nextDouble() < 0.5) {
 					jump(guest);
