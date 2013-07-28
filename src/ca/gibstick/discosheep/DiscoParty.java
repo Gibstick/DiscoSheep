@@ -62,7 +62,7 @@ public class DiscoParty {
 		DyeColor.BLACK,
 		DyeColor.WHITE
 	};
-	private Random random;
+	private Random r;
 
 	public DiscoParty(DiscoSheep parent, Player player) {
 		this.ds = parent;
@@ -72,7 +72,7 @@ public class DiscoParty {
 		this.radius = DiscoParty.defaultRadius;
 		this.sheep = DiscoParty.defaultSheep;
 		this.guestNumbers = (HashMap) DiscoParty.getDefaultGuestNumbers().clone();
-		random = new Random();
+		r = new Random();
 	}
 
 	public DiscoParty(DiscoSheep parent) {
@@ -82,7 +82,7 @@ public class DiscoParty {
 		this.radius = DiscoParty.defaultRadius;
 		this.sheep = DiscoParty.defaultSheep;
 		this.guestNumbers = (HashMap) DiscoParty.getDefaultGuestNumbers().clone();
-		random = new Random();
+		r = new Random();
 	}
 
 	// copy but with new player
@@ -95,7 +95,7 @@ public class DiscoParty {
 		newParty.radius = this.radius;
 		newParty.sheep = this.sheep;
 		newParty.guestNumbers = this.getGuestNumbers();
-		newParty.random = new Random();
+		newParty.r = new Random();
 		return newParty;
 	}
 
@@ -160,15 +160,15 @@ public class DiscoParty {
 	}
 
 	public DiscoParty setDenseRadius(int sheepNo) throws IllegalArgumentException {
-		Integer r = (int) Math.floor(Math.sqrt(sheep / Math.PI));
-		if (r > DiscoParty.maxRadius) {
-			r = DiscoParty.maxRadius;
+		Integer rand = (int) Math.floor(Math.sqrt(sheep / Math.PI));
+		if (rand > DiscoParty.maxRadius) {
+			rand = DiscoParty.maxRadius;
 		}
-		if (r < 1) {
-			r = 1;
+		if (rand < 1) {
+			rand = 1;
 		}
 
-		this.setRadius(r);
+		this.setRadius(rand);
 		return this;
 	}
 
@@ -216,14 +216,14 @@ public class DiscoParty {
 		/* random point on circle with polar coordinates
 		 * random number must be square rooted to obtain uniform distribution
 		 * otherwise the sheep are biased toward the centre */
-		double r = Math.sqrt(Math.random()) * spawnRadius;
-		double azimuth = Math.random() * 2 * Math.PI; // radians
-		x += r * Math.cos(azimuth);
-		z += r * Math.sin(azimuth);
+		double rand = Math.sqrt(r.nextDouble()) * spawnRadius;
+		double azimuth = r.nextDouble() * 2 * Math.PI; // radians
+		x += rand * Math.cos(azimuth);
+		z += rand * Math.sin(azimuth);
 		y = world.getHighestBlockYAt((int) x, (int) z);
 
 		loc = new Location(world, x, y, z);
-		loc.setPitch((float) Math.random() * 360 - 180);
+		loc.setPitch(r.nextFloat() * 360 - 180);
 		loc.setYaw(0);
 
 		return loc;
@@ -256,7 +256,7 @@ public class DiscoParty {
 
 	void spawnSheep(World world, Location loc) {
 		Sheep newSheep = (Sheep) world.spawnEntity(loc, EntityType.SHEEP);
-		newSheep.setColor(discoColours[(int) (Math.random() * (discoColours.length - 1))]);
+		newSheep.setColor(discoColours[(r.nextInt(discoColours.length))]);
 		newSheep.setBreed(false);	// this prevents breeding - no event listener required
 		newSheep.teleport(loc);	// teleport is needed to set orientation
 		getSheepList().add(newSheep);
@@ -281,7 +281,7 @@ public class DiscoParty {
 
 	// Set a random colour for all sheep in array
 	void randomizeSheepColour(Sheep sheep) {
-		sheep.setColor(discoColours[(random.nextInt(discoColours.length))]);
+		sheep.setColor(discoColours[(r.nextInt(discoColours.length))]);
 	}
 
 	void jump(LivingEntity entity) {
@@ -354,13 +354,13 @@ public class DiscoParty {
 			randomizeSheepColour(sheeple);
 
 			if (doFireworks && state % 8 == 0) {
-				if (Math.random() < 0.50) {
+				if (r.nextDouble() < 0.50) {
 					spawnRandomFireworkAtSheep(sheeple);
 				}
 			}
 
 			if (doJump) {
-				if (state % 2 == 0 && Math.random() < 0.5) {
+				if (state % 2 == 0 && r.nextDouble() < 0.5) {
 					jump(sheeple);
 				}
 			}
@@ -368,7 +368,7 @@ public class DiscoParty {
 
 		for (LivingEntity guest : getGuestList()) {
 			if (doJump) {
-				if (state % 2 == 0 && Math.random() < 0.5) {
+				if (state % 2 == 0 && r.nextDouble() < 0.5) {
 					jump(guest);
 				}
 			}
@@ -383,7 +383,7 @@ public class DiscoParty {
 		if (this.state % 4 == 0) {
 			player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0f, 1.0f);
 		}
-		player.playSound(player.getLocation(), Sound.BURP, 0.5f, (float) Math.random() + 1);
+		player.playSound(player.getLocation(), Sound.BURP, 0.5f, r.nextFloat() + 1);
 	}
 
 	void randomizeFirework(Firework firework) {
