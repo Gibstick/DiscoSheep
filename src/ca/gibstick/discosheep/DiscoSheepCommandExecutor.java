@@ -3,8 +3,8 @@ package ca.gibstick.discosheep;
 import java.util.Arrays;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class DiscoSheepCommandExecutor implements CommandExecutor {
@@ -153,7 +153,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 				}
 
 				if (parseNextArg(args, i, "none")) {
-					return parent.zeroGuests(mainParty);
+					return parent.clearGuests(mainParty);
 				}
 
 				String[] guests = getNextArgs(args, i + 1);

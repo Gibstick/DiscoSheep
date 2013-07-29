@@ -18,12 +18,9 @@ import org.bukkit.FireworkEffect.Builder;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-/**
- *
- * @author Georgiy
- */
 public class DiscoParty {
 
 	private DiscoSheep parent;
@@ -426,32 +423,15 @@ public class DiscoParty {
 			playSounds();
 			duration -= period;
 			this.scheduleUpdate();
-			if (state < 10000) {
-				this.state++;
-			} else {
-				state = 1; // prevent overflow
-			}
+			this.state = (this.state + 1) % 10000;
 		} else {
 			this.stopDisco();
 		}
 	}
 
 	void scheduleUpdate() {
-		updater = new DiscoUpdater(this);
+		updater = new DiscoUpdater();
 		updater.runTaskLater(parent, this.period);
-	}
-
-	@Deprecated
-	void startDisco(int duration, int sheepAmount, int radius, int period, boolean fireworks) {
-		if (this.duration > 0) {
-			stopDisco();
-		}
-		this.spawnAll(sheepAmount, radius);
-		this.doFireworks = fireworks;
-		this.period = period;
-		this.duration = duration;
-		this.scheduleUpdate();
-		parent.getPartyMap().put(this.player.getName(), this);
 	}
 
 	void startDisco() {
@@ -473,5 +453,13 @@ public class DiscoParty {
 		parent.getPartyMap().remove(this.player.getName());
 		// stop listening
 		HandlerList.unregisterAll(this.partyEvents);
+	}
+
+	class DiscoUpdater extends BukkitRunnable {
+
+		@Override
+		public void run() {
+			update();
+		}
 	}
 }

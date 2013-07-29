@@ -12,10 +12,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-/**
- *
- * @author Mauve
- */
 public class GlobalEvents implements Listener {
 
 	DiscoSheep parent;

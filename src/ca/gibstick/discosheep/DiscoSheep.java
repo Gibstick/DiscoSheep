@@ -115,15 +115,15 @@ public final class DiscoSheep extends JavaPlugin {
 		this.stopAllParties(); // or else the parties will continue FOREVER
 	}
 
-	int toTicks(double seconds) {
+	static int toTicks(double seconds) {
 		return (int) Math.round(seconds * 20.0);
 	}
 
-	double toSeconds(int ticks) {
+	static double toSeconds(int ticks) {
 		return (double) Math.round(ticks / 20.0);
 	}
 
-	int toSeconds_i(int ticks) {
+	static int toSeconds_i(int ticks) {
 		return (int) Math.round(ticks / 20.0);
 	}
 
@@ -297,7 +297,7 @@ public final class DiscoSheep extends JavaPlugin {
 
 	}
 
-	boolean zeroGuests(DiscoParty party) {
+	boolean clearGuests(DiscoParty party) {
 		party.getGuestNumbers().clear();
 		return true;
 	}
