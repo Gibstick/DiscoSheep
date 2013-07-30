@@ -61,18 +61,12 @@ public class DiscoParty {
 		DyeColor.BLACK,
 		DyeColor.WHITE
 	};
-	private Random r;
+	private Random r=new Random();
 	private PartyEvents partyEvents;
 
 	public DiscoParty(DiscoSheep parent, Player player) {
-		this.parent = parent;
+		this(parent);
 		this.player = player;
-		this.duration = DiscoParty.defaultDuration;
-		this.period = DiscoParty.defaultPeriod;
-		this.radius = DiscoParty.defaultRadius;
-		this.sheep = DiscoParty.defaultSheep;
-		this.guestNumbers = new HashMap<String, Integer>(DiscoParty.defaultGuestNumbers);
-		r = new Random();
 	}
 
 	public DiscoParty(DiscoSheep parent) {
@@ -87,7 +81,7 @@ public class DiscoParty {
 
 	// copy but with new player
 	// used for /ds other and /ds all
-	public DiscoParty DiscoParty(Player player) {
+	public DiscoParty clone(Player player) {
 		DiscoParty newParty;
 		newParty = new DiscoParty(this.parent, player);
 		newParty.doFireworks = this.doFireworks;
@@ -95,8 +89,8 @@ public class DiscoParty {
 		newParty.period = this.period;
 		newParty.radius = this.radius;
 		newParty.sheep = this.sheep;
+		newParty.doLightning = this.doLightning;
 		newParty.guestNumbers = this.getGuestNumbers();
-		newParty.r = new Random();
 		return newParty;
 	}
 

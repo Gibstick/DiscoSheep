@@ -226,7 +226,7 @@ public final class DiscoSheep extends JavaPlugin {
 				p = Bukkit.getServer().getPlayer(playerName);
 				if (p != null) {
 					if (!hasParty(p.getName())) {
-						DiscoParty individualParty = party.DiscoParty(p);
+						DiscoParty individualParty = party.clone(p);
 						individualParty.startDisco();
 					}
 				} else {
@@ -243,7 +243,7 @@ public final class DiscoSheep extends JavaPlugin {
 		if (sender.hasPermission(PERMISSION_ALL)) {
 			for (Player p : Bukkit.getServer().getOnlinePlayers()) {
 				if (!hasParty(p.getName())) {
-					DiscoParty individualParty = party.DiscoParty(p);
+					DiscoParty individualParty = party.clone(p);
 					individualParty.startDisco();
 					p.sendMessage(ChatColor.RED + "LET'S DISCO!!");
 				}
