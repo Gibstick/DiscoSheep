@@ -27,6 +27,7 @@ permissions:
       discosheep.party.other: true
       discosheep.party.changeperiod: true
       discosheep.party.spawnguests: true
+      discosheep.party.lightning: true
   discosheep.admin:
     description: Suggested permissions for administrators
     default: op
@@ -72,4 +73,7 @@ permissions:
     default: op
   discosheep.admin.toggleonjoin:
     description: Allow a player to toggle party-on-join functionality (force disable)
+    default: op
+  discosheep.party.lightning:
+    description: Allow a player to use lightning for parties
     default: op

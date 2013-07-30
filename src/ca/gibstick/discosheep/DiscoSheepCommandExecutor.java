@@ -167,6 +167,11 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 					}
 					j += 2; // skip over two arguments, since they come in pairs of entity-number
 				}
+			} else if (args[i].equalsIgnoreCase("-l")) {
+				if (!sender.hasPermission(DiscoSheep.PERMISSION_LIGHTNING)) {
+					return parent.noPermsMessage(sender, DiscoSheep.PERMISSION_LIGHTNING);
+				}
+				mainParty.setDoLightning(true);
 			}
 		}
 

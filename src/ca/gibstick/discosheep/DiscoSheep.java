@@ -24,6 +24,7 @@ public final class DiscoSheep extends JavaPlugin {
 	static final String PERMISSION_ONJOIN = "discosheep.party.onjoin";
 	static final String PERMISSION_SPAWNGUESTS = "discosheep.party.spawnguests";
 	static final String PERMISSION_TOGGLEPARTYONJOIN = "discosheep.admin.toggleonjoin";
+	static final String PERMISSION_LIGHTNING = "discosheep.party.lightning";
 	static boolean partyOnJoin = true;
 	Map<String, DiscoParty> parties = new HashMap<String, DiscoParty>();
 

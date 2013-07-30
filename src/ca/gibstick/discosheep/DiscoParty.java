@@ -42,6 +42,7 @@ public class DiscoParty {
 	private static HashMap<String, Integer> maxGuestNumbers = new HashMap<String, Integer>();
 	private boolean doFireworks = false;
 	private boolean doJump = true;
+	private boolean doLightning = false;
 	private int duration, period, radius, sheep;
 	private int state = 0; // basically our own tick system
 	private DiscoUpdater updater;
@@ -185,6 +186,11 @@ public class DiscoParty {
 		this.doFireworks = doFireworks;
 		return this;
 	}
+	
+	public DiscoParty setDoLightning(boolean doLightning) {
+		this.doLightning = doLightning;
+		return this;
+	}
 
 	public DiscoParty setGuestNumber(String key, int n) throws IllegalArgumentException {
 		if (getMaxGuestNumbers().containsKey(key.toUpperCase())) {
@@ -260,11 +266,17 @@ public class DiscoParty {
 		newSheep.setBreed(false);	// this prevents breeding - no event listener required
 		newSheep.teleport(loc);	// teleport is needed to set orientation
 		getSheepList().add(newSheep);
+		if (doLightning) {
+			world.strikeLightningEffect(loc);
+		}
 	}
 
 	void spawnGuest(World world, Location loc, EntityType type) {
 		Entity newGuest = world.spawnEntity(loc, type);
 		getGuestList().add(newGuest);
+		if (doLightning) {
+			world.strikeLightningEffect(loc);
+		}
 	}
 
 	// Mark all guests for removal, then clear the array
