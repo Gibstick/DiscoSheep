@@ -36,6 +36,7 @@ permissions:
       discosheep.admin.reload: true
       discosheep.admin.changedefaults: true
       discosheep.admin.saveconfig: true
+      discosheep.admin.toggleonjoin: true
   discosheep.party.me:
     description: Allows a player to have a party of one
     default: op
