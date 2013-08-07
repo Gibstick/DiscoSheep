@@ -77,3 +77,16 @@ permissions:
   discosheep.party.lightning:
     description: Allow a player to use lightning for parties
     default: op
+ # FOR BACKWARDS COMPAT FROM 1.1 TO 1.1.1
+  discosheep.party:
+    children: 
+     discosheep.party.me: true
+  discosheep.partyall:
+    children: 
+      discosheep.party.all: true
+  discosheep.reload:
+    children: 
+      discoshep.admin.reload: true
+  discosheep.stopall:
+    children: 
+      discosheep.admin.stopall: true
