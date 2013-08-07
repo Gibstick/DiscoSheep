@@ -168,7 +168,7 @@ public final class DiscoSheep extends JavaPlugin {
 				+ "DiscoSheep Help\n"
 				+ ChatColor.GRAY
 				+ "  Subcommands\n"
-				+ ChatColor.WHITE + "me, stop, all, stopall, save, reload\n"
+				+ ChatColor.WHITE + "me, stop, all, stopall, save, reload, togglejoin\n"
 				+ "other <players>: start a party for the space-delimited list of players\n"
 				+ "defaults: Change the default settings for parties (takes normal arguments)\n"
 				+ ChatColor.GRAY + "  Arguments\n"
