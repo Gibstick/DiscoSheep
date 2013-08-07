@@ -162,7 +162,7 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 					try {
 						mainParty.setGuestNumber(guests[j], getNextIntArg(guests, j));
 					} catch (IllegalArgumentException e) {
-						sender.sendMessage("Invalid arguments: " + guests[j] + ", " + guests[j + 1]
+						sender.sendMessage(ChatColor.RED + "Invalid arguments: " + ChatColor.WHITE + guests[j] + ", " + guests[j + 1]
 								+ ".\nEither a name typo or a number that is not within limits.");
 					}
 					j += 2; // skip over two arguments, since they come in pairs of entity-number

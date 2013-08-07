@@ -43,7 +43,7 @@ public final class DiscoSheep extends JavaPlugin {
 		getConfig().addDefault("default.radius", DiscoParty.defaultRadius);
 		getConfig().addDefault("default.duration", toSeconds_i(DiscoParty.defaultDuration));
 		getConfig().addDefault("default.period-ticks", DiscoParty.defaultPeriod);
-
+		
 		/*
 		 * Iterate through all live entities and create default configuration values for them
 		 * excludes bosses and other mobs that throw NPE
@@ -177,6 +177,7 @@ public final class DiscoSheep extends JavaPlugin {
 				+ "-p <ticks>: set the number of ticks between each disco beat\n"
 				+ "-r <integer>: set radius of the area in which sheep can spawn\n"
 				+ "-g <mob> <number>: set spawns for other mobs"
+				+ "-l: enables lightning"
 				+ "-fw: enables fireworks");
 		return true;
 	}

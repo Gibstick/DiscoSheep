@@ -266,7 +266,7 @@ public class DiscoParty {
 	}
 
 	void spawnGuest(World world, Location loc, EntityType type) {
-		Entity newGuest = world.spawnEntity(loc, type);
+		Entity newGuest = loc.getWorld().spawnEntity(loc, type);
 		getGuestList().add(newGuest);
 		if (doLightning) {
 			world.strikeLightningEffect(loc);
