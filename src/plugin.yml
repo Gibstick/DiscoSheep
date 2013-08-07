@@ -17,7 +17,7 @@ permissions:
     children:
       discosheep.party: true
       discosheep.admin: true
-  discosheep.party:
+  discosheep.party.*:
     description: All permissions related to parties
     defualt: op
     children: 
@@ -28,7 +28,7 @@ permissions:
       discosheep.party.changeperiod: true
       discosheep.party.spawnguests: true
       discosheep.party.lightning: true
-  discosheep.admin:
+  discosheep.admin.*:
     description: Suggested permissions for administrators
     default: op
     children:
