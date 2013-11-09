@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Builder;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
@@ -24,7 +25,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class DiscoParty {
-	
+
 	// Static properties
 	static int defaultDuration = 300; // ticks for entire party
 	static int defaultPeriod = 10; // ticks per state change
@@ -61,7 +62,6 @@ public class DiscoParty {
 		1.667f,
 		2.0f
 	};
-	
 	// Instance properties
 	private Random r = new Random();
 	private PartyEvents partyEvents;
@@ -78,12 +78,12 @@ public class DiscoParty {
 	private int duration, period, radius, sheep;
 	private int state = 0; // basically our own tick system
 	private DiscoUpdater updater;
-
+	
 	public DiscoParty(DiscoSheep parent, Player player) {
 		this(parent);
 		this.player = player;
 	}
-
+	
 	public DiscoParty(DiscoSheep parent) {
 		this.parent = parent;
 		this.duration = DiscoParty.defaultDuration;
@@ -108,31 +108,39 @@ public class DiscoParty {
 		newParty.guestNumbers = this.getGuestNumbers();
 		return newParty;
 	}
-
+	
 	ArrayList<Sheep> getSheepList() {
 		return sheepList;
 	}
-
+	
 	ArrayList<Entity> getGuestList() {
 		return guestList;
 	}
-
+	
+	ArrayList<BlockState> getFloorCache() {
+		return this.floorBlockCache;
+	}
+	
+	ArrayList<Block> getFloorBlocks() {
+		return this.floorBlocks;
+	}
+	
 	public static HashMap<String, Integer> getDefaultGuestNumbers() {
 		return defaultGuestNumbers;
 	}
-
+	
 	public HashMap<String, Integer> getGuestNumbers() {
 		return guestNumbers;
 	}
-
+	
 	public static HashMap<String, Integer> getMaxGuestNumbers() {
 		return maxGuestNumbers;
 	}
-
+	
 	public int getSheep() {
 		return this.sheep;
 	}
-
+	
 	public DiscoParty setPlayer(Player player) {
 		if (player != null) {
 			this.player = player;
@@ -141,7 +149,7 @@ public class DiscoParty {
 			throw new NullPointerException();
 		}
 	}
-
+	
 	public DiscoParty setDuration(int duration) throws IllegalArgumentException {
 		if (duration <= DiscoParty.maxDuration && duration > 0) {
 			this.duration = duration;
@@ -150,7 +158,7 @@ public class DiscoParty {
 			throw new IllegalArgumentException();
 		}
 	}
-
+	
 	public DiscoParty setPeriod(int period) throws IllegalArgumentException {
 		if (period >= DiscoParty.minPeriod && period <= DiscoParty.maxPeriod) {
 			this.period = period;
@@ -159,7 +167,7 @@ public class DiscoParty {
 			throw new IllegalArgumentException();
 		}
 	}
-
+	
 	public DiscoParty setRadius(int radius) throws IllegalArgumentException {
 		if (radius <= DiscoParty.maxRadius && radius > 0) {
 			this.radius = radius;
@@ -168,7 +176,7 @@ public class DiscoParty {
 			throw new IllegalArgumentException();
 		}
 	}
-
+	
 	public DiscoParty setDenseRadius(int sheepNo) throws IllegalArgumentException {
 		Integer rand = (int) Math.floor(Math.sqrt(sheep / Math.PI));
 		if (rand > DiscoParty.maxRadius) {
@@ -177,11 +185,11 @@ public class DiscoParty {
 		if (rand < 1) {
 			rand = 1;
 		}
-
+		
 		this.setRadius(rand);
 		return this;
 	}
-
+	
 	public DiscoParty setSheep(int sheep) throws IllegalArgumentException {
 		if (sheep <= DiscoParty.maxSheep && sheep > 0) {
 			this.sheep = sheep;
@@ -190,22 +198,22 @@ public class DiscoParty {
 			throw new IllegalArgumentException();
 		}
 	}
-
+	
 	public DiscoParty setDoFireworks(boolean doFireworks) {
 		this.doFireworks = doFireworks;
 		return this;
 	}
-
+	
 	public DiscoParty setDoLightning(boolean doLightning) {
 		this.doLightning = doLightning;
 		return this;
 	}
-
+	
 	public DiscoParty setGuestNumber(String key, int n) throws IllegalArgumentException {
 		if (getMaxGuestNumbers().containsKey(key.toUpperCase())) {
 			if (n <= getMaxGuestNumbers().get(key.toUpperCase()) && n >= 0) { // so that /ds defaults can take 0 as arg
 				getGuestNumbers().put(key, n);
-
+				
 				return this;
 			}
 		}
@@ -221,10 +229,10 @@ public class DiscoParty {
 		DiscoParty.defaultGuestNumbers = new HashMap<String, Integer>(this.getGuestNumbers());
 		return this;
 	}
-
+	
 	Location getRandomSpawnLocation(double x, double z, World world, int spawnRadius) {
 		Location loc;
-
+		
 		double y;
 
 		/* random point on circle with polar coordinates
@@ -235,11 +243,11 @@ public class DiscoParty {
 		x += rand * Math.cos(azimuth);
 		z += rand * Math.sin(azimuth);
 		y = this.player.getLocation().getY();
-
+		
 		loc = new Location(world, x, y, z);
 		loc.setPitch(r.nextFloat() * 360 - 180);
 		loc.setYaw(0);
-
+		
 		return loc;
 	}
 
@@ -247,8 +255,8 @@ public class DiscoParty {
 	void spawnAll(int sheep, int spawnRadius) {
 		Location loc;
 		World world = player.getWorld();
-
-
+		
+		
 		double x = player.getLocation().getX();
 		double z = player.getLocation().getZ();
 		for (int i = 0; i < sheep; i++) {
@@ -260,14 +268,17 @@ public class DiscoParty {
 		for (Map.Entry entry : guestNumbers.entrySet()) {
 			EntityType ent = EntityType.valueOf((String) entry.getKey());
 			int num = (Integer) entry.getValue();
-
+			
 			for (int i = 0; i < num; i++) {
 				loc = getRandomSpawnLocation(x, z, world, spawnRadius);
 				spawnGuest(world, loc, ent);
 			}
 		}
+		
+		loc = player.getLocation();
+		this.spawnFloor(world, new Location(world,loc.getBlockX(),loc.getBlockY()-1,loc.getBlockZ()));
 	}
-
+	
 	void spawnSheep(World world, Location loc) {
 		Sheep newSheep = (Sheep) world.spawnEntity(loc, EntityType.SHEEP);
 		newSheep.setColor(discoColours[(r.nextInt(discoColours.length))]);
@@ -278,12 +289,24 @@ public class DiscoParty {
 			world.strikeLightningEffect(loc);
 		}
 	}
-
+	
 	void spawnGuest(World world, Location loc, EntityType type) {
 		Entity newGuest = loc.getWorld().spawnEntity(loc, type);
 		getGuestList().add(newGuest);
 		if (doLightning) {
 			world.strikeLightningEffect(loc);
+		}
+	}
+	
+	void spawnFloor(World world, Location loc) {
+		// First we'll save the floor state
+		for (int x = loc.getBlockX() - this.radius; x < loc.getX() + this.radius; ++x) {
+			for (int z = loc.getBlockZ() - this.radius; z < loc.getZ() + this.radius; ++z) {
+				Block block = world.getBlockAt(x, loc.getBlockY(), z);
+				this.getFloorCache().add(block.getState());
+				block.setType(Material.WOOL);
+				this.getFloorBlocks().add(block);
+			}
 		}
 	}
 
@@ -295,7 +318,7 @@ public class DiscoParty {
 		for (Entity guest : getGuestList()) {
 			guest.remove();
 		}
-		for(BlockState block : this.floorBlockCache){
+		for (BlockState block : this.floorBlockCache) {
 			block.update(true);
 		}
 		getSheepList().clear();
@@ -307,7 +330,11 @@ public class DiscoParty {
 	void randomizeSheepColour(Sheep sheep) {
 		sheep.setColor(discoColours[(r.nextInt(discoColours.length))]);
 	}
-
+	
+	void randomizeFloorColor(Block block) {
+		// Randomize them colors, boi
+	}
+	
 	void jump(Entity entity) {
 		Vector orgVel = entity.getVelocity();
 		Vector newVel = (new Vector()).copy(orgVel);
@@ -369,27 +396,27 @@ public class DiscoParty {
 		if (i == 17) {
 			c = Color.YELLOW;
 		}
-
+		
 		return c;
 	}
-
+	
 	void updateAll() {
 		for (Sheep sheeple : getSheepList()) {
 			randomizeSheepColour(sheeple);
-
+			
 			if (doFireworks && state % 8 == 0) {
 				if (r.nextDouble() < 0.50) {
 					spawnRandomFireworkAtSheep(sheeple);
 				}
 			}
-
+			
 			if (doJump) {
 				if (state % 2 == 0 && r.nextDouble() < 0.5) {
 					jump(sheeple);
 				}
 			}
 		}
-
+		
 		for (Entity guest : getGuestList()) {
 			if (doJump) {
 				if (state % 2 == 0 && r.nextDouble() < 0.5) {
@@ -397,23 +424,28 @@ public class DiscoParty {
 				}
 			}
 		}
+		
+		for (Block block : this.floorBlocks) {
+			this.randomizeFloorColor(block);
+		}
+		
 	}
-
+	
 	private float getPentatonicNote() {
 		return DiscoParty.pentatonicNotes[r.nextInt(pentatonicNotes.length)];
 	}
-
+	
 	void playSounds() {
 		player.playSound(player.getLocation(), Sound.NOTE_BASS_DRUM, 0.75f, 1.0f);
 		if (this.state % 2 == 0) {
 			player.playSound(player.getLocation(), Sound.NOTE_SNARE_DRUM, 0.8f, 1.0f);
 		}
-
+		
 		if ((this.state + 1) % 8 == 0) {
 			player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0f, 1.0f);
 		}
 	}
-
+	
 	void randomizeFirework(Firework firework) {
 		Random r = new Random();
 		Builder effect = FireworkEffect.builder();
@@ -439,12 +471,12 @@ public class DiscoParty {
 		// apply it to the given firework
 		firework.setFireworkMeta(meta);
 	}
-
+	
 	void spawnRandomFireworkAtSheep(Sheep sheep) {
 		Firework firework = (Firework) sheep.getWorld().spawnEntity(sheep.getEyeLocation(), EntityType.FIREWORK);
 		randomizeFirework(firework);
 	}
-
+	
 	void update() {
 		if (duration > 0) {
 			updateAll();
@@ -456,12 +488,12 @@ public class DiscoParty {
 			this.stopDisco();
 		}
 	}
-
+	
 	void scheduleUpdate() {
 		updater = new DiscoUpdater();
 		updater.runTaskLater(parent, this.period);
 	}
-
+	
 	void startDisco() {
 		this.spawnAll(sheep, radius);
 		this.scheduleUpdate();
@@ -470,7 +502,7 @@ public class DiscoParty {
 		this.partyEvents = new PartyEvents(this.parent, this);
 		parent.getServer().getPluginManager().registerEvents(this.partyEvents, this.parent);
 	}
-
+	
 	void stopDisco() {
 		removeAll();
 		this.duration = 0;
@@ -482,9 +514,9 @@ public class DiscoParty {
 		// stop listening
 		HandlerList.unregisterAll(this.partyEvents);
 	}
-
+	
 	class DiscoUpdater extends BukkitRunnable {
-
+		
 		@Override
 		public void run() {
 			update();
