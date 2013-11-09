@@ -212,7 +212,6 @@ public class DiscoParty {
 
 		double y;
 
-
 		/* random point on circle with polar coordinates
 		 * random number must be square rooted to obtain uniform distribution
 		 * otherwise the sheep are biased toward the centre */
@@ -220,7 +219,7 @@ public class DiscoParty {
 		double azimuth = r.nextDouble() * 2 * Math.PI; // radians
 		x += rand * Math.cos(azimuth);
 		z += rand * Math.sin(azimuth);
-		y = world.getHighestBlockYAt((int) x, (int) z);
+		y = this.player.getLocation().getY();
 
 		loc = new Location(world, x, y, z);
 		loc.setPitch(r.nextFloat() * 360 - 180);
