@@ -61,6 +61,14 @@ public class DiscoParty {
 		DyeColor.BLACK,
 		DyeColor.WHITE
 	};
+	private static final float[] pentatonicNotes = {
+		1.0f,
+		1.125f,
+		1.25f,
+		1.5f,
+		1.667f,
+		2.0f
+	};
 	private Random r=new Random();
 	private PartyEvents partyEvents;
 
@@ -243,7 +251,7 @@ public class DiscoParty {
 
 		// loop through hashmap of other guests and spawn accordingly
 		for (Map.Entry entry : guestNumbers.entrySet()) {
-			EntityType ent = EntityType.fromName((String) entry.getKey());
+			EntityType ent = EntityType.valueOf((String) entry.getKey());
 			int num = (Integer) entry.getValue();
 
 			for (int i = 0; i < num; i++) {
@@ -380,15 +388,19 @@ public class DiscoParty {
 		}
 	}
 
+	private float getPentatonicNote() {
+		return DiscoParty.pentatonicNotes[r.nextInt(pentatonicNotes.length)];
+	}
+	
 	void playSounds() {
-		player.playSound(player.getLocation(), Sound.NOTE_BASS_DRUM, 0.5f, 1.0f);
+		player.playSound(player.getLocation(), Sound.NOTE_BASS_DRUM, 0.75f, 1.0f);
 		if (this.state % 2 == 0) {
-			player.playSound(player.getLocation(), Sound.NOTE_SNARE_DRUM, 0.75f, 1.0f);
+			player.playSound(player.getLocation(), Sound.NOTE_SNARE_DRUM, 0.8f, 1.0f);
 		}
+
 		if ((this.state + 1) % 8 == 0) {
 			player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0f, 1.0f);
 		}
-		//player.playSound(player.getLocation(), Sound.BURP, 0.5f, r.nextFloat() + 1); TODO
 	}
 
 	void randomizeFirework(Firework firework) {
