@@ -21,6 +21,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.material.Wool;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -331,8 +332,9 @@ public class DiscoParty {
 		sheep.setColor(discoColours[(r.nextInt(discoColours.length))]);
 	}
 	
-	void randomizeFloorColor(Block block) {
-		// Randomize them colors, boi
+	void randomizeFloorColour(Block block) {
+		block.setType(Material.WOOL);
+		block.setData(discoColours[(r.nextInt(discoColours.length))].getData());
 	}
 	
 	void jump(Entity entity) {
@@ -426,7 +428,7 @@ public class DiscoParty {
 		}
 		
 		for (Block block : this.floorBlocks) {
-			this.randomizeFloorColor(block);
+			this.randomizeFloorColour(block);
 		}
 		
 	}
