@@ -15,6 +15,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Builder;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -67,6 +69,8 @@ public class DiscoParty {
 	private Player player;
 	private ArrayList<Sheep> sheepList = new ArrayList<Sheep>();
 	private ArrayList<Entity> guestList = new ArrayList<Entity>();
+	private ArrayList<BlockState> floorBlockCache = new ArrayList<BlockState>();
+	private ArrayList<Block> floorBlocks = new ArrayList<Block>();
 	private HashMap<String, Integer> guestNumbers = new HashMap<String, Integer>();
 	private boolean doFireworks = false;
 	private boolean doJump = true;
@@ -291,8 +295,12 @@ public class DiscoParty {
 		for (Entity guest : getGuestList()) {
 			guest.remove();
 		}
+		for(BlockState block : this.floorBlockCache){
+			block.update(true);
+		}
 		getSheepList().clear();
 		getGuestList().clear();
+		floorBlockCache.clear();
 	}
 
 	// Set a random colour for all sheep in array
