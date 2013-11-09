@@ -22,11 +22,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class DiscoParty {
-
-	private DiscoSheep parent;
-	private Player player;
-	private ArrayList<Sheep> sheepList = new ArrayList<Sheep>();
-	private ArrayList<Entity> guestList = new ArrayList<Entity>();
+	
+	// Static properties
 	static int defaultDuration = 300; // ticks for entire party
 	static int defaultPeriod = 10; // ticks per state change
 	static int defaultRadius = 5;
@@ -37,15 +34,8 @@ public class DiscoParty {
 	static int maxRadius = 100;
 	static int minPeriod = 5;	// 0.25 seconds
 	static int maxPeriod = 40;	// 2.0 seconds
-	private HashMap<String, Integer> guestNumbers = new HashMap<String, Integer>();
 	private static HashMap<String, Integer> defaultGuestNumbers = new HashMap<String, Integer>();
 	private static HashMap<String, Integer> maxGuestNumbers = new HashMap<String, Integer>();
-	private boolean doFireworks = false;
-	private boolean doJump = true;
-	private boolean doLightning = false;
-	private int duration, period, radius, sheep;
-	private int state = 0; // basically our own tick system
-	private DiscoUpdater updater;
 	private static final DyeColor[] discoColours = {
 		DyeColor.RED,
 		DyeColor.ORANGE,
@@ -69,8 +59,21 @@ public class DiscoParty {
 		1.667f,
 		2.0f
 	};
-	private Random r=new Random();
+	
+	// Instance properties
+	private Random r = new Random();
 	private PartyEvents partyEvents;
+	private DiscoSheep parent;
+	private Player player;
+	private ArrayList<Sheep> sheepList = new ArrayList<Sheep>();
+	private ArrayList<Entity> guestList = new ArrayList<Entity>();
+	private HashMap<String, Integer> guestNumbers = new HashMap<String, Integer>();
+	private boolean doFireworks = false;
+	private boolean doJump = true;
+	private boolean doLightning = false;
+	private int duration, period, radius, sheep;
+	private int state = 0; // basically our own tick system
+	private DiscoUpdater updater;
 
 	public DiscoParty(DiscoSheep parent, Player player) {
 		this(parent);
@@ -188,7 +191,7 @@ public class DiscoParty {
 		this.doFireworks = doFireworks;
 		return this;
 	}
-	
+
 	public DiscoParty setDoLightning(boolean doLightning) {
 		this.doLightning = doLightning;
 		return this;
@@ -391,7 +394,7 @@ public class DiscoParty {
 	private float getPentatonicNote() {
 		return DiscoParty.pentatonicNotes[r.nextInt(pentatonicNotes.length)];
 	}
-	
+
 	void playSounds() {
 		player.playSound(player.getLocation(), Sound.NOTE_BASS_DRUM, 0.75f, 1.0f);
 		if (this.state % 2 == 0) {
