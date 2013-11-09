@@ -381,14 +381,14 @@ public class DiscoParty {
 	}
 
 	void playSounds() {
-		player.playSound(player.getLocation(), Sound.NOTE_BASS_DRUM, 1.0f, 1.0f);
+		player.playSound(player.getLocation(), Sound.NOTE_BASS_DRUM, 0.5f, 1.0f);
 		if (this.state % 2 == 0) {
-			player.playSound(player.getLocation(), Sound.NOTE_SNARE_DRUM, 1.0f, 1.0f);
+			player.playSound(player.getLocation(), Sound.NOTE_SNARE_DRUM, 0.75f, 1.0f);
 		}
-		if (this.state % 4 == 0) {
+		if ((this.state + 1) % 8 == 0) {
 			player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0f, 1.0f);
 		}
-		player.playSound(player.getLocation(), Sound.BURP, 0.5f, r.nextFloat() + 1);
+		//player.playSound(player.getLocation(), Sound.BURP, 0.5f, r.nextFloat() + 1); TODO
 	}
 
 	void randomizeFirework(Firework firework) {
