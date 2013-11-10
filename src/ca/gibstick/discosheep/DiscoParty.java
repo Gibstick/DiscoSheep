@@ -21,7 +21,6 @@ import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.meta.FireworkMeta;
-import org.bukkit.material.Wool;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -334,7 +333,7 @@ public class DiscoParty {
 		sheep.setColor(discoColours[(r.nextInt(discoColours.length))]);
 	}
 
-	void randomizeFloorColour(Block block) {
+	void randomizeFloor(Block block) {
 		block.setType(Material.WOOL);
 		block.setData(discoColours[(r.nextInt(discoColours.length))].getData());
 	}
@@ -430,7 +429,7 @@ public class DiscoParty {
 		}
 
 		for (Block block : this.floorBlocks) {
-			this.randomizeFloorColour(block);
+			this.randomizeFloor(block);
 		}
 
 	}
@@ -451,7 +450,6 @@ public class DiscoParty {
 	}
 
 	void randomizeFirework(Firework firework) {
-		Random r = new Random();
 		Builder effect = FireworkEffect.builder();
 		FireworkMeta meta = firework.getFireworkMeta();
 
