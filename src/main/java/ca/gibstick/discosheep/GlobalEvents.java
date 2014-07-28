@@ -14,22 +14,22 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class GlobalEvents implements Listener {
 
-	DiscoSheep parent;
+    DiscoSheep parent;
 
-	public GlobalEvents(DiscoSheep parent) {
-		this.parent = parent;
-	}
+    public GlobalEvents(DiscoSheep parent) {
+        this.parent = parent;
+    }
 
-	@EventHandler (priority = EventPriority.MONITOR)
-	public void onPlayerQuitEvent(PlayerQuitEvent e) {
-		String name = e.getPlayer().getName();
-		parent.stopParty(name);
-		// stop party on player quit or else it will CONTINUE FOR ETERNITY
-	}
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerQuitEvent(PlayerQuitEvent e) {
+        String name = e.getPlayer().getName();
+        parent.stopParty(name);
+        // stop party on player quit or else it will CONTINUE FOR ETERNITY
+    }
 
-	@EventHandler (priority = EventPriority.MONITOR)
-	public void onPlayerJoinEvent(PlayerJoinEvent e) {
-		Player player = e.getPlayer();
-		parent.partyOnJoin(player);
-	}
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerJoinEvent(PlayerJoinEvent e) {
+        Player player = e.getPlayer();
+        parent.partyOnJoin(player);
+    }
 }
