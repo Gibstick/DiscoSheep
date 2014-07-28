@@ -10,6 +10,10 @@
             <id>bukkit-repo</id>
             <url>http://repo.bukkit.org/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>repo.oc.tc</id>
+            <url>http://repo.oc.tc/content/repositories/public/</url>
+        </repository>
     </repositories>
     <dependencies>
         <dependency>
@@ -17,6 +21,11 @@
             <artifactId>bukkit</artifactId>
             <scope>provided</scope>
             <version>1.7.9-R0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sk89q</groupId>
+            <artifactId>command-framework-bukkit</artifactId>
+            <version>0.5-SNAPSHOT</version>
         </dependency>
     </dependencies>
     <build>
@@ -41,6 +50,33 @@
                         <arg>-Xlint:deprecation</arg>
                     </compilerArgs>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>DiscoSheep</finalName>
+                            <useBaseVersion>true</useBaseVersion>
+                            <shadedClassifierName/>
+                            <outputDirectory>${project.basedir}</outputDirectory>
+                            <artifactSet>
+                                <includes>
+                                    <include>com.sk89q:command-framework-bukkit</include>
+                                </includes>
+                            </artifactSet>
+                            <generateUniqueDependencyReducedPom>false</generateUniqueDependencyReducedPom>
+                            <shadedArtifactAttached>true</shadedArtifactAttached> <!-- Makes Netbeans shut up -->
+                            <shadedClassifierName>unshaded</shadedClassifierName> 		
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build> 
