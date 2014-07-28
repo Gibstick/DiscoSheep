@@ -276,7 +276,7 @@ public class DiscoParty {
 		}
 
 		loc = player.getLocation();
-		this.spawnFloor(world, new Location(world, loc.getBlockX(), loc.getBlockY() - 1, loc.getBlockZ()));
+		//this.spawnFloor(world, new Location(world, loc.getBlockX(), loc.getBlockY() - 1, loc.getBlockZ()));
 	}
 
 	void spawnSheep(World world, Location loc) {
@@ -428,9 +428,9 @@ public class DiscoParty {
 			}
 		}
 
-		for (Block block : this.floorBlocks) {
-			this.randomizeFloor(block);
-		}
+                /*		for (Block block : this.floorBlocks) {
+                this.randomizeFloor(block);
+                }*/
 
 	}
 

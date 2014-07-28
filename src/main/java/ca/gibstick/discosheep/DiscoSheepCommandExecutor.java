@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 
 public class DiscoSheepCommandExecutor implements CommandExecutor {
 
-	private DiscoSheep parent;
+	private final DiscoSheep parent;
 
 	public DiscoSheepCommandExecutor(DiscoSheep parent) {
 		this.parent = parent;
@@ -147,26 +147,26 @@ public class DiscoSheepCommandExecutor implements CommandExecutor {
 							+ DiscoParty.maxPeriod + "]");
 					return false;
 				}
-			} else if (args[i].equalsIgnoreCase("-g")) {
-				if (!sender.hasPermission(DiscoSheep.PERMISSION_SPAWNGUESTS)) {
-					return parent.noPermsMessage(sender, DiscoSheep.PERMISSION_SPAWNGUESTS);
-				}
-
-				if (parseNextArg(args, i, "none")) {
-					return parent.clearGuests(mainParty);
-				}
-
-				String[] guests = getNextArgs(args, i + 1);
-				int j = 0;
-				while (j < guests.length - 1) {
-					try {
-						mainParty.setGuestNumber(guests[j], getNextIntArg(guests, j));
-					} catch (IllegalArgumentException e) {
-						sender.sendMessage(ChatColor.RED + "Invalid arguments: " + ChatColor.WHITE + guests[j] + ", " + guests[j + 1]
-								+ ".\nEither a name typo or a number that is not within limits.");
-					}
-					j += 2; // skip over two arguments, since they come in pairs of entity-number
-				}
+//			} else if (args[i].equalsIgnoreCase("-g")) {
+//				if (!sender.hasPermission(DiscoSheep.PERMISSION_SPAWNGUESTS)) {
+//					return parent.noPermsMessage(sender, DiscoSheep.PERMISSION_SPAWNGUESTS);
+//				}
+//
+//				if (parseNextArg(args, i, "none")) {
+//					return parent.clearGuests(mainParty);
+//				}
+//
+//				String[] guests = getNextArgs(args, i + 1);
+//				int j = 0;
+//				while (j < guests.length - 1) {
+//					try {
+//						mainParty.setGuestNumber(guests[j], getNextIntArg(guests, j));
+//					} catch (IllegalArgumentException e) {
+//						sender.sendMessage(ChatColor.RED + "Invalid arguments: " + ChatColor.WHITE + guests[j] + ", " + guests[j + 1]
+//								+ ".\nEither a name typo or a number that is not within limits.");
+//					}
+//					j += 2; // skip over two arguments, since they come in pairs of entity-number
+//				}
 			} else if (args[i].equalsIgnoreCase("-l")) {
 				if (!sender.hasPermission(DiscoSheep.PERMISSION_LIGHTNING)) {
 					return parent.noPermsMessage(sender, DiscoSheep.PERMISSION_LIGHTNING);

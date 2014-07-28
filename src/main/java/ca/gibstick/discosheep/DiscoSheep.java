@@ -25,7 +25,7 @@ public final class DiscoSheep extends JavaPlugin {
 	static final String PERMISSION_SPAWNGUESTS = "discosheep.party.spawnguests";
 	static final String PERMISSION_TOGGLEPARTYONJOIN = "discosheep.admin.toggleonjoin";
 	static final String PERMISSION_LIGHTNING = "discosheep.party.lightning";
-	static boolean partyOnJoin = true;
+	static boolean partyOnJoin = false;
 	Map<String, DiscoParty> parties = new HashMap<String, DiscoParty>();
 
 	@Override
@@ -48,22 +48,21 @@ public final class DiscoSheep extends JavaPlugin {
 		 * Iterate through all live entities and create default configuration values for them
 		 * excludes bosses and other mobs that throw NPE
 		 */
-		for (EntityType ent : EntityType.values()) {
-			if (ent.isAlive()
-					&& !ent.equals(EntityType.ENDER_DRAGON)
-					&& !ent.equals(EntityType.WITHER)
-					&& !ent.equals(EntityType.PIG_ZOMBIE)
-					&& !ent.equals(EntityType.OCELOT)
-					&& !ent.equals(EntityType.CAVE_SPIDER)
-					&& !ent.equals(EntityType.MAGMA_CUBE)
-					&& !ent.equals(EntityType.MUSHROOM_COW)
-					&& !ent.equals(EntityType.IRON_GOLEM)
-					&& !ent.equals(EntityType.PLAYER)) {
-				getConfig().addDefault("default.guests." + ent.toString(), 0);
-				getConfig().addDefault("max.guests." + ent.toString(), 0);
-			}
-		}
-
+                /*		for (EntityType ent : EntityType.values()) {
+                if (ent.isAlive()
+                && !ent.equals(EntityType.ENDER_DRAGON)
+                && !ent.equals(EntityType.WITHER)
+                && !ent.equals(EntityType.PIG_ZOMBIE)
+                && !ent.equals(EntityType.OCELOT)
+                && !ent.equals(EntityType.CAVE_SPIDER)
+                && !ent.equals(EntityType.MAGMA_CUBE)
+                && !ent.equals(EntityType.MUSHROOM_COW)
+                && !ent.equals(EntityType.IRON_GOLEM)
+                && !ent.equals(EntityType.PLAYER)) {
+                getConfig().addDefault("default.guests." + ent.toString(), 0);
+                getConfig().addDefault("max.guests." + ent.toString(), 0);
+                }
+                }*/
 		loadConfigFromDisk();
 	}
 
@@ -82,13 +81,13 @@ public final class DiscoSheep extends JavaPlugin {
 		DiscoParty.defaultDuration = toTicks(getConfig().getInt("default.duration"));
 		DiscoParty.defaultPeriod = getConfig().getInt("default.period-ticks");
 
-		for (String key : getConfig().getConfigurationSection("default.guests").getKeys(false)) {
-			DiscoParty.getDefaultGuestNumbers().put(key, getConfig().getInt("default.guests." + key));
-		}
-
-		for (String key : getConfig().getConfigurationSection("max.guests").getKeys(false)) {
-			DiscoParty.getMaxGuestNumbers().put(key, getConfig().getInt("max.guests." + key));
-		}
+                /*		for (String key : getConfig().getConfigurationSection("default.guests").getKeys(false)) {
+                DiscoParty.getDefaultGuestNumbers().put(key, getConfig().getInt("default.guests." + key));
+                }
+                
+                for (String key : getConfig().getConfigurationSection("max.guests").getKeys(false)) {
+                DiscoParty.getMaxGuestNumbers().put(key, getConfig().getInt("max.guests." + key));
+                }*/
 
 	}
 
@@ -104,9 +103,9 @@ public final class DiscoSheep extends JavaPlugin {
 		getConfig().set("default.duration", toSeconds_i(DiscoParty.defaultDuration));
 		getConfig().set("default.period-ticks", DiscoParty.defaultPeriod);
 
-		for (Map.Entry<String, Integer> entry : DiscoParty.getDefaultGuestNumbers().entrySet()) {
-			getConfig().set("default.guests." + entry.getKey(), entry.getValue());
-		}
+                /*		for (Map.Entry<String, Integer> entry : DiscoParty.getDefaultGuestNumbers().entrySet()) {
+                getConfig().set("default.guests." + entry.getKey(), entry.getValue());
+                }*/
 
 		saveConfig();
 	}
@@ -176,8 +175,8 @@ public final class DiscoSheep extends JavaPlugin {
 				+ "-t <integer>: set the party duration in seconds\n"
 				+ "-p <ticks>: set the number of ticks between each disco beat\n"
 				+ "-r <integer>: set radius of the area in which sheep can spawn\n"
-				+ "-g <mob> <number>: set spawns for other mobs"
-				+ "-l: enables lightning"
+				//+ "-g <mob> <number>: set spawns for other mobs\n"
+				+ "-l: enables lightning\n"
 				+ "-fw: enables fireworks");
 		return true;
 	}
@@ -219,7 +218,10 @@ public final class DiscoSheep extends JavaPlugin {
 			return noPermsMessage(sender, PERMISSION_RELOAD);
 		}
 	}
-
+        
+        @SuppressWarnings( "deprecation" ) 
+        // UUIDs not necessary since DiscoSheep only lasts for one session at most
+        // and permissions will handle onJoin DiscoSheep
 	boolean partyOtherCommand(String[] players, CommandSender sender, DiscoParty party) {
 		if (sender.hasPermission(PERMISSION_OTHER)) {
 			Player p;

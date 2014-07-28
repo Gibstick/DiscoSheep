@@ -3,8 +3,18 @@ DiscoSheep
 
 A plugin for [Bukkit](http://bukkit.org/), the Minecraft server API. This is a from-scratch remake of the fabulous [DiscoSheep plugin](http://forums.bukkit.org/threads/inactive-fun-discosheep-v0-3-uninvited-guesssts-permissions-and-source-code-522.7106/) which spawns a dance party of sheep at your whim. 
 
+###DiscoFix###
+An attempt to fix up DiscoSheep. No new big features. A short (non-binding) todo list:
+* fix NPE for guests
+* refactor command handling (use sk89q's framework) 
+* fix wifi, bluetooth, GPS (wipe dalvik x333)
+* you tell me
+
+##A note on UUIDs##
+DiscoSheep doesn't store anything after a party and getPlayer(name), and disco-party-on-join is handled by a permissions plugin. Thus, we don't need to worry about the migration to UUIDs.
+
 ###Versions###
-Tested up to CraftBukkit build 2918 (RB for 1.6.4 R2.0); can be built with Java 6.
+Tested up to CraftBukkit build 2918 (RB for 1.6.4 R2.0); can be built with Java 7.
 
 ###[BukkitDev](http://dev.bukkit.org/bukkit-plugins/superdiscosheep/)###
 
