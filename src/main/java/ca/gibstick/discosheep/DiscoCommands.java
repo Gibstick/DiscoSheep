@@ -35,7 +35,7 @@ public class DiscoCommands {
     static final String PERMISSION_TOGGLEPARTYONJOIN = "discosheep.admin.toggleonjoin";
     static final String PERMISSION_LIGHTNING = "discosheep.party.lightning";
 
-    static final String FLAGS = ":n:t:p:rlf";
+    static final String FLAGS = "n:t:p:r:lf";
 
     private static final DiscoSheep plugin = DiscoSheep.getInstance();
 
