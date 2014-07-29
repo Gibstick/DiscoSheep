@@ -50,16 +50,15 @@ public class DiscoCommands {
     private static void parsePartyFlags(DiscoParty party, final CommandContext args, CommandSender sender) throws IllegalArgumentException {
         party.setDuration(args.getFlagInteger('t', DiscoParty.defaultDuration));
         party.setPeriod(args.getFlagInteger('p', DiscoParty.defaultPeriod));
-        party.setRadius(args.getFlagInteger('r', DiscoParty.defaultRadius));
         party.setSheep(args.getFlagInteger('n', DiscoParty.defaultSheep));
 
         // handle the special case of radius flag arg "dense"
-        /*String radiusArg = args.getFlag('r');
+        String radiusArg = args.getFlag('r', Integer.toString(DiscoParty.defaultRadius));
         if ("dense".equals(radiusArg)) {
-        party.setDenseRadius(party.getSheep());
+            party.setDenseRadius(party.getSheep());
         } else {
-        party.setRadius(Integer.parseInt(radiusArg));
-        }*/
+            party.setRadius(Integer.parseInt(radiusArg));
+        }
 
         if (sender.hasPermission(PERMISSION_FIREWORKS)) {
             party.setDoFireworks(args.hasFlag('f'));
@@ -135,7 +134,7 @@ public class DiscoCommands {
     public static void partyOtherCommand(CommandContext args, CommandSender sender) {
         DiscoParty party = new DiscoParty();
         Player p;
-        String players[] = args.getSlice(0);
+        String players[] = args.getSlice(1);
 
         parsePartyFlags(party, args, sender);
 

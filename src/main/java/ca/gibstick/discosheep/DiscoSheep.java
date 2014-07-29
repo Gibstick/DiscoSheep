@@ -60,6 +60,8 @@ public final class DiscoSheep extends JavaPlugin {
         } catch (WrappedCommandException e) {
             if (e.getCause() instanceof NumberFormatException) {
                 sender.sendMessage(ChatColor.RED + "Number expected, string received instead.");
+            } else if (e.getCause() instanceof IllegalArgumentException) {
+                sender.sendMessage(ChatColor.RED + "Illegal argument (out of bounds or bad format).");
             } else {
                 sender.sendMessage(ChatColor.RED + "An error has occurred. See console.");
                 e.printStackTrace();
@@ -69,7 +71,6 @@ public final class DiscoSheep extends JavaPlugin {
         } catch (com.sk89q.minecraft.util.commands.CommandException ex) {
             Logger.getLogger(DiscoSheep.class.getName()).log(Level.SEVERE, null, ex);
         }
-
         return true;
     }
 
