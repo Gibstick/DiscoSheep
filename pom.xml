@@ -73,7 +73,7 @@
                             </artifactSet>
                             <generateUniqueDependencyReducedPom>false</generateUniqueDependencyReducedPom>
                             <shadedArtifactAttached>true</shadedArtifactAttached> <!-- Makes Netbeans shut up -->
-                            <shadedClassifierName>unshaded</shadedClassifierName> 		
+                            <shadedClassifierName>shaded</shadedClassifierName> 		
                         </configuration>
                     </execution>
                 </executions>

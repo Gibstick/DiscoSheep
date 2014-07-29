@@ -65,7 +65,7 @@ public class DiscoParty {
     // Instance properties
     private Random r = new Random();
     private PartyEvents partyEvents;
-    private DiscoSheep parent;
+    private final DiscoSheep parent = DiscoSheep.getInstance();
     private Player player;
     private ArrayList<Sheep> sheepList = new ArrayList<Sheep>();
     private ArrayList<Entity> guestList = new ArrayList<Entity>();
@@ -79,13 +79,12 @@ public class DiscoParty {
     private int state = 0; // basically our own tick system
     private DiscoUpdater updater;
 
-    public DiscoParty(DiscoSheep parent, Player player) {
-        this(parent);
+    public DiscoParty(Player player) {
+        this();
         this.player = player;
     }
 
-    public DiscoParty(DiscoSheep parent) {
-        this.parent = parent;
+    public DiscoParty() {
         this.duration = DiscoParty.defaultDuration;
         this.period = DiscoParty.defaultPeriod;
         this.radius = DiscoParty.defaultRadius;
@@ -98,7 +97,7 @@ public class DiscoParty {
     // used for /ds other and /ds all
     public DiscoParty clone(Player player) {
         DiscoParty newParty;
-        newParty = new DiscoParty(this.parent, player);
+        newParty = new DiscoParty(player);
         newParty.doFireworks = this.doFireworks;
         newParty.duration = this.duration;
         newParty.period = this.period;
