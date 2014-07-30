@@ -273,7 +273,7 @@ public class DiscoParty {
             }
         }
 
-        loc = player.getLocation();
+        //loc = player.getLocation();
         //this.spawnFloor(world, new Location(world, loc.getBlockX(), loc.getBlockY() - 1, loc.getBlockZ()));
     }
 
@@ -498,7 +498,7 @@ public class DiscoParty {
         this.scheduleUpdate();
         parent.getPartyMap().put(this.player.getName(), this);
         // start listening
-        this.partyEvents = new PartyEvents(this.parent, this);
+        this.partyEvents = new PartyEvents(this);
         parent.getServer().getPluginManager().registerEvents(this.partyEvents, this.parent);
     }
 

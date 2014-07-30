@@ -16,6 +16,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -96,21 +97,15 @@ public final class DiscoSheep extends JavaPlugin {
          * Iterate through all live entities and create default configuration values for them
          * excludes bosses and other mobs that throw NPE
          */
-        /*		for (EntityType ent : EntityType.values()) {
-         if (ent.isAlive()
-         && !ent.equals(EntityType.ENDER_DRAGON)
-         && !ent.equals(EntityType.WITHER)
-         && !ent.equals(EntityType.PIG_ZOMBIE)
-         && !ent.equals(EntityType.OCELOT)
-         && !ent.equals(EntityType.CAVE_SPIDER)
-         && !ent.equals(EntityType.MAGMA_CUBE)
-         && !ent.equals(EntityType.MUSHROOM_COW)
-         && !ent.equals(EntityType.IRON_GOLEM)
-         && !ent.equals(EntityType.PLAYER)) {
-         getConfig().addDefault("default.guests." + ent.toString(), 0);
-         getConfig().addDefault("max.guests." + ent.toString(), 0);
-         }
-         }*/
+        for (EntityType ent : EntityType.values()) {
+            if (ent.isAlive()
+                    && !ent.equals(EntityType.ENDER_DRAGON)
+                    && !ent.equals(EntityType.WITHER)
+                    && !ent.equals(EntityType.PLAYER)) {
+                getConfig().addDefault("default.guests." + ent.toString(), 0);
+                getConfig().addDefault("max.guests." + ent.toString(), 5);
+            }
+        }
         loadConfigFromDisk();
     }
 
@@ -129,13 +124,13 @@ public final class DiscoSheep extends JavaPlugin {
         DiscoParty.defaultDuration = toTicks(getConfig().getInt("default.duration"));
         DiscoParty.defaultPeriod = getConfig().getInt("default.period-ticks");
 
-        /*		for (String key : getConfig().getConfigurationSection("default.guests").getKeys(false)) {
-         DiscoParty.getDefaultGuestNumbers().put(key, getConfig().getInt("default.guests." + key));
-         }
-                
-         for (String key : getConfig().getConfigurationSection("max.guests").getKeys(false)) {
-         DiscoParty.getMaxGuestNumbers().put(key, getConfig().getInt("max.guests." + key));
-         }*/
+        for (String key : getConfig().getConfigurationSection("default.guests").getKeys(false)) {
+            DiscoParty.getDefaultGuestNumbers().put(key, getConfig().getInt("default.guests." + key));
+        }
+
+        for (String key : getConfig().getConfigurationSection("max.guests").getKeys(false)) {
+            DiscoParty.getMaxGuestNumbers().put(key, getConfig().getInt("max.guests." + key));
+        }
     }
 
     void reloadConfigFromDisk() {
@@ -150,9 +145,9 @@ public final class DiscoSheep extends JavaPlugin {
         getConfig().set("default.duration", toSeconds_i(DiscoParty.defaultDuration));
         getConfig().set("default.period-ticks", DiscoParty.defaultPeriod);
 
-        /*		for (Map.Entry<String, Integer> entry : DiscoParty.getDefaultGuestNumbers().entrySet()) {
-         getConfig().set("default.guests." + entry.getKey(), entry.getValue());
-         }*/
+        for (Map.Entry<String, Integer> entry : DiscoParty.getDefaultGuestNumbers().entrySet()) {
+            getConfig().set("default.guests." + entry.getKey(), entry.getValue());
+        }
         saveConfig();
     }
 
@@ -163,15 +158,15 @@ public final class DiscoSheep extends JavaPlugin {
         commands = null;
     }
 
-    static int toTicks(double seconds) {
+    int toTicks(double seconds) {
         return (int) Math.round(seconds * 20.0);
     }
 
-    static double toSeconds(int ticks) {
+    double toSeconds(int ticks) {
         return (double) Math.round(ticks / 20.0);
     }
 
-    static int toSeconds_i(int ticks) {
+    int toSeconds_i(int ticks) {
         return (int) Math.round(ticks / 20.0);
     }
 

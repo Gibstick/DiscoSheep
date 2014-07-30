@@ -5,7 +5,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityPortalEnterEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 
 /**
@@ -14,7 +16,7 @@ import org.bukkit.event.player.PlayerShearEntityEvent;
  */
 public class PartyEvents implements Listener {
 
-    DiscoSheep parent;
+    DiscoSheep plugin = DiscoSheep.getInstance();
     DiscoParty party;
     /*
      * There will be multiple instances of PartyEvents,
@@ -24,8 +26,7 @@ public class PartyEvents implements Listener {
      * unregister the listeners when no parties are running.
      */
 
-    public PartyEvents(DiscoSheep parent, DiscoParty party) {
-        this.parent = parent;
+    public PartyEvents(DiscoParty party) {
         this.party = party;
     }
 
@@ -33,11 +34,9 @@ public class PartyEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerShear(PlayerShearEntityEvent e) {
         if (e.getEntity() instanceof Sheep) {
-
             if (party.getSheepList().contains((Sheep) e.getEntity())) {
                 e.setCancelled(true);
             }
-
         }
     }
 
@@ -46,12 +45,9 @@ public class PartyEvents implements Listener {
     public void onLivingEntityDamageEvent(EntityDamageEvent e) {
         if (e.getEntity() instanceof Sheep) {
             if (party.getSheepList().contains((Sheep) e.getEntity())) {
-                {
-                    party.jump(e.getEntity()); // for kicks
-                    e.setCancelled(true);
-                }
+                party.jump(e.getEntity()); // for kicks
+                e.setCancelled(true);
             }
-
         }
         if (party.getGuestList().contains(e.getEntity())) {
             party.jump(e.getEntity());
@@ -62,10 +58,17 @@ public class PartyEvents implements Listener {
     // prevent uninvited guests from targetting players
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityTargetLivingEntityEvent(EntityTargetEvent e) {
-
         if (party.getGuestList().contains(e.getEntity())) {
             e.setCancelled(true);
         }
-
     }
+
+    // prevent egg breeding
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onPlayerInteractEntityEvent(PlayerInteractEntityEvent e) {
+        if (party.getSheepList().contains(e.getRightClicked()) || party.getGuestList().contains(e.getRightClicked())) {
+            e.setCancelled(true);
+        }
+    }
+
 }

@@ -1,14 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ca.gibstick.discosheep;
 
 import com.sk89q.minecraft.util.commands.Command;
 import com.sk89q.minecraft.util.commands.CommandContext;
 import com.sk89q.minecraft.util.commands.CommandPermissions;
 import com.sk89q.minecraft.util.commands.NestedCommand;
+import java.util.Arrays;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandException;
@@ -35,22 +31,63 @@ public class DiscoCommands {
     static final String PERMISSION_TOGGLEPARTYONJOIN = "discosheep.admin.toggleonjoin";
     static final String PERMISSION_LIGHTNING = "discosheep.party.lightning";
 
-    static final String FLAGS = "n:t:p:r:lf";
+    static final String FLAGS = "n:t:p:r:lfg";
 
     private static final DiscoSheep plugin = DiscoSheep.getInstance();
 
     public static class ParentCommand {
 
-        @Command(aliases = {"discosheep", "ds"}, desc = "Main Discosheep Command", min = 0, max = -1)
+        @Command(aliases = {"ds", "discosheep"}, desc = "Main Discosheep Command (see /ds help)", min = 0, max = -1)
         @NestedCommand(DiscoCommands.class)
         public static void DiscoCommand(final CommandContext args, CommandSender sender) throws CommandException {
         }
     }
 
+    private static boolean getNextArg(String[] args, int i, String compare) {
+        if (i < args.length - 1) {
+            return args[i + 1].equalsIgnoreCase(compare);
+        }
+        return false;
+    }
+
+    private static String getNextArg(String[] args, int i) {
+        if (i < args.length - 1) {
+            return args[i + 1];
+        } else {
+            return null;
+        }
+    }
+
+    // return portion of the array that contains space-separated args,
+    // stopping at the end of the array or the next -switch
+    private static String[] getNextArgs(String[] args, int i) {
+        int j = i;
+        while (j < args.length && !args[j].startsWith("-")) {
+            j++;
+        }
+        return Arrays.copyOfRange(args, i, j);
+    }
+
+    private static int getNextIntArg(String[] args, int i) {
+        if (i < args.length - 1) {
+            try {
+                return Integer.parseInt(args[i + 1]);
+            } catch (NumberFormatException e) {
+                return -1; // so that it fails limit checks elsewhere
+            }
+        }
+        return -1; // ibid
+    }
+
     private static void parsePartyFlags(DiscoParty party, final CommandContext args, CommandSender sender) throws IllegalArgumentException {
-        party.setDuration(args.getFlagInteger('t', DiscoParty.defaultDuration));
         party.setPeriod(args.getFlagInteger('p', DiscoParty.defaultPeriod));
         party.setSheep(args.getFlagInteger('n', DiscoParty.defaultSheep));
+
+        // handle special case of duration conversion ugh
+        if (args.hasFlag('t')) {
+            int duration = args.getFlagInteger('t');
+            party.setDuration(plugin.toTicks(duration));
+        }
 
         // handle the special case of radius flag arg "dense"
         String radiusArg = args.getFlag('r', Integer.toString(DiscoParty.defaultRadius));
@@ -60,6 +97,7 @@ public class DiscoCommands {
             party.setRadius(Integer.parseInt(radiusArg));
         }
 
+        // party will still start if player doesn't have permission for extras
         if (sender.hasPermission(PERMISSION_FIREWORKS)) {
             party.setDoFireworks(args.hasFlag('f'));
         } else {
@@ -71,11 +109,58 @@ public class DiscoCommands {
         } else {
             plugin.noPermsMessage(sender, PERMISSION_LIGHTNING);
         }
+
+        // handle guests
+        if (args.hasFlag('g')) {
+            // stop if no permission for spawning guests
+            if (!sender.hasPermission(PERMISSION_SPAWNGUESTS)) {
+                plugin.noPermsMessage(sender, PERMISSION_SPAWNGUESTS);
+                return;
+            }
+
+            String dirtyArgs[] = args.getParsedSlice(0);
+            //sender.sendMessage(dirtyArgs);
+            for (int i = 0; i < dirtyArgs.length; i++) {
+                if ("none".equals(dirtyArgs[0])) {
+                    plugin.clearGuests(party);
+                    return;
+                }
+
+                String[] guests = dirtyArgs;
+                int j = 0;
+                while (j < guests.length - 1) {
+                    try {
+                        party.setGuestNumber(guests[j].toUpperCase(), getNextIntArg(guests, j));
+                    } catch (IllegalArgumentException e) {
+                        sender.sendMessage(ChatColor.RED + "Invalid arguments: " + ChatColor.WHITE + guests[j] + ", " + guests[j + 1]
+                                + ".\nEither a name typo or a number that is not within limits.");
+                    }
+                    j += 2; // skip over two arguments, since they come in pairs of entity-number
+                }
+            }
+
+        }
+
     }
 
-    @Command(aliases = {"test"}, desc = "Test command", usage = "No arguments", min = 0, max = 0)
-    public static void test(final CommandContext args, CommandSender sender) throws CommandException {
-        sender.sendMessage("TESTING");
+    /*-- Actual commands begin here --*/
+    @Command(aliases = "help", desc = "DiscoSheep help", usage = "No arguments", min = 0, max = -1)
+    public static void helpCommand(CommandContext args, CommandSender sender) {
+        sender.sendMessage(ChatColor.YELLOW
+                + "DiscoSheep Help\n"
+                + ChatColor.GRAY
+                + " Subcommands\n"
+                + ChatColor.WHITE + "me, stop, all, stopall, save, reload, togglejoin\n"
+                + "other <players>: start a party for the space-delimited list of players\n"
+                + "defaults: Change the default settings for parties (takes normal arguments)\n"
+                + ChatColor.GRAY + " Arguments\n"
+                + ChatColor.WHITE + "-n <integer>: set the number of sheep per player that spawn\n"
+                + "-t <seconds>: set the party duration in seconds\n"
+                + "-p <ticks>: set the number of ticks between each disco beat\n"
+                + "-r <radius>: set radius of the area in which sheep can spawn\n"
+                + "-g <mob> <number>: set spawns for other mobs"
+                + "-l: enables lightning"
+                + "-f: enables fireworks");
     }
 
     @Command(aliases = {"stop", "stoppls", "wtf"}, desc = "Stop your own disco party", usage = "No arguments", min = 0, max = 0)
@@ -90,7 +175,8 @@ public class DiscoCommands {
     }
 
     @Command(aliases = {"reload"}, desc = "Reload DiscoSheep configuration from file", usage = "No arguments", min = 0, max = 0)
-    public static void reloadCommand(final CommandContext args, CommandSender sender) {
+    public static void reloadCommand(final CommandContext args, CommandSender sender
+    ) {
         plugin.reloadConfigFromDisk();
         sender.sendMessage(ChatColor.GREEN + "DiscoSheep config reloaded from file.");
     }
@@ -104,7 +190,8 @@ public class DiscoCommands {
             flags = FLAGS
     )
     @CommandPermissions(value = PERMISSION_PARTY)
-    public static void partyCommand(final CommandContext args, CommandSender sender) {
+    public static void partyCommand(final CommandContext args, CommandSender sender
+    ) {
         if (!(sender instanceof Player)) {
             sender.sendMessage("You must be a player to have a party");
             return;
@@ -131,13 +218,13 @@ public class DiscoCommands {
             flags = FLAGS
     )
     @CommandPermissions(value = PERMISSION_OTHER)
-    public static void partyOtherCommand(CommandContext args, CommandSender sender) {
+    public static void partyOtherCommand(CommandContext args, CommandSender sender
+    ) {
         DiscoParty party = new DiscoParty();
-        Player p;
-        String players[] = args.getSlice(1);
-
         parsePartyFlags(party, args, sender);
+        String players[] = args.getParsedSlice(0);
 
+        Player p;
         for (String playerName : players) {
             p = Bukkit.getServer().getPlayer(playerName);
             if (p != null) {
@@ -160,7 +247,8 @@ public class DiscoCommands {
             flags = FLAGS
     )
     @CommandPermissions(value = PERMISSION_ALL)
-    public static void partyAllCommand(final CommandContext args, CommandSender sender) {
+    public static void partyAllCommand(final CommandContext args, CommandSender sender
+    ) {
         DiscoParty party = new DiscoParty();
         parsePartyFlags(party, args, sender);
         for (Player p : Bukkit.getServer().getOnlinePlayers()) {
@@ -181,7 +269,8 @@ public class DiscoCommands {
             flags = FLAGS
     )
     @CommandPermissions(value = PERMISSION_TOGGLEPARTYONJOIN)
-    public static void togglePartyOnJoinCommand(final CommandContext args, CommandSender sender) {
+    public static void togglePartyOnJoinCommand(final CommandContext args, CommandSender sender
+    ) {
         boolean result = plugin.toggleOnJoin();
         if (result) {
             sender.sendMessage(ChatColor.GREEN + "DiscoSheep party on join functionality enabled.");
@@ -199,7 +288,8 @@ public class DiscoCommands {
             flags = FLAGS
     )
     @CommandPermissions(value = PERMISSION_CHANGEDEFAULTS)
-    public static void setDefaultsCommand(final CommandContext args, CommandSender sender) {
+    public static void setDefaultsCommand(final CommandContext args, CommandSender sender
+    ) {
         DiscoParty party = new DiscoParty();
         parsePartyFlags(party, args, sender);
         party.setDefaultsFromCurrent();
@@ -215,7 +305,8 @@ public class DiscoCommands {
             flags = FLAGS
     )
     @CommandPermissions(value = PERMISSION_SAVECONFIG)
-    public static void saveConfigCommand(final CommandContext args, CommandSender sender) {
+    public static void saveConfigCommand(final CommandContext args, CommandSender sender
+    ) {
         plugin.saveConfigToDisk();
         sender.sendMessage(ChatColor.GREEN + "DiscoSheep config saved to disk");
     }
