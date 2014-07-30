@@ -5,7 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityPortalEnterEvent;
+import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
@@ -67,6 +67,14 @@ public class PartyEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerInteractEntityEvent(PlayerInteractEntityEvent e) {
         if (party.getSheepList().contains(e.getRightClicked()) || party.getGuestList().contains(e.getRightClicked())) {
+            e.setCancelled(true);
+        }
+    }
+
+    // prevent portal teleport
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onEntityPortalEvent(EntityPortalEvent e) {
+        if (party.getSheepList().contains(e.getEntity()) || party.getGuestList().contains(e.getEntity())) {
             e.setCancelled(true);
         }
     }
