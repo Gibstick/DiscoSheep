@@ -1,0 +1,93 @@
+name: DiscoSheep
+main: ca.gibstick.discosheep.DiscoSheep
+authors: [Gibstick, RangerMauve]
+version: 1.1.2
+commands:
+  #ds:
+    #description: "Main DiscoSheep command"
+    #usage: |
+        #<command> <subcommand> [arguments]
+        #Use /ds help for more information
+        #To stop your party, use /ds stop.
+permissions:
+  # If default is set to false, console will not have permission!
+  discosheep.*:
+    description: Permission node for all DiscoSheep commands
+    default: op
+    children:
+      discosheep.party: true
+      discosheep.admin: true
+  discosheep.party.*:
+    description: All permissions related to parties
+    defualt: op
+    children: 
+      discosheep.party.me: true
+      discosheep.party.all: true
+      discosheep.party.fireworks: true
+      discosheep.party.other: true
+      discosheep.party.changeperiod: true
+      discosheep.party.spawnguests: true
+      discosheep.party.lightning: true
+  discosheep.admin.*:
+    description: Suggested permissions for administrators
+    default: op
+    children:
+      discosheep.admin.stopall: true
+      discosheep.admin.reload: true
+      discosheep.admin.changedefaults: true
+      discosheep.admin.saveconfig: true
+      discosheep.admin.toggleonjoin: true
+  discosheep.party.me:
+    description: Allows a player to have a party of one
+    default: op
+  discosheep.party.all:
+    description: Allows a player to call a server-wide party
+    default: op
+  discosheep.admin.stopall:
+    description: Allows a player to stop all parties on the server
+    default: op
+  discosheep.party.fireworks:
+    description: Allows a player to enable have parties with fireworks
+    default: op
+  discosheep.admin.reload:
+    description: Allows a player to reload settings from config.yml
+    default: op
+  discosheep.party.other:
+    description: Allows a player to call parties for other people, including themselves.
+    default: op
+    children:
+      discosheep.party.me: true
+  discosheep.party.changeperiod:
+    description: Allows a player to use the -p switch
+    default: op
+  discosheep.admin.changedefaults:
+    description: Allows a player to change the default settings
+    default: op
+  discosheep.admin.saveconfig:
+    description: Allows a player to save the config with current values set in memory
+    default: op
+  discosheep.party.onjoin:
+    description: Gives a player a disco party on join
+    default: false
+  discosheep.party.spawnguests:
+    description: Allow a player to spawn other mobs
+    default: op
+  discosheep.admin.toggleonjoin:
+    description: Allow a player to toggle party-on-join functionality (force disable)
+    default: op
+  discosheep.party.lightning:
+    description: Allow a player to use lightning for parties
+    default: op
+ # FOR BACKWARDS COMPAT FROM 1.1 TO 1.1.1
+  discosheep.party:
+    children: 
+     discosheep.party.me: true
+  discosheep.partyall:
+    children: 
+      discosheep.party.all: true
+  discosheep.reload:
+    children: 
+      discoshep.admin.reload: true
+  discosheep.stopall:
+    children: 
+      discosheep.admin.stopall: true
