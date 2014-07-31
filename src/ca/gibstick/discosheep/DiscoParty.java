@@ -275,8 +275,8 @@ public class DiscoParty {
             }
         }
 
-        //loc = player.getLocation();
-        //this.spawnFloor(world, new Location(world, loc.getBlockX(), loc.getBlockY() - 1, loc.getBlockZ()));
+        loc = player.getLocation();
+        this.spawnFloor(world, new Location(world, loc.getBlockX(), loc.getBlockY() - 1, loc.getBlockZ()));
     }
 
     void spawnSheep(World world, Location loc) {
@@ -290,7 +290,7 @@ public class DiscoParty {
             world.strikeLightningEffect(loc);
         }
         newSheep.setCustomName("jeb_");
-        newSheep.setCustomNameVisible(true);
+        newSheep.setCustomNameVisible(false);
         newSheep.setRemoveWhenFarAway(false);
     }
 
@@ -434,9 +434,9 @@ public class DiscoParty {
             }
         }
 
-        /*		for (Block block : this.floorBlocks) {
-         this.randomizeFloor(block);
-         }*/
+        for (Block block : this.floorBlocks) {
+            this.randomizeFloor(block);
+        }
     }
 
     private float getPentatonicNote() {
