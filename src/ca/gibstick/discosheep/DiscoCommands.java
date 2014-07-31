@@ -158,8 +158,8 @@ public class DiscoCommands {
                 + "-t <seconds>: set the party duration in seconds\n"
                 + "-p <ticks>: set the number of ticks between each disco beat\n"
                 + "-r <radius>: set radius of the area in which sheep can spawn\n"
-                + "-g <mob> <number>: set spawns for other mobs"
-                + "-l: enables lightning"
+                + "-g <mob> <number>: set spawns for other mobs\n"
+                + "-l: enables lightning\n"
                 + "-f: enables fireworks");
     }
 
