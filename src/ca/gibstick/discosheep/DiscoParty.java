@@ -6,19 +6,21 @@ import java.util.Map;
 import java.util.Random;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
+import org.bukkit.Effect;
+import static org.bukkit.EntityEffect.*;
+import org.bukkit.FireworkEffect;
+import org.bukkit.FireworkEffect.Builder;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
-import org.bukkit.FireworkEffect;
-import org.bukkit.FireworkEffect.Builder;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
-import org.bukkit.entity.Entity;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -279,13 +281,17 @@ public class DiscoParty {
 
     void spawnSheep(World world, Location loc) {
         Sheep newSheep = (Sheep) world.spawnEntity(loc, EntityType.SHEEP);
-        newSheep.setColor(discoColours[(r.nextInt(discoColours.length))]);
+        //newSheep.setColor(discoColours[(r.nextInt(discoColours.length))]);
         newSheep.setBreed(false);	// this prevents breeding - no event listener required
         newSheep.teleport(loc);	// teleport is needed to set orientation
+        newSheep.setTarget(player);
         getSheepList().add(newSheep);
         if (doLightning) {
             world.strikeLightningEffect(loc);
         }
+        newSheep.setCustomName("jeb_");
+        newSheep.setCustomNameVisible(true);
+        newSheep.setRemoveWhenFarAway(false);
     }
 
     void spawnGuest(World world, Location loc, EntityType type) {
@@ -403,12 +409,13 @@ public class DiscoParty {
 
     void updateAll() {
         for (Sheep sheeple : getSheepList()) {
-            randomizeSheepColour(sheeple);
+            //randomizeSheepColour(sheeple);
 
-            if (doFireworks && state % 8 == 0) {
-                if (r.nextDouble() < 0.50) {
+            if (state % 8 == 0) {
+                if (r.nextDouble() < 0.50 && doFireworks) {
                     spawnRandomFireworkAtSheep(sheeple);
                 }
+                sheeple.playEffect(SHEEP_EAT);
             }
 
             if (doJump) {
@@ -416,6 +423,7 @@ public class DiscoParty {
                     jump(sheeple);
                 }
             }
+
         }
 
         for (Entity guest : getGuestList()) {
