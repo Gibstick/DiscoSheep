@@ -7,11 +7,15 @@ import com.sk89q.minecraft.util.commands.CommandsManager;
 import com.sk89q.minecraft.util.commands.MissingNestedCommandException;
 import com.sk89q.minecraft.util.commands.WrappedCommandException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
@@ -107,6 +111,7 @@ public final class DiscoSheep extends JavaPlugin {
                 getConfig().addDefault("max.guests." + ent.toString(), 5);
             }
         }
+
         loadConfigFromDisk();
     }
 
@@ -184,6 +189,7 @@ public final class DiscoSheep extends JavaPlugin {
         if (this.hasParty(name)) {
             this.getParty(name).stopDisco();
         }
+
     }
 
     public void stopAllParties() {
@@ -229,5 +235,17 @@ public final class DiscoSheep extends JavaPlugin {
     boolean noPermsMessage(CommandSender sender, String permission) {
         sender.sendMessage(ChatColor.RED + "You do not have the permission node " + ChatColor.GRAY + permission);
         return false;
+    }
+
+    // From user "desht" on bukkit forums
+    public List<Player> getPlayersWithin(Player player, int distance) {
+        List<Player> res = new ArrayList<Player>();
+        int d2 = distance * distance;
+        for (Player p : Bukkit.getServer().getOnlinePlayers()) {
+            if (p.getWorld() == player.getWorld() && p.getLocation().distanceSquared(player.getLocation()) <= d2) {
+                res.add(p);
+            }
+        }
+        return res;
     }
 }

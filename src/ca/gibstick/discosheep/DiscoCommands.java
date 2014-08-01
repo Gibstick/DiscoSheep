@@ -30,6 +30,7 @@ public class DiscoCommands {
     static final String PERMISSION_SPAWNGUESTS = "discosheep.party.spawnguests";
     static final String PERMISSION_TOGGLEPARTYONJOIN = "discosheep.admin.toggleonjoin";
     static final String PERMISSION_LIGHTNING = "discosheep.party.lightning";
+    static final String PERMISSION_SHARED = "discosheep.party.shared";
 
     static final String FLAGS = "n:t:p:r:lfg";
 
@@ -190,8 +191,7 @@ public class DiscoCommands {
             flags = FLAGS
     )
     @CommandPermissions(value = PERMISSION_PARTY)
-    public static void partyCommand(final CommandContext args, CommandSender sender
-    ) {
+    public static void partyCommand(final CommandContext args, CommandSender sender) {
         if (!(sender instanceof Player)) {
             sender.sendMessage("You must be a player to have a party");
             return;
@@ -200,6 +200,32 @@ public class DiscoCommands {
         if (!plugin.hasParty(player.getName())) {
             DiscoParty party = new DiscoParty(player);
             parsePartyFlags(party, args, sender);
+            party.startDisco();
+        } else {
+            player.sendMessage(ChatColor.RED + "You already have a party.");
+        }
+    }
+
+    @Command(
+            aliases = {"shared"},
+            desc = "Start your own shared DiscoParty (other players can see the party)",
+            usage = "[optional flags]",
+            min = 0,
+            max = -1,
+            flags = FLAGS
+    )
+    @CommandPermissions(value = PERMISSION_SHARED)
+    public static void partySharedCommand(final CommandContext args, CommandSender sender) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("You must be a player to have a party");
+            return;
+        }
+        Player player = (Player) sender;
+        if (!plugin.hasParty(player.getName())) {
+            DiscoParty party = new DiscoParty();
+            party.setMainPlayer(player);
+            parsePartyFlags(party, args, sender);
+            party.getPlayers().addAll(plugin.getPlayersWithin(player, party.getRadius()));
             party.startDisco();
         } else {
             player.sendMessage(ChatColor.RED + "You already have a party.");
@@ -218,8 +244,7 @@ public class DiscoCommands {
             flags = FLAGS
     )
     @CommandPermissions(value = PERMISSION_OTHER)
-    public static void partyOtherCommand(CommandContext args, CommandSender sender
-    ) {
+    public static void partyOtherCommand(CommandContext args, CommandSender sender) {
         DiscoParty party = new DiscoParty();
         parsePartyFlags(party, args, sender);
         String players[] = args.getParsedSlice(0);

@@ -1,5 +1,7 @@
 package ca.gibstick.discosheep;
 
+import org.bukkit.Instrument;
+import org.bukkit.Sound;
 import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -35,7 +37,7 @@ public class PartyEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerShear(PlayerShearEntityEvent e) {
         if (e.getEntity() instanceof Sheep) {
-            if (party.getSheepList().contains((Sheep) e.getEntity())) {
+            if (party.getSheepSet().contains((Sheep) e.getEntity())) {
                 e.setCancelled(true);
             }
         }
@@ -45,12 +47,12 @@ public class PartyEvents implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onLivingEntityDamageEvent(EntityDamageEvent e) {
         if (e.getEntity() instanceof Sheep) {
-            if (party.getSheepList().contains((Sheep) e.getEntity())) {
+            if (party.getSheepSet().contains((Sheep) e.getEntity())) {
                 party.jump(e.getEntity()); // for kicks
                 e.setCancelled(true);
             }
         }
-        if (party.getGuestList().contains(e.getEntity())) {
+        if (party.getGuestSet().contains(e.getEntity())) {
             party.jump(e.getEntity());
             e.setCancelled(true);
         }
@@ -59,7 +61,7 @@ public class PartyEvents implements Listener {
     // prevent uninvited guests from targetting players
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityTargetLivingEntityEvent(EntityTargetEvent e) {
-        if (party.getGuestList().contains(e.getEntity())) {
+        if (party.getGuestSet().contains(e.getEntity())) {
             e.setCancelled(true);
         }
     }
@@ -67,15 +69,16 @@ public class PartyEvents implements Listener {
     // prevent egg breeding
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerInteractEntityEvent(PlayerInteractEntityEvent e) {
-        if (party.getSheepList().contains(e.getRightClicked()) || party.getGuestList().contains(e.getRightClicked())) {
+        if (party.getSheepSet().contains(e.getRightClicked()) || party.getGuestSet().contains(e.getRightClicked())) {
             e.setCancelled(true);
+            e.getPlayer().playSound(e.getRightClicked().getLocation(), Sound.NOTE_BASS_GUITAR, 1.0f, party.getPentatonicNote());
         }
     }
 
     // prevent portal teleport
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityPortalEvent(EntityPortalEvent e) {
-        if (party.getSheepList().contains(e.getEntity()) || party.getGuestList().contains(e.getEntity())) {
+        if (party.getSheepSet().contains(e.getEntity()) || party.getGuestSet().contains(e.getEntity())) {
             e.setCancelled(true);
         }
     }

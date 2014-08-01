@@ -1,12 +1,15 @@
 package ca.gibstick.discosheep;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
-import org.bukkit.Effect;
+import org.bukkit.Material;
 import static org.bukkit.EntityEffect.*;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Builder;
@@ -15,6 +18,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -41,6 +45,20 @@ public class DiscoParty {
     static int maxPeriod = 40;	// 2.0 seconds
     private static HashMap<String, Integer> defaultGuestNumbers = new HashMap<String, Integer>();
     private static HashMap<String, Integer> maxGuestNumbers = new HashMap<String, Integer>();
+    private static final EnumSet<Material> floorExceptions = EnumSet.of(
+            Material.STAINED_GLASS,
+            Material.FURNACE,
+            Material.CHEST,
+            Material.ENDER_CHEST,
+            Material.BURNING_FURNACE,
+            Material.ENDER_PORTAL,
+            Material.ENDER_PORTAL_FRAME,
+            Material.OBSIDIAN,
+            Material.BED,
+            Material.BED_BLOCK,
+            Material.SOIL
+    );
+
     private static final DyeColor[] discoColours = {
         DyeColor.RED,
         DyeColor.ORANGE,
@@ -56,6 +74,7 @@ public class DiscoParty {
         DyeColor.BLACK,
         DyeColor.WHITE
     };
+
     private static final float[] pentatonicNotes = {
         1.0f,
         1.125f,
@@ -68,9 +87,12 @@ public class DiscoParty {
     private Random r = new Random();
     private PartyEvents partyEvents;
     private final DiscoSheep parent = DiscoSheep.getInstance();
-    private Player player;
+    private ArrayList<Player> players = new ArrayList<Player>();
+    private Player mainPlayer;
     private ArrayList<Sheep> sheepList = new ArrayList<Sheep>();
+    private HashSet<Sheep> sheepSet = new HashSet<Sheep>();
     private ArrayList<Entity> guestList = new ArrayList<Entity>();
+    private HashSet<Entity> guestSet = new HashSet<Entity>();
     private ArrayList<BlockState> floorBlockCache = new ArrayList<BlockState>();
     private ArrayList<Block> floorBlocks = new ArrayList<Block>();
     private HashMap<String, Integer> guestNumbers = new HashMap<String, Integer>();
@@ -83,7 +105,8 @@ public class DiscoParty {
 
     public DiscoParty(Player player) {
         this();
-        this.player = player;
+        this.mainPlayer = player;
+        this.players.add(player);
     }
 
     public DiscoParty() {
@@ -110,6 +133,14 @@ public class DiscoParty {
         return newParty;
     }
 
+    HashSet<Sheep> getSheepSet() {
+        return sheepSet;
+    }
+
+    HashSet<Entity> getGuestSet() {
+        return guestSet;
+    }
+
     ArrayList<Sheep> getSheepList() {
         return sheepList;
     }
@@ -124,6 +155,10 @@ public class DiscoParty {
 
     ArrayList<Block> getFloorBlocks() {
         return this.floorBlocks;
+    }
+
+    public int getRadius() {
+        return radius;
     }
 
     public static HashMap<String, Integer> getDefaultGuestNumbers() {
@@ -142,13 +177,13 @@ public class DiscoParty {
         return this.sheep;
     }
 
-    public DiscoParty setPlayer(Player player) {
-        if (player != null) {
-            this.player = player;
-            return this;
-        } else {
-            throw new NullPointerException();
-        }
+    public DiscoParty setMainPlayer(Player player) {
+        this.mainPlayer = player;
+        return this;
+    }
+
+    public ArrayList<Player> getPlayers() {
+        return players;
     }
 
     public DiscoParty setDuration(int duration) throws IllegalArgumentException {
@@ -243,11 +278,11 @@ public class DiscoParty {
         double azimuth = r.nextDouble() * 2 * Math.PI; // radians
         x += rand * Math.cos(azimuth);
         z += rand * Math.sin(azimuth);
-        y = this.player.getLocation().getY();
+        y = this.mainPlayer.getLocation().getY();
 
         loc = new Location(world, x, y, z);
         loc.setPitch(r.nextFloat() * 360 - 180);
-        loc.setYaw(0);
+        loc.setYaw(r.nextFloat() * 360 - 180);
 
         return loc;
     }
@@ -255,10 +290,10 @@ public class DiscoParty {
     // Spawn some number of guests next to given player
     void spawnAll(int sheep, int spawnRadius) {
         Location loc;
-        World world = player.getWorld();
+        World world = mainPlayer.getWorld();
 
-        double x = player.getLocation().getX();
-        double z = player.getLocation().getZ();
+        double x = mainPlayer.getLocation().getX();
+        double z = mainPlayer.getLocation().getZ();
         for (int i = 0; i < sheep; i++) {
             loc = getRandomSpawnLocation(x, z, world, spawnRadius);
             spawnSheep(world, loc);
@@ -275,7 +310,7 @@ public class DiscoParty {
             }
         }
 
-        loc = player.getLocation();
+        loc = mainPlayer.getLocation();
         this.spawnFloor(world, new Location(world, loc.getBlockX(), loc.getBlockY() - 1, loc.getBlockZ()));
     }
 
@@ -284,8 +319,9 @@ public class DiscoParty {
         //newSheep.setColor(discoColours[(r.nextInt(discoColours.length))]);
         newSheep.setBreed(false);	// this prevents breeding - no event listener required
         newSheep.teleport(loc);	// teleport is needed to set orientation
-        newSheep.setTarget(player);
+        newSheep.setTarget(this.mainPlayer);
         getSheepList().add(newSheep);
+        getSheepSet().add(newSheep);
         if (doLightning) {
             world.strikeLightningEffect(loc);
         }
@@ -297,6 +333,7 @@ public class DiscoParty {
     void spawnGuest(World world, Location loc, EntityType type) {
         Entity newGuest = loc.getWorld().spawnEntity(loc, type);
         getGuestList().add(newGuest);
+        getGuestSet().add(newGuest);
         if (doLightning) {
             world.strikeLightningEffect(loc);
         }
@@ -307,7 +344,9 @@ public class DiscoParty {
         for (int x = loc.getBlockX() - Math.min(this.radius, DiscoParty.maxFloorSize); x < loc.getX() + Math.min(this.radius, DiscoParty.maxFloorSize); ++x) {
             for (int z = loc.getBlockZ() - Math.min(this.radius, DiscoParty.maxFloorSize); z < loc.getZ() + Math.min(this.radius, DiscoParty.maxFloorSize); ++z) {
                 Block block = world.getBlockAt(x, loc.getBlockY(), z);
-                if (block.getType() != Material.STAINED_GLASS) {
+                if (!DiscoParty.floorExceptions.contains(block.getType())
+                        && block.getRelative(BlockFace.UP).getType() == Material.AIR
+                        && (block.getType().isSolid() || block.getType() == Material.AIR)) {
                     this.getFloorCache().add(block.getState());
                     block.setType(Material.STAINED_GLASS);
                     this.getFloorBlocks().add(block);
@@ -324,11 +363,14 @@ public class DiscoParty {
         for (Entity guest : getGuestList()) {
             guest.remove();
         }
+
         for (BlockState block : this.floorBlockCache) {
             block.update(true);
         }
         getSheepList().clear();
         getGuestList().clear();
+        getSheepSet().clear();
+        getGuestSet().clear();
         floorBlockCache.clear();
     }
 
@@ -339,7 +381,6 @@ public class DiscoParty {
 
     void randomizeFloor(Block block, int index) {
         int to_color = (index + state) % discoColours.length;
-
         block.setData(discoColours[to_color].getData());
     }
 
@@ -350,7 +391,6 @@ public class DiscoParty {
         entity.setVelocity(newVel);
     }
 
-    // WHY ISN'T THERE A Color.getValue() ?!?!?!?!
     private Color getColor(int i) {
         Color c = null;
         if (i == 1) {
@@ -434,23 +474,26 @@ public class DiscoParty {
                 }
             }
         }
+
         for (int i = 0; i < this.floorBlocks.size(); i++) {
             this.randomizeFloor(floorBlocks.get(i), i);
         }
     }
 
-    private float getPentatonicNote() {
+    float getPentatonicNote() {
         return DiscoParty.pentatonicNotes[r.nextInt(pentatonicNotes.length)];
     }
 
     void playSounds() {
-        player.playSound(player.getLocation(), Sound.NOTE_BASS_DRUM, 0.75f, 1.0f);
-        if (this.state % 2 == 0) {
-            player.playSound(player.getLocation(), Sound.NOTE_SNARE_DRUM, 0.8f, 1.0f);
-        }
+        for (Player p : players) {
+            p.playSound(p.getLocation(), Sound.NOTE_BASS_DRUM, 0.75f, 1.0f);
+            if (this.state % 2 == 0) {
+                p.playSound(p.getLocation(), Sound.NOTE_SNARE_DRUM, 0.8f, 1.0f);
+            }
 
-        if ((this.state + 1) % 8 == 0) {
-            player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1.0f, 1.0f);
+            if ((this.state + 1) % 8 == 0) {
+                p.playSound(p.getLocation(), Sound.NOTE_STICKS, 1.0f, 1.0f);
+            }
         }
     }
 
@@ -504,7 +547,7 @@ public class DiscoParty {
     void startDisco() {
         this.spawnAll(sheep, radius);
         this.scheduleUpdate();
-        parent.getPartyMap().put(this.player.getName(), this);
+        parent.getPartyMap().put(this.mainPlayer.getName(), this);
         // start listening
         this.partyEvents = new PartyEvents(this);
         parent.getServer().getPluginManager().registerEvents(this.partyEvents, this.parent);
@@ -517,7 +560,7 @@ public class DiscoParty {
             updater.cancel();
         }
         updater = null;
-        parent.getPartyMap().remove(this.player.getName());
+        parent.getPartyMap().remove(this.mainPlayer.getName());
         // stop listening
         HandlerList.unregisterAll(this.partyEvents);
     }
