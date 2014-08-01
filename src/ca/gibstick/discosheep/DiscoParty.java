@@ -338,7 +338,7 @@ public class DiscoParty {
     }
 
     void randomizeFloor(Block block, int index) {
-        int to_color = (index + state) % disocColors.length;
+        int to_color = (index + state) % disocColours.length;
         block.setType(Material.WOOL);
         block.setData(discoColours[to_color].getData());
     }
