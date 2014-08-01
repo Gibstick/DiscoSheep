@@ -4,6 +4,7 @@ import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
@@ -78,5 +79,11 @@ public class PartyEvents implements Listener {
             e.setCancelled(true);
         }
     }
-
+    // prevent disco floor breaking
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBlockBreakEvent(BlockBreakEvent e) {
+        if (party.getFloorBlocks().contains(e.getBlock())) {
+            e.setCancelled(true);
+        }
+    }
 }

@@ -28,12 +28,12 @@ import org.bukkit.util.Vector;
 
 public class DiscoParty {
 
-    // Static properties
     static int defaultDuration = 300; // ticks for entire party
     static int defaultPeriod = 10; // ticks per state change
     static int defaultRadius = 5;
     static int defaultSheep = 10;
     static float defaultSheepJump = 0.35f;
+    static int maxFloorSize = 5;
     static int maxDuration = 2400; // 120 seconds
     static int maxSheep = 100;
     static int maxRadius = 100;
@@ -304,12 +304,12 @@ public class DiscoParty {
 
     void spawnFloor(World world, Location loc) {
         // First we'll save the floor state
-        for (int x = loc.getBlockX() - this.radius; x < loc.getX() + this.radius; ++x) {
-            for (int z = loc.getBlockZ() - this.radius; z < loc.getZ() + this.radius; ++z) {
+        for (int x = loc.getBlockX() - Math.min(this.radius, DiscoParty.maxFloorSize); x < loc.getX() + Math.min(this.radius, DiscoParty.maxFloorSize); ++x) {
+            for (int z = loc.getBlockZ() - Math.min(this.radius, DiscoParty.maxFloorSize); z < loc.getZ() + Math.min(this.radius, DiscoParty.maxFloorSize); ++z) {
                 Block block = world.getBlockAt(x, loc.getBlockY(), z);
-                if (block.getType() != Material.WOOL) {
+                if (block.getType() != Material.STAINED_GLASS) {
                     this.getFloorCache().add(block.getState());
-                    block.setType(Material.WOOL);
+                    block.setType(Material.STAINED_GLASS);
                     this.getFloorBlocks().add(block);
                 }
             }
@@ -339,7 +339,7 @@ public class DiscoParty {
 
     void randomizeFloor(Block block, int index) {
         int to_color = (index + state) % discoColours.length;
-        
+
         block.setData(discoColours[to_color].getData());
     }
 

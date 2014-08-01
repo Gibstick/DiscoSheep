@@ -24,7 +24,7 @@ public final class DiscoSheep extends JavaPlugin {
 
     private static DiscoSheep instance;
 
-    static boolean partyOnJoin = false;
+    boolean partyOnJoin = true;
     Map<String, DiscoParty> parties = new HashMap<String, DiscoParty>();
     private CommandsManager<CommandSender> commands;
 
@@ -92,6 +92,7 @@ public final class DiscoSheep extends JavaPlugin {
         getConfig().addDefault("default.radius", DiscoParty.defaultRadius);
         getConfig().addDefault("default.duration", toSeconds_i(DiscoParty.defaultDuration));
         getConfig().addDefault("default.period-ticks", DiscoParty.defaultPeriod);
+        getConfig().addDefault("max.floor_size", DiscoParty.maxFloorSize);
 
         /*
          * Iterate through all live entities and create default configuration values for them
@@ -123,6 +124,7 @@ public final class DiscoSheep extends JavaPlugin {
         DiscoParty.defaultRadius = getConfig().getInt("default.radius");
         DiscoParty.defaultDuration = toTicks(getConfig().getInt("default.duration"));
         DiscoParty.defaultPeriod = getConfig().getInt("default.period-ticks");
+        DiscoParty.maxFloorSize = getConfig().getInt("max.floor_size");
 
         for (String key : getConfig().getConfigurationSection("default.guests").getKeys(false)) {
             DiscoParty.getDefaultGuestNumbers().put(key, getConfig().getInt("default.guests." + key));
@@ -199,8 +201,8 @@ public final class DiscoSheep extends JavaPlugin {
     }
 
     public boolean toggleOnJoin() {
-        DiscoSheep.partyOnJoin = !DiscoSheep.partyOnJoin;
-        return DiscoSheep.partyOnJoin;
+        partyOnJoin = !partyOnJoin;
+        return partyOnJoin;
     }
 
     public void removeParty(String name) {
@@ -209,135 +211,6 @@ public final class DiscoSheep extends JavaPlugin {
         }
     }
 
-    /*-- Actual commands begin here --*/
-    /*boolean helpCommand(CommandSender sender) {
-     sender.sendMessage(ChatColor.YELLOW
-     + "DiscoSheep Help\n"
-     + ChatColor.GRAY
-     + "  Subcommands\n"
-     + ChatColor.WHITE + "me, stop, all, stopall, save, reload, togglejoin\n"
-     + "other <players>: start a party for the space-delimited list of players\n"
-     + "defaults: Change the default settings for parties (takes normal arguments)\n"
-     + ChatColor.GRAY + "  Arguments\n"
-     + ChatColor.WHITE + "-n <integer>: set the number of sheep per player that spawn\n"
-     + "-t <integer>: set the party duration in seconds\n"
-     + "-p <ticks>: set the number of ticks between each disco beat\n"
-     + "-r <integer>: set radius of the area in which sheep can spawn\n"
-     //+ "-g <mob> <number>: set spawns for other mobs\n"
-     + "-l: enables lightning\n"
-     + "-fw: enables fireworks");
-     return true;
-     }
-    
-     boolean stopMeCommand(CommandSender sender) {
-     stopParty(sender.getName());
-     return true;
-     }
-    
-     boolean stopAllCommand(CommandSender sender) {
-     if (sender.hasPermission(PERMISSION_STOPALL)) {
-     stopAllParties();
-     return true;
-     } else {
-     return noPermsMessage(sender, PERMISSION_STOPALL);
-     }
-     }
-    
-     boolean partyCommand(Player player, DiscoParty party) {
-     if (player.hasPermission(PERMISSION_PARTY)) {
-     if (!hasParty(player.getName())) {
-     party.setPlayer(player);
-     party.startDisco();
-     } else {
-     player.sendMessage(ChatColor.RED + "You already have a party. Are you underground?");
-     }
-     return true;
-     } else {
-     return noPermsMessage(player, PERMISSION_PARTY);
-     }
-     }
-    
-     boolean reloadCommand(CommandSender sender) {
-     if (sender.hasPermission(PERMISSION_RELOAD)) {
-     reloadConfigFromDisk();
-     sender.sendMessage(ChatColor.GREEN + "DiscoSheep config reloaded from disk");
-     return true;
-     } else {
-     return noPermsMessage(sender, PERMISSION_RELOAD);
-     }
-     }
-    
-     @SuppressWarnings("deprecation")
-     // UUIDs not necessary since DiscoSheep only lasts for one session at most
-     // and permissions will handle onJoin DiscoSheep
-     boolean partyOtherCommand(String[] players, CommandSender sender, DiscoParty party) {
-     if (sender.hasPermission(PERMISSION_OTHER)) {
-     Player p;
-     for (String playerName : players) {
-     p = Bukkit.getServer().getPlayer(playerName);
-     if (p != null) {
-     if (!hasParty(p.getName())) {
-     DiscoParty individualParty = party.clone(p);
-     individualParty.startDisco();
-     }
-     } else {
-     sender.sendMessage("Invalid player: " + playerName);
-     }
-     }
-     return true;
-     } else {
-     return noPermsMessage(sender, PERMISSION_OTHER);
-     }
-     }
-    
-     boolean partyAllCommand(CommandSender sender, DiscoParty party) {
-     if (sender.hasPermission(PERMISSION_ALL)) {
-     for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-     if (!hasParty(p.getName())) {
-     DiscoParty individualParty = party.clone(p);
-     individualParty.startDisco();
-     p.sendMessage(ChatColor.RED + "LET'S DISCO!!");
-     }
-     }
-     return true;
-     } else {
-     return noPermsMessage(sender, PERMISSION_ALL);
-     }
-     }
-    
-     boolean togglePartyOnJoinCommand(CommandSender sender) {
-     if (!sender.hasPermission(PERMISSION_TOGGLEPARTYONJOIN)) {
-     return noPermsMessage(sender, PERMISSION_TOGGLEPARTYONJOIN);
-     }
-     partyOnJoin = !partyOnJoin;
-     if (partyOnJoin) {
-     sender.sendMessage(ChatColor.GREEN + "DiscoSheep party on join functionality enabled.");
-     } else {
-     sender.sendMessage(ChatColor.GREEN + "DiscoSheep party on join functionality disabled.");
-     }
-     return true;
-     }
-    
-     boolean setDefaultsCommand(CommandSender sender, DiscoParty party) {
-     if (sender.hasPermission(PERMISSION_CHANGEDEFAULTS)) {
-     party.setDefaultsFromCurrent();
-     sender.sendMessage(ChatColor.GREEN + "DiscoSheep configured with new defaults (not saved to disk yet)");
-     return true;
-     } else {
-     return noPermsMessage(sender, PERMISSION_CHANGEDEFAULTS);
-     }
-     }
-    
-     boolean saveConfigCommand(CommandSender sender) {
-     if (sender.hasPermission(PERMISSION_SAVECONFIG)) {
-     saveConfigToDisk();
-     sender.sendMessage(ChatColor.GREEN + "DiscoSheep config saved to disk");
-     return true;
-     } else {
-     return noPermsMessage(sender, PERMISSION_SAVECONFIG);
-     }
-    
-     }*/
     void partyOnJoin(Player player) {
         if (!partyOnJoin) {
             return;
