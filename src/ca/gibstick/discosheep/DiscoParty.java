@@ -337,9 +337,10 @@ public class DiscoParty {
         sheep.setColor(discoColours[(r.nextInt(discoColours.length))]);
     }
 
-    void randomizeFloor(Block block) {
+    void randomizeFloor(Block block, int index) {
+        int to_color = (index + state) % disocColors.length;
         block.setType(Material.WOOL);
-        block.setData(discoColours[(r.nextInt(discoColours.length))].getData());
+        block.setData(discoColours[to_color].getData());
     }
 
     void jump(Entity entity) {
@@ -433,9 +434,8 @@ public class DiscoParty {
                 }
             }
         }
-
-        for (Block block : this.floorBlocks) {
-            this.randomizeFloor(block);
+        for(int i = 0; i < this.floorBlocks.length;i++){
+            this.randomizeFloor(block,i);
         }
     }
 
