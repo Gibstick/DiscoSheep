@@ -19,7 +19,5 @@ Tested up to CraftBukkit build #3092 (MC: 1.7.9); can be built with Java 7.
 ###Releases###
 See BukkitDev, or https://github.com/Gibstick/DiscoSheep/releases
 
-##A Note on Performance###
-
 ###License###
 See LICENSE.md
