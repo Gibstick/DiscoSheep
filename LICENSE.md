@@ -1,6 +1,6 @@
 This license applies to the project except for files in the "lib" folder. See lib/LICENSE.txt for details.
 
-==DiscoSheep License==
+##DiscoSheep License##
 
 Copyright (c) 2013-2014 "Gibstick", "RangerMauve"
 
