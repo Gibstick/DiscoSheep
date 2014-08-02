@@ -1,7 +1,7 @@
 name: DiscoSheep
 main: ca.gibstick.discosheep.DiscoSheep
 authors: [Gibstick, RangerMauve]
-version: 1.1.2
+version: 1.2
 commands:
   #ds:
     #description: "Main DiscoSheep command"
@@ -28,6 +28,7 @@ permissions:
       discosheep.party.changeperiod: true
       discosheep.party.spawnguests: true
       discosheep.party.lightning: true
+      discosheep.party.dancefloor: true
   discosheep.admin.*:
     description: Suggested permissions for administrators
     default: op
@@ -77,6 +78,9 @@ permissions:
     default: op
   discosheep.party.lightning:
     description: Allow a player to use lightning for parties
+    default: op
+  discosheep.party.dancefloor:
+    description: Allow a player to spawn a dance floor
     default: op
  # FOR BACKWARDS COMPAT FROM 1.1 TO 1.1.1
   discosheep.party:

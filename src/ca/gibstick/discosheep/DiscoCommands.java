@@ -30,9 +30,9 @@ public class DiscoCommands {
     static final String PERMISSION_SPAWNGUESTS = "discosheep.party.spawnguests";
     static final String PERMISSION_TOGGLEPARTYONJOIN = "discosheep.admin.toggleonjoin";
     static final String PERMISSION_LIGHTNING = "discosheep.party.lightning";
-    static final String PERMISSION_SHARED = "discosheep.party.shared";
+    static final String PERMISSION_DANCEFLOOR = "discosheep.party.dancefloor";
 
-    static final String FLAGS = "n:t:p:r:lfg";
+    static final String FLAGS = "n:t:p:r:lfgd";
 
     private static final DiscoSheep plugin = DiscoSheep.getInstance();
 
@@ -83,6 +83,10 @@ public class DiscoCommands {
     private static void parsePartyFlags(DiscoParty party, final CommandContext args, CommandSender sender) throws IllegalArgumentException {
         party.setPeriod(args.getFlagInteger('p', DiscoParty.defaultPeriod));
         party.setSheep(args.getFlagInteger('n', DiscoParty.defaultSheep));
+
+        if (sender.hasPermission(PERMISSION_DANCEFLOOR)) {
+            party.setDoFloor(args.hasFlag('d'));
+        }
 
         // handle special case of duration conversion ugh
         if (args.hasFlag('t')) {
@@ -141,7 +145,6 @@ public class DiscoCommands {
             }
 
         }
-
     }
 
     /*-- Actual commands begin here --*/
@@ -200,32 +203,6 @@ public class DiscoCommands {
         if (!plugin.hasParty(player.getName())) {
             DiscoParty party = new DiscoParty(player);
             parsePartyFlags(party, args, sender);
-            party.startDisco();
-        } else {
-            player.sendMessage(ChatColor.RED + "You already have a party.");
-        }
-    }
-
-    @Command(
-            aliases = {"shared"},
-            desc = "Start your own shared DiscoParty (other players can see the party)",
-            usage = "[optional flags]",
-            min = 0,
-            max = -1,
-            flags = FLAGS
-    )
-    @CommandPermissions(value = PERMISSION_SHARED)
-    public static void partySharedCommand(final CommandContext args, CommandSender sender) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage("You must be a player to have a party");
-            return;
-        }
-        Player player = (Player) sender;
-        if (!plugin.hasParty(player.getName())) {
-            DiscoParty party = new DiscoParty();
-            party.setMainPlayer(player);
-            parsePartyFlags(party, args, sender);
-            party.getPlayers().addAll(plugin.getPlayersWithin(player, party.getRadius()));
             party.startDisco();
         } else {
             player.sendMessage(ChatColor.RED + "You already have a party.");

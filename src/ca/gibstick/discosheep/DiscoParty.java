@@ -9,7 +9,6 @@ import java.util.Random;
 import java.util.Set;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
-import org.bukkit.Material;
 import static org.bukkit.EntityEffect.*;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Builder;
@@ -23,6 +22,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.event.HandlerList;
@@ -86,27 +86,29 @@ public class DiscoParty {
     // Instance properties
     private Random r = new Random();
     private PartyEvents partyEvents;
-    private final DiscoSheep parent = DiscoSheep.getInstance();
-    private ArrayList<Player> players = new ArrayList<Player>();
-    private Player mainPlayer;
-    private ArrayList<Sheep> sheepList = new ArrayList<Sheep>();
-    private HashSet<Sheep> sheepSet = new HashSet<Sheep>();
-    private ArrayList<Entity> guestList = new ArrayList<Entity>();
-    private HashSet<Entity> guestSet = new HashSet<Entity>();
-    private ArrayList<BlockState> floorBlockCache = new ArrayList<BlockState>();
-    private ArrayList<Block> floorBlocks = new ArrayList<Block>();
+    private final DiscoSheep plugin = DiscoSheep.getInstance();
+    private Player player;
+    private final ArrayList<Sheep> sheepList = new ArrayList<Sheep>();
+    private final HashSet<Sheep> sheepSet = new HashSet<Sheep>();
+    private final ArrayList<Entity> guestList = new ArrayList<Entity>();
+    private final HashSet<Entity> guestSet = new HashSet<Entity>();
+    private final ArrayList<BlockState> floorBlockCache = new ArrayList<BlockState>();
+    private final ArrayList<Block> floorBlocks = new ArrayList<Block>();
     private HashMap<String, Integer> guestNumbers = new HashMap<String, Integer>();
     private boolean doFireworks = false;
-    private boolean doJump = true;
+    private final boolean doJump = true;
     private boolean doLightning = false;
+    private boolean doFloor = false;
     private int duration, period, radius, sheep;
     private int state = 0; // basically our own tick system
+    private float volumeMultiplier;
+    private Location partyLocation;
     private DiscoUpdater updater;
 
     public DiscoParty(Player player) {
         this();
-        this.mainPlayer = player;
-        this.players.add(player);
+        this.player = player;
+        this.partyLocation = player.getLocation();
     }
 
     public DiscoParty() {
@@ -177,13 +179,10 @@ public class DiscoParty {
         return this.sheep;
     }
 
-    public DiscoParty setMainPlayer(Player player) {
-        this.mainPlayer = player;
+    public DiscoParty setPlayer(Player player) {
+        this.player = player;
+        this.partyLocation = player.getLocation();
         return this;
-    }
-
-    public ArrayList<Player> getPlayers() {
-        return players;
     }
 
     public DiscoParty setDuration(int duration) throws IllegalArgumentException {
@@ -245,6 +244,10 @@ public class DiscoParty {
         return this;
     }
 
+    public void setDoFloor(boolean doFloor) {
+        this.doFloor = doFloor;
+    }
+    
     public DiscoParty setGuestNumber(String key, int n) throws IllegalArgumentException {
         if (getMaxGuestNumbers().containsKey(key.toUpperCase())) {
             if (n <= getMaxGuestNumbers().get(key.toUpperCase()) && n >= 0) { // so that /ds defaults can take 0 as arg
@@ -278,7 +281,7 @@ public class DiscoParty {
         double azimuth = r.nextDouble() * 2 * Math.PI; // radians
         x += rand * Math.cos(azimuth);
         z += rand * Math.sin(azimuth);
-        y = this.mainPlayer.getLocation().getY();
+        y = partyLocation.getY();
 
         loc = new Location(world, x, y, z);
         loc.setPitch(r.nextFloat() * 360 - 180);
@@ -290,10 +293,10 @@ public class DiscoParty {
     // Spawn some number of guests next to given player
     void spawnAll(int sheep, int spawnRadius) {
         Location loc;
-        World world = mainPlayer.getWorld();
+        World world = player.getWorld();
 
-        double x = mainPlayer.getLocation().getX();
-        double z = mainPlayer.getLocation().getZ();
+        double x = partyLocation.getX();
+        double z = partyLocation.getZ();
         for (int i = 0; i < sheep; i++) {
             loc = getRandomSpawnLocation(x, z, world, spawnRadius);
             spawnSheep(world, loc);
@@ -310,16 +313,16 @@ public class DiscoParty {
             }
         }
 
-        loc = mainPlayer.getLocation();
-        this.spawnFloor(world, new Location(world, loc.getBlockX(), loc.getBlockY() - 1, loc.getBlockZ()));
+        if (doFloor) {
+            this.spawnFloor(world, new Location(world, partyLocation.getBlockX(), partyLocation.getBlockY() - 1, partyLocation.getBlockZ()));
+        }
     }
 
     void spawnSheep(World world, Location loc) {
         Sheep newSheep = (Sheep) world.spawnEntity(loc, EntityType.SHEEP);
         //newSheep.setColor(discoColours[(r.nextInt(discoColours.length))]);
         newSheep.setBreed(false);	// this prevents breeding - no event listener required
-        newSheep.teleport(loc);	// teleport is needed to set orientation
-        newSheep.setTarget(this.mainPlayer);
+        newSheep.teleport(loc);	    // teleport is needed to set orientation
         getSheepList().add(newSheep);
         getSheepSet().add(newSheep);
         if (doLightning) {
@@ -331,7 +334,8 @@ public class DiscoParty {
     }
 
     void spawnGuest(World world, Location loc, EntityType type) {
-        Entity newGuest = loc.getWorld().spawnEntity(loc, type);
+        LivingEntity newGuest = (LivingEntity) loc.getWorld().spawnEntity(loc, type);
+        newGuest.setRemoveWhenFarAway(false);
         getGuestList().add(newGuest);
         getGuestSet().add(newGuest);
         if (doLightning) {
@@ -485,16 +489,28 @@ public class DiscoParty {
     }
 
     void playSounds() {
-        for (Player p : players) {
-            p.playSound(p.getLocation(), Sound.NOTE_BASS_DRUM, 0.75f, 1.0f);
-            if (this.state % 2 == 0) {
-                p.playSound(p.getLocation(), Sound.NOTE_SNARE_DRUM, 0.8f, 1.0f);
-            }
 
-            if ((this.state + 1) % 8 == 0) {
-                p.playSound(p.getLocation(), Sound.NOTE_STICKS, 1.0f, 1.0f);
-            }
+        /*for (Sheep sheep : this.getSheepList()) {
+         sheep.getWorld().playSound(sheep.getLocation(), Sound.NOTE_BASS_DRUM, 0.75f, 1.0f);
+
+         if (this.state % 2 == 0) {
+         sheep.getWorld().playSound(sheep.getLocation(), Sound.NOTE_SNARE_DRUM, 0.8f, 1.0f);
+         }
+
+         if ((this.state + 1) % 8 == 0) {
+         sheep.getWorld().playSound(sheep.getLocation(), Sound.NOTE_STICKS, 1.0f, 1.0f);
+         }
+
+         }*/
+        partyLocation.getWorld().playSound(partyLocation, Sound.NOTE_BASS_DRUM, volumeMultiplier * 0.75f, 1.0f);
+        if (this.state % 2 == 0) {
+            partyLocation.getWorld().playSound(partyLocation, Sound.NOTE_SNARE_DRUM, volumeMultiplier * 0.8f, 1.0f);
         }
+
+        if ((this.state + 1) % 8 == 0) {
+            partyLocation.getWorld().playSound(partyLocation, Sound.NOTE_STICKS, volumeMultiplier * 1.0f, 1.0f);
+        }
+
     }
 
     void randomizeFirework(Firework firework) {
@@ -541,16 +557,17 @@ public class DiscoParty {
 
     void scheduleUpdate() {
         updater = new DiscoUpdater();
-        updater.runTaskLater(parent, this.period);
+        updater.runTaskLater(plugin, this.period);
     }
 
     void startDisco() {
+        this.volumeMultiplier = Math.max(this.radius / 10, 1.0f);
         this.spawnAll(sheep, radius);
         this.scheduleUpdate();
-        parent.getPartyMap().put(this.mainPlayer.getName(), this);
+        plugin.getPartyMap().put(this.player.getName(), this);
         // start listening
         this.partyEvents = new PartyEvents(this);
-        parent.getServer().getPluginManager().registerEvents(this.partyEvents, this.parent);
+        plugin.getServer().getPluginManager().registerEvents(this.partyEvents, this.plugin);
     }
 
     void stopDisco() {
@@ -560,7 +577,7 @@ public class DiscoParty {
             updater.cancel();
         }
         updater = null;
-        parent.getPartyMap().remove(this.mainPlayer.getName());
+        plugin.getPartyMap().remove(this.player.getName());
         // stop listening
         HandlerList.unregisterAll(this.partyEvents);
     }
