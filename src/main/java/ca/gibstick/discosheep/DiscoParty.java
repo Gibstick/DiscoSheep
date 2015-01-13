@@ -46,7 +46,7 @@ public class DiscoParty {
     private static HashMap<String, Integer> defaultGuestNumbers = new HashMap<String, Integer>();
     private static HashMap<String, Integer> maxGuestNumbers = new HashMap<String, Integer>();
     private static final EnumSet<Material> floorExceptions = EnumSet.of(
-            Material.STAINED_GLASS,
+            //Material.STAINED_GLASS,
             Material.FURNACE,
             Material.CHEST,
             Material.ENDER_CHEST,
@@ -328,8 +328,8 @@ public class DiscoParty {
         if (doLightning) {
             world.strikeLightningEffect(loc);
         }
-        newSheep.setCustomName("jeb_");
-        newSheep.setCustomNameVisible(false);
+        //newSheep.setCustomName("jeb_");
+        //newSheep.setCustomNameVisible(false);
         newSheep.setRemoveWhenFarAway(false);
     }
 
@@ -352,7 +352,7 @@ public class DiscoParty {
                         && block.getRelative(BlockFace.UP).getType() == Material.AIR
                         && (block.getType().isSolid() || block.getType() == Material.AIR)) {
                     this.getFloorCache().add(block.getState());
-                    block.setType(Material.STAINED_GLASS);
+                    //block.setType(Material.STAINED_GLASS);
                     this.getFloorBlocks().add(block);
                 }
             }
