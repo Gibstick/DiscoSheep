@@ -7,7 +7,6 @@ import com.sk89q.minecraft.util.commands.CommandsManager;
 import com.sk89q.minecraft.util.commands.MissingNestedCommandException;
 import com.sk89q.minecraft.util.commands.WrappedCommandException;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +14,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
@@ -29,7 +27,7 @@ public final class DiscoSheep extends JavaPlugin {
     private static DiscoSheep instance;
 
     boolean partyOnJoin = true;
-    Map<String, DiscoParty> parties = new HashMap<String, DiscoParty>();
+    Map<String, DiscoParty> parties = new HashMap<>();
     private CommandsManager<CommandSender> commands;
 
     public static DiscoSheep getInstance() {
@@ -69,7 +67,6 @@ public final class DiscoSheep extends JavaPlugin {
                 sender.sendMessage(ChatColor.RED + "Illegal argument (out of bounds or bad format).");
             } else {
                 sender.sendMessage(ChatColor.RED + "An error has occurred. See console.");
-                e.printStackTrace();
             }
         } catch (CommandException e) {
             sender.sendMessage(ChatColor.RED + e.getMessage());
@@ -82,7 +79,6 @@ public final class DiscoSheep extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        //getCommand("ds").setExecutor(new DiscoSheepCommandExecutor(this));
         setupCommands();
         getServer().getPluginManager().registerEvents(new GlobalEvents(), this);
 
@@ -182,7 +178,7 @@ public final class DiscoSheep extends JavaPlugin {
     }
 
     public synchronized ArrayList<DiscoParty> getParties() {
-        return new ArrayList<DiscoParty>(this.getPartyMap().values());
+        return new ArrayList<>(this.getPartyMap().values());
     }
 
     public void stopParty(String name) {
@@ -239,7 +235,7 @@ public final class DiscoSheep extends JavaPlugin {
 
     // From user "desht" on bukkit forums
     public List<Player> getPlayersWithin(Player player, int distance) {
-        List<Player> res = new ArrayList<Player>();
+        List<Player> res = new ArrayList<>();
         int d2 = distance * distance;
         for (Player p : Bukkit.getServer().getOnlinePlayers()) {
             if (p.getWorld() == player.getWorld() && p.getLocation().distanceSquared(player.getLocation()) <= d2) {

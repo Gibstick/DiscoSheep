@@ -126,7 +126,7 @@ public class DiscoCommands {
             String dirtyArgs[] = args.getParsedSlice(0);
             //sender.sendMessage(dirtyArgs);
             for (int i = 0; i < dirtyArgs.length; i++) {
-                if ("none".equals(dirtyArgs[0])) {
+                if ("none".equals(dirtyArgs[0])) { // wtf??
                     plugin.clearGuests(party);
                     return;
                 }

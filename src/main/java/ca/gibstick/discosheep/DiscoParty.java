@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import static org.bukkit.EntityEffect.*;
@@ -43,8 +42,8 @@ public class DiscoParty {
     static int maxRadius = 100;
     static int minPeriod = 5;	// 0.25 seconds
     static int maxPeriod = 40;	// 2.0 seconds
-    private static HashMap<String, Integer> defaultGuestNumbers = new HashMap<String, Integer>();
-    private static HashMap<String, Integer> maxGuestNumbers = new HashMap<String, Integer>();
+    private static HashMap<String, Integer> defaultGuestNumbers = new HashMap<>();
+    private static HashMap<String, Integer> maxGuestNumbers = new HashMap<>();
     private static final EnumSet<Material> floorExceptions = EnumSet.of(
             //Material.STAINED_GLASS,
             Material.FURNACE,
@@ -88,13 +87,13 @@ public class DiscoParty {
     private PartyEvents partyEvents;
     private final DiscoSheep plugin = DiscoSheep.getInstance();
     private Player player;
-    private final ArrayList<Sheep> sheepList = new ArrayList<Sheep>();
-    private final HashSet<Sheep> sheepSet = new HashSet<Sheep>();
-    private final ArrayList<Entity> guestList = new ArrayList<Entity>();
-    private final HashSet<Entity> guestSet = new HashSet<Entity>();
-    private final ArrayList<BlockState> floorBlockCache = new ArrayList<BlockState>();
-    private final ArrayList<Block> floorBlocks = new ArrayList<Block>();
-    private HashMap<String, Integer> guestNumbers = new HashMap<String, Integer>();
+    private final ArrayList<Sheep> sheepList = new ArrayList<>();
+    private final HashSet<Sheep> sheepSet = new HashSet<>();
+    private final ArrayList<Entity> guestList = new ArrayList<>();
+    private final HashSet<Entity> guestSet = new HashSet<>();
+    private final ArrayList<BlockState> floorBlockCache = new ArrayList<>();
+    private final ArrayList<Block> floorBlocks = new ArrayList<>();
+    private HashMap<String, Integer> guestNumbers = new HashMap<>();
     private boolean doFireworks = false;
     private final boolean doJump = true;
     private boolean doLightning = false;
@@ -116,7 +115,7 @@ public class DiscoParty {
         this.period = DiscoParty.defaultPeriod;
         this.radius = DiscoParty.defaultRadius;
         this.sheep = DiscoParty.defaultSheep;
-        this.guestNumbers = new HashMap<String, Integer>(DiscoParty.defaultGuestNumbers);
+        this.guestNumbers = new HashMap<>(DiscoParty.defaultGuestNumbers);
         r = new Random();
     }
 
@@ -265,7 +264,7 @@ public class DiscoParty {
         DiscoParty.defaultPeriod = this.period;
         DiscoParty.defaultRadius = this.radius;
         DiscoParty.defaultSheep = this.sheep;
-        DiscoParty.defaultGuestNumbers = new HashMap<String, Integer>(this.getGuestNumbers());
+        DiscoParty.defaultGuestNumbers = new HashMap<>(this.getGuestNumbers());
         return this;
     }
 
@@ -442,9 +441,9 @@ public class DiscoParty {
             }
         }
 
-        for (int i = 0; i < this.floorBlocks.size(); i++) {
-            this.randomizeFloor(floorBlocks.get(i), i);
-        }
+//        for (int i = 0; i < this.floorBlocks.size(); i++) {
+//            this.randomizeFloor(floorBlocks.get(i), i);
+//        }
     }
 
     float getPentatonicNote() {
