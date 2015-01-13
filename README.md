@@ -9,13 +9,14 @@ DiscoSheep doesn't store anything after a party, and disco-party-on-join is hand
 ###A Note on Performance###
 DiscoSheep can be a fairly resource intensive plugin, but only when it is running. The events are unregistered when there are no parties. To prevent server slowdowns, set sensible limits in your config.yml, though the defaults are already fairly conservative.
 
-###[Documentation](http://dev.bukkit.org/bukkit-plugins/superdiscosheep/pages/)###
+###[Documentation](https://github.com/Gibstick/DiscoSheep/wiki)###
 
 ###Versions###
 Tested up to CraftBukkit build #3092 (MC: 1.7.9); can be built with Java 7.
 Also works as-is with Spigot for 1.8.
 
-###[BukkitDev](http://dev.bukkit.org/bukkit-plugins/superdiscosheep/)###
+###[~~BukkitDev~~](http://dev.bukkit.org/bukkit-plugins/superdiscosheep/)###
+No longer updated.
 
 ###Releases###
 See BukkitDev, or https://github.com/Gibstick/DiscoSheep/releases
