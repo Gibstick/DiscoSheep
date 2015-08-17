@@ -22,6 +22,7 @@ public class PartyBuilder {
     private boolean lightning = false;
     private boolean jeb = false;
     private boolean pentatonic = false;
+    private int babyness = 0;
 
     public PartyBuilder(Player player) {
         this.player = player;
@@ -115,8 +116,17 @@ public class PartyBuilder {
         if (lightning) party = new LightningParty(party);
         if (jeb) party = new JebParty(party);
         if (pentatonic) party = new PentatonicParty(party);
+        if (babyness > 0) party = new BabyParty(party, babyness);
 
         return party;
+    }
+
+    public void pentatonic() {
+        pentatonic = true;
+    }
+
+    public void baby(int babyness) {
+        this.babyness = babyness;
     }
 
     public AbstractParty buildOther(Player newPlayer) {
@@ -127,7 +137,5 @@ public class PartyBuilder {
         return otherParty;
     }
 
-    public void pentatonic() {
-        pentatonic = true;
-    }
+
 }

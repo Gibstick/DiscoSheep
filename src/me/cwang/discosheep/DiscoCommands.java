@@ -60,7 +60,7 @@ public class DiscoCommands implements CommandExecutor {
         PartyBuilder builder = new PartyBuilder(player);
         // ctor takes "program name" as first arg so we pass the sub-command as that
         // args then start at args[1] so we slice args[1:]
-        Getopt g = new Getopt(args[0], Arrays.copyOfRange(args, 1, args.length), "n:t:p:r:g:lwjP");
+        Getopt g = new Getopt(args[0], Arrays.copyOfRange(args, 1, args.length), "n:t:p:r:g:lwjPb:");
 
         int c;
         while ((c = g.getopt()) != -1) {
@@ -111,6 +111,8 @@ public class DiscoCommands implements CommandExecutor {
                     case 'P':
                         builder.pentatonic();
                         break;
+                    case 'b':
+                        builder.baby(Integer.parseInt(g.getOptarg()));
                 }
             } catch (IllegalArgumentException e) {
                 sender.sendMessage("Bad command: " + e.getMessage());
