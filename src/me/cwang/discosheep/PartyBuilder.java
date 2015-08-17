@@ -87,6 +87,11 @@ public class PartyBuilder {
         return this;
     }
 
+    public PartyBuilder fireworks() {
+        fireworks = true;
+        return this;
+    }
+
     public PartyBuilder jeb() {
         jeb = true;
         return this;
@@ -109,10 +114,7 @@ public class PartyBuilder {
             radius = denseRadius;
         }
         AbstractParty party = new BasicDiscoParty(player, duration, radius, period, sheep, guests);
-        if (fireworks) {
-            // do stuff
-        }
-
+        if (fireworks) party = new FireworkParty(party);
         if (lightning) party = new LightningParty(party);
         if (jeb) party = new JebParty(party);
         if (pentatonic) party = new PentatonicParty(party);

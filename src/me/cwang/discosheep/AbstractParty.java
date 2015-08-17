@@ -68,6 +68,8 @@ public abstract class AbstractParty {
 
     protected abstract int getState();
 
+    protected abstract float getVolumeMultiplier();
+
     protected abstract Location getLocation();
 
     protected abstract Sheep spawnSheep();

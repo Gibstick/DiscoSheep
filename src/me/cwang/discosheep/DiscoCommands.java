@@ -101,6 +101,9 @@ public class DiscoCommands implements CommandExecutor {
                             }
                         }
                         break;
+                    case 'w':
+                        builder.fireworks();
+                        break;
                     case 'l':
                         if (sender.hasPermission(DiscoSheep.PERMISSION_LIGHTNING))
                             builder.lightning();
@@ -113,6 +116,7 @@ public class DiscoCommands implements CommandExecutor {
                         break;
                     case 'b':
                         builder.baby(Integer.parseInt(g.getOptarg()));
+                        break;
                 }
             } catch (IllegalArgumentException e) {
                 sender.sendMessage("Bad command: " + e.getMessage());

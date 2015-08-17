@@ -206,7 +206,9 @@ public final class DiscoSheep extends JavaPlugin {
                 + "-g <mob:integer, mob:integer...>: set spawns for other mobs, eg. -g cow:5,pig:2\n"
                 + "-l: enables lightning\n"
                 + "-w: enables fireworks\n"
-                + "-j: enables alternative method for setting sheep colours\n");
+                + "-j: enables alternative method for setting sheep colours\n"
+                + "-b <integer>: spawns a percentage of mobs as babies, if possible\n"
+                + "-P: enables pentatonic backing track\n");
 		return true;
 	}
 

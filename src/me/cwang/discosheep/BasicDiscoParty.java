@@ -3,7 +3,6 @@ package me.cwang.discosheep;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.HandlerList;
-import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
@@ -122,6 +121,11 @@ public class BasicDiscoParty extends AbstractParty {
     }
 
     @Override
+    protected float getVolumeMultiplier() {
+        return volumeMultiplier;
+    }
+
+    @Override
     protected Location getLocation() {
         return partyLocation;
     }
@@ -150,37 +154,6 @@ public class BasicDiscoParty extends AbstractParty {
         newGuest.setMetadata(DiscoSheep.METADATA_KEY, new FixedMetadataValue(plugin, true));
         newGuest.setCanPickupItems(false);
         return newGuest;
-    }
-
-
-    private void randomizeFirework(Firework firework) {
-        FireworkEffect.Builder effect = FireworkEffect.builder();
-        FireworkMeta meta = firework.getFireworkMeta();
-
-        // construct [1, 3] random colours
-        int numColours = r.nextInt(3) + 1;
-        Color[] colourArray = new Color[numColours];
-        for (int i = 0; i < numColours; i++) {
-            colourArray[i] = getColor(r.nextInt(17) + 1);
-        }
-
-        // randomize effects
-        effect.withColor(colourArray);
-        effect.flicker(r.nextDouble() < 0.5);
-        effect.trail(r.nextDouble() < 0.5);
-        effect.with(FireworkEffect.Type.values()[r.nextInt(FireworkEffect.Type.values().length)]);
-
-        // set random effect and randomize power
-        meta.addEffect(effect.build());
-        meta.setPower(r.nextInt(2) + 1);
-
-        // apply it to the given firework
-        firework.setFireworkMeta(meta);
-    }
-
-    void spawnRandomFireworkAtSheep(Sheep sheep) {
-        Firework firework = (Firework) sheep.getWorld().spawnEntity(sheep.getEyeLocation(), EntityType.FIREWORK);
-        randomizeFirework(firework);
     }
 
     /**

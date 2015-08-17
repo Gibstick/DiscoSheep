@@ -54,6 +54,9 @@ public class DiscoDecorator extends AbstractParty {
     protected int getState() { return decoratedParty.getState(); }
 
     @Override
+    protected float getVolumeMultiplier() { return decoratedParty.getVolumeMultiplier(); }
+
+    @Override
     protected Location getLocation() {
         return decoratedParty.getLocation();
     }

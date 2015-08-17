@@ -31,6 +31,6 @@ public class PentatonicParty extends DiscoDecorator {
     @Override
     protected void playSounds() {
         super.playSounds();
-        getLocation().getWorld().playSound(getLocation(), Sound.NOTE_PIANO, 1.0f, getPentatonicNote());
+        getLocation().getWorld().playSound(getLocation(), Sound.NOTE_PIANO, getVolumeMultiplier() * 1.0f, getPentatonicNote());
     }
 }
