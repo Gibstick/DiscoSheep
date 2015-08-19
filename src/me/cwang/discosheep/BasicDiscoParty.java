@@ -43,7 +43,7 @@ public class BasicDiscoParty extends AbstractParty {
         this.r = new Random();
         this.guestList = new ArrayList<LivingEntity>();
         this.partyLocation = player.getLocation();
-        this.volumeMultiplier = Math.max(this.radius / 10, 1.0f);
+        this.volumeMultiplier = 2.0f * Math.max(this.radius / 10, 1.0f);
     }
 
     @Override
