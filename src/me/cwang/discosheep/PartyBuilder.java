@@ -30,7 +30,7 @@ public class PartyBuilder {
 
     public PartyBuilder duration(int duration) throws IllegalArgumentException {
         if (duration < 0 || duration > AbstractParty.maxDuration) {
-            throw new IllegalArgumentException("Invalid duration.");
+            throw new IllegalArgumentException("nvalid duration");
         }
         this.duration = duration;
         return this;
@@ -38,7 +38,7 @@ public class PartyBuilder {
 
     public PartyBuilder radius(int radius) throws IllegalArgumentException {
         if (radius < 0 || radius > AbstractParty.maxRadius) {
-            throw new IllegalArgumentException("Invalid radius.");
+            throw new IllegalArgumentException("Invalid radius");
         }
         this.radius = radius;
         return this;
@@ -51,7 +51,7 @@ public class PartyBuilder {
 
     public PartyBuilder period(int period) throws IllegalArgumentException {
         if (period < 0 || period > AbstractParty.maxPeriod) {
-            throw new IllegalArgumentException("Invalid period.");
+            throw new IllegalArgumentException("invalid period");
         }
         this.period = period;
         return this;
@@ -59,7 +59,7 @@ public class PartyBuilder {
 
     public PartyBuilder sheep(int sheep) throws IllegalArgumentException {
         if (sheep < 0 || sheep > AbstractParty.maxSheep) {
-            throw new IllegalArgumentException("Invalid sheep number");
+            throw new IllegalArgumentException("invalid sheep number");
         }
         this.sheep = sheep;
         return this;
@@ -71,7 +71,7 @@ public class PartyBuilder {
         try {
             type = EntityType.valueOf(key);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(String.format("Invalid guest: %s", key));
+            throw new IllegalArgumentException(String.format("invalid guest %s", key));
         }
         if (guests.containsKey(type)) {
             if (n <= AbstractParty.getMaxGuestNumbers().get(type) && n >= 0) { // so that /ds defaults can take 0 as arg
@@ -79,7 +79,7 @@ public class PartyBuilder {
                 return this;
             }
         }
-        throw new IllegalArgumentException(String.format("Invalid number for %s", key));
+        throw new IllegalArgumentException(String.format("invalid number for %s", key));
     }
 
     public PartyBuilder noGuests() {

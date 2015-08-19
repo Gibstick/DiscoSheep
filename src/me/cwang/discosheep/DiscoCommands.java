@@ -57,11 +57,15 @@ public class DiscoCommands implements CommandExecutor {
             }
         }
 
+        if (args.length == 0) {
+            return plugin.helpCommand(sender);
+        }
+
         PartyBuilder builder = new PartyBuilder(player);
         // ctor takes "program name" as first arg so we pass the sub-command as that
         // args then start at args[1] so we slice args[1:]
         Getopt g = new Getopt(args[0], Arrays.copyOfRange(args, 1, args.length), "n:t:p:r:g:lfjPb:");
-
+        g.setOpterr(false); // do own error handling
         int c;
         while ((c = g.getopt()) != -1) {
             try {
@@ -95,8 +99,8 @@ public class DiscoCommands implements CommandExecutor {
                                 try {
                                     String[] pair = tokens.nextToken().split(":");
                                     builder.guests(pair[0], Integer.parseInt(pair[1]));
-                                } catch (Exception e) {
-                                    throw new IllegalArgumentException("Bad guest arguments");
+                                } catch (ArrayIndexOutOfBoundsException e) {
+                                    throw new IllegalArgumentException("a valid list of guest:number pairs was not found.");
                                 }
                             }
                         }
@@ -117,9 +121,18 @@ public class DiscoCommands implements CommandExecutor {
                     case 'b':
                         builder.baby(Integer.parseInt(g.getOptarg()));
                         break;
+                    case '?': // handle invalid switch
+                        // need to cast getOptopt() to char because it returns a string representation of an integer
+                        sender.sendMessage(String.format("Invalid switch '%s' was found", (char)g.getOptopt()));
+                        return false;
                 }
-            } catch (IllegalArgumentException e) {
+            } catch (NumberFormatException e) {
+                String badNumber = e.getMessage().replace("For input string: ", "");
+                sender.sendMessage(String.format("Error: %s is not a valid number", badNumber));
+                return false;
+            } catch (IllegalArgumentException e) { // handle invalid arguments
                 sender.sendMessage("Bad command: " + e.getMessage());
+                return false;
             }
         }
 

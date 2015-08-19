@@ -175,13 +175,9 @@ public final class DiscoSheep extends JavaPlugin {
         }
 	}
 
-	public boolean hasParty(String name) {
-		return parties.containsKey(name);
-	}
+	public boolean hasParty(String name) { return parties.containsKey(name); }
 
-	public AbstractParty getParty(String name) {
-		return parties.get(name);
-	}
+	public AbstractParty getParty(String name) { return parties.get(name); }
 
 	public void removeParty(String name) {
 		if (this.hasParty(name)) {
@@ -234,7 +230,7 @@ public final class DiscoSheep extends JavaPlugin {
                 if (!hasParty(s.getName())) {
                     builder.build().startDisco();
                 } else {
-                    s.sendMessage(ChatColor.RED + "You already have a party. Are you underground?");
+                    s.sendMessage(ChatColor.RED + "You already have a party.");
                 }
                 return true;
             }
