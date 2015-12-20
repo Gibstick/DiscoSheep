@@ -1,5 +1,4 @@
-/target/
 *.jar
-/build/
-/dist/
-/server/
+/out/
+.idea
+*.iml

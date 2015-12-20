@@ -1,14 +1,14 @@
 name: DiscoSheep
-main: ca.gibstick.discosheep.DiscoSheep
+main: me.cwang.discosheep.DiscoSheep
 authors: [Gibstick, RangerMauve]
-version: 1.2
+version: 2.0
 commands:
-  #ds:
-    #description: "Main DiscoSheep command"
-    #usage: |
-        #<command> <subcommand> [arguments]
-        #Use /ds help for more information
-        #To stop your party, use /ds stop.
+  ds:
+    description: "Main DiscoSheep command"
+    usage: |
+        <command> <subcommand> [arguments]
+        Use /ds help for more information
+        To stop your party, use /ds stop.
 permissions:
   # If default is set to false, console will not have permission!
   discosheep.*:
